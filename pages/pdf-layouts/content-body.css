@@ -1,0 +1,96 @@
+.content-text,
+.content-text * {
+    max-width: 100%;
+    box-sizing: border-box;
+}
+
+.content-text .stage,
+.content-text .session-list,
+.content-text .session,
+.content-text .workshop,
+.content-text .workshop-item,
+.content-text .row,
+.content-text .session-title,
+.content-text [class*="col-"] {
+    display: block;
+}
+
+.content-text .session-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.content-text .session {
+    position: static;
+    clear: both;
+    margin: 0 0 4mm;
+    padding: 0;
+    break-inside: avoid;
+    page-break-inside: avoid;
+}
+
+.content-text .event-title,
+.content-text .event-details,
+.content-text .event-leitung,
+.content-text .event-booking_state,
+.content-text .speaker-list {
+    position: static;
+    top: auto;
+    right: auto;
+    bottom: auto;
+    left: auto;
+}
+
+.content-text [hidden],
+.content-text template,
+.content-text .js-workshop-options,
+.content-text .btn-select-workshop,
+.content-text .hours,
+.content-text .stage-headline,
+.content-text .event-booking_state {
+    display: none !important;
+}
+
+.content-text .event-details,
+.content-text .event-leitung,
+.content-text .speaker-list {
+    break-inside: auto;
+    page-break-inside: auto;
+}
+
+.content-text .participant-name {
+    display: inline-block;
+    min-width: 70mm;
+    border-bottom: 0.4mm solid rgba(15, 79, 121, 0.25);
+    padding-bottom: 1mm;
+    margin: 0 1mm;
+    font-weight: 700;
+}
+
+.content-text .js-session-container {
+    border-top: 1px solid black;
+    padding-top: 0.25rem;
+}
+
+.content-text .session-title {
+    margin: 0;
+    padding: 0;
+    font-weight: 700;
+    line-height: 1.25;
+}
+
+.content-text p,
+.content-text h3 {
+    margin: 0;
+}
+
+.content-text .event-leitung
+ {
+    margin: 0;
+}
+.content-text .speaker-list {
+    margin: 0;
+    margin-left:1rem;
+    margin-top:0.5rem;
+}
