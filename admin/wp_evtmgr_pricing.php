@@ -26,7 +26,7 @@
         'list'  => [
             'fields' => ["str_pricing_name_{$lang}"],
             'fields_iframe' => ["str_pricing_name_{$lang}", "num_price", "int_sort_order"],
-            'orderby_default' => "str_pricing_name_{$lang}",
+            'orderby_default' => "int_sort_order,str_pricing_name_{$lang}",
             'condition' => "$additional_sql_condition",
             'order_default' => 'asc',
             'labels' => [

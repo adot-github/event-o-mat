@@ -360,9 +360,9 @@ class Event_Registration {
             </style>
         ';
 
-        $greeting_text = $wordings['t74GutenTag'] ?? 'Guten Tag';
-        $notice_text   = $wordings['t76BitteBeachtenSieIhreAnmeldungIstVerbindlichAbmeldungen'] ?? '';
-        $subject_text  = $wordings['t79IhreAnmeldung'] ?? 'Ihre Anmeldung';
+        $greeting_text = $wordings['guten_tag'] ?? 'Guten Tag';
+        $notice_text   = $wordings['bitte_beachten_sie_ihre_anmeldung_ist_verbindlich_abmeldungen'] ?? '';
+        $subject_text  = $wordings['ihre_anmeldung'] ?? 'Ihre Anmeldung';
 
         $show_email_text = '
             <p>' . esc_html($greeting_text) . ' ' . esc_html(trim($first_name . ' ' . $last_name)) . '<br><br>'

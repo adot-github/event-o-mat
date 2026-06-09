@@ -198,7 +198,7 @@ h4 {
     &.info {
         background: #8b036b;
         border-color: #c06ca9;
-        color:#ffffff !important;
+        color:#ffffff;
     }
 
     &.alert {
@@ -254,7 +254,7 @@ h4 {
 .speaker-list li {
   list-style: none;
   position: relative;
-  padding-left: 1.75rem;
+  padding-left: 1.5rem;
 }
 
 .speaker-list li::before {
@@ -264,69 +264,5 @@ h4 {
   top: 0;
   width: 1.35em;
   height: 1.35em;
-  background: url("../img/speaker-2.png") no-repeat center / contain;
+  background: url("../img/speaker.png") no-repeat center / contain;
 }
-
-
-.price-list {
-    margin:0;
-    padding:0;
-}
-.price-list li {
-  list-style: none;
-  position: relative;
-  padding-left: 1.75rem;
-}
-
-.price-list li::before {
-  content: "";
-  position: absolute;
-  left: 0;
-  top: 0;
-  width: 1.35em;
-  height: 1.35em;
-  background: url("../img/price.png") no-repeat center / contain;
-}
-
-
-.free-places-list {
-    margin:0;
-    padding:0;
-}
-.free-places-list li {
-  list-style: none;
-  position: relative;
-  padding-left: 1.75rem;
-}
-
-.free-places-list li::before {
-  content: "";
-  position: absolute;
-  left: 0;
-  top: 0;
-  width: 1.35em;
-  height: 1.35em;
-  background: url("../img/places.png") no-repeat center / contain;
-}
-
-.audience-list {
-    margin:0;
-    padding:0;
-}
-.audience-list li {
-  list-style: none;
-  position: relative;
-  padding-left: 1.75rem;
-}
-
-.audience-list li::before {
-  content: "";
-  position: absolute;
-  left: 0;
-  top: 0;
-  width: 1.35em;
-  height: 1.35em;
-  background: url("../img/zielgruppen.png") no-repeat center / contain;
-}
-
-

@@ -13,9 +13,6 @@
         border-top: 1px solid #dee2e6;
         font-weight: 700;
     }
-    .pricing-group-odd td {
-        background-color: #f5f5f5;
-    }
 </style>
 <?php
 
@@ -136,7 +133,7 @@ $selected_pricing_group_value = !empty($selected_pricing_option)
 
         <div class="alert alert-warning">
             <?php
-                echo $wordings['sie_haben_keine_workshops_ausgewaehlt_bitte_gehen_sie_einen_schritt_zurueck_und_waehlen_sie_die_gewuenschten_workshops'] ?? '';
+                echo '$Sie haben keine Workshops ausgewählt. Bitte gehen Sie einen Schritt zurück und wählen Sie die gewünschten Workshops.£';
             ?>
         </div>
 
@@ -187,10 +184,9 @@ $selected_pricing_group_value = !empty($selected_pricing_option)
                                         : array();
 
                                     $parent_line = !empty($lines[0]) ? $lines[0] : array();
-                                    $group_class = ($discount_index % 2 === 0) ? 'pricing-group-odd' : '';
                                     ?>
 
-                                    <tr class="<?php echo esc_attr($group_class); ?>">
+                                    <tr>
                                         <td>
                                             <label class="d-block mb-0">
                                                 <input type="radio"
@@ -232,7 +228,7 @@ $selected_pricing_group_value = !empty($selected_pricing_option)
                                             ? 'event-registration-pricing-total'
                                             : 'event-registration-pricing-child';
                                         ?>
-                                        <tr class="<?php echo esc_attr(trim($row_class . ' ' . $group_class)); ?>">
+                                        <tr class="<?php echo esc_attr($row_class); ?>">
                                             <td style="padding-left:3rem;">
                                                 <?php if ($is_total) : ?>
                                                     <?php echo esc_html($line['label'] ?? ''); ?>
@@ -262,7 +258,7 @@ $selected_pricing_group_value = !empty($selected_pricing_option)
                         </table>
                     </div>
 
-                    <div class="mb-3 d-none">
+                    <div class="mb-3">
                         <label for="total_cost" class="form-label">Total Cost</label>
                         <input type="text"
                                name="total_cost"
@@ -293,7 +289,7 @@ $selected_pricing_group_value = !empty($selected_pricing_option)
                 name="registration_action"
                 value="prev"
                 class="btn btn-secondary">
-            <?php echo $wordings['zurueck'] ?? ''; ?>
+            $Zurück£
         </button>
 
         <button type="submit"
@@ -301,7 +297,7 @@ $selected_pricing_group_value = !empty($selected_pricing_option)
                 value="next"
                 class="btn btn-primary">
             <?php
-            echo $wordings['weiter'] ?? '';
+            echo $wordings['t5Weiter'] ?? '$Weiter£';
             ?>
         </button>
     </div>

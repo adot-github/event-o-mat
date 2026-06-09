@@ -177,15 +177,14 @@ function event_registration_shortcode($atts = array()) {
                 <?php for ($i = 1; $i <= Event_Registration::MAX_STEP; $i++) : ?>
                     <?php if ((int) $step === Event_Registration::MAX_STEP) : ?>
                         <span class="event-registration-step <?php echo $i === (int) $step ? 'is-active' : ''; ?>">
-                            <?php echo $wordings['schritt'] ?? ''; ?>&nbsp;<?php echo $i; ?>
+                            <?php echo '$Schritt£'; ?>&nbsp;<?php echo $i; ?>
                         </span>
                     <?php else : ?>
                         <button type="submit"
                                 class="event-registration-step <?php echo $i === (int) $step ? 'is-active' : ''; ?>"
                                 name="registration_step"
-                                value="<?php echo esc_attr($i); ?>"
-                                formnovalidate>
-                            <?php echo $wordings['schritt'] ?? ''; ?>&nbsp;<?php echo $i; ?>
+                                value="<?php echo esc_attr($i); ?>">
+                            <?php echo '$Schritt£'; ?>&nbsp;<?php echo $i; ?>
                         </button>
                     <?php endif; ?>
                 <?php endfor; ?>

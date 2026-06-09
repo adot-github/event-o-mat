@@ -81,7 +81,7 @@ $pricing_lines = !empty($selected_pricing_option['lines']) && is_array($selected
 
 <div class="container my-4 event-registration-step-3">
 
-    <h2><?php echo $wordings['ihre_gewaehlten_optionen'] ?? ''; ?></h2>
+    <h2><?php echo '$Ihre gewählten Optionen£'; ?></h2>
 
     <?php if (!empty($selected_workshop_rows)) : ?>
 
@@ -110,12 +110,12 @@ $pricing_lines = !empty($selected_pricing_option['lines']) && is_array($selected
     <?php else : ?>
 
         <div class="alert alert-warning">
-            <?php echo $wordings['es_wurden_keine_workshops_ausgewaehlt'] ?? ''; ?>
+            <?php echo '$Es wurden keine Workshops ausgewählt.£'; ?>
         </div>
 
     <?php endif; ?>
 
-    <h2><?php echo $wordings['ihre_kosten'] ?? ''; ?></h2>
+    <h2><?php echo '$Ihre Kosten£'; ?></h2>
 
     <?php if (!empty($pricing_lines)) : ?>
 
@@ -150,7 +150,7 @@ $pricing_lines = !empty($selected_pricing_option['lines']) && is_array($selected
 
                 <?php if (empty($selected_pricing_option['has_additional_lines'])) : ?>
                     <tr>
-                        <th scope="row"><?php echo $wordings['total'] ?? ''; ?></th>
+                        <th scope="row"><?php echo '$Total£'; ?></th>
                         <td>
                             <?php echo esc_html(event_registration_format_price($total_cost)); ?> CHF
                         </td>
@@ -162,12 +162,12 @@ $pricing_lines = !empty($selected_pricing_option['lines']) && is_array($selected
     <?php else : ?>
 
         <div class="alert alert-warning">
-            <?php echo $wordings['es_wurde_keine_preisoption_ausgewaehlt'] ?? ''; ?>
+            <?php echo '$Es wurde keine Preisoption ausgewählt.£'; ?>
         </div>
 
         <?php if ($total_cost !== '') : ?>
             <p>
-                <strong><?php echo $wordings['total'] ?? ''; ?></strong>
+                <strong><?php echo '$Total:£'; ?></strong>
                 <?php echo esc_html(event_registration_format_price($total_cost)); ?> CHF
             </p>
         <?php endif; ?>
@@ -195,14 +195,14 @@ $pricing_lines = !empty($selected_pricing_option['lines']) && is_array($selected
                 name="registration_action"
                 value="prev"
                 class="btn btn-secondary">
-            <?php echo $wordings['zurueck'] ?? ''; ?>
+            <?php echo '$Zurück£'; ?>
         </button>
 
         <button type="submit"
                 name="registration_action"
                 value="next"
                 class="btn btn-primary">
-            <?php echo $wordings['weiter'] ?? ''; ?>
+            <?php echo '$Weiter£'; ?>
         </button>
     </div>
 

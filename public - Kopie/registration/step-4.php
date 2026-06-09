@@ -101,10 +101,9 @@
         font-weight: 400;
     }
 
-    .registration-step-4 .radio-group input[type="radio"] {
+    .registration-step-4 .radio-group input {
         width: auto;
-        margin-right: 0.5rem;
-        transform: scale(1.5);
+        margin-right: 0.35rem;
     }
 </style>
 <?php
@@ -268,8 +267,8 @@ $str_institution_City     = $get_saved_value('str_institution_City');
         <div class="row mt-4">
             <div class="col-12 col-md-9 form-field radio-group">
 
-                <h3 style="margin-bottom:10px;"><?php echo $wordings['angaben_zur_verrechnung'] ?? ''; ?></h3>
-                <?php echo $wordings['die_rechung_wird_ausgestellt_auf'] ?? ''; ?>
+                <h3 style="margin-bottom:10px;"><?php echo '$Angaben zur Verrechnung£'; ?></h3>
+                <?php echo '$Die Rechung wird ausgestellt auf:£'; ?>
 
                 <label>
                     <input type="radio"
@@ -277,7 +276,7 @@ $str_institution_City     = $get_saved_value('str_institution_City');
                            value="1"
                            class="js-billing-address"
                            <?php checked((string) $int_billing_address, '1'); ?>>
-                    <?php echo $wordings['privatadresse'] ?? ''; ?>
+                    <?php echo '$Privatadresse£'; ?>
                 </label>
 
                 <label>
@@ -286,19 +285,19 @@ $str_institution_City     = $get_saved_value('str_institution_City');
                            value="2"
                            class="js-billing-address"
                            <?php checked((string) $int_billing_address, '2'); ?>>
-                    <?php echo $wordings['organisation_arbeitgeber'] ?? ''; ?>
+                    <?php echo '$Organisation/Arbeitgeber£'; ?>
                 </label>
 
             </div>
         </div>
 
-        <h3><?php echo $wordings['angaben_zu_ihrer_person'] ?? ''; ?></h3>
+        <h3><?php echo '$Angaben zu Ihrer Person£'; ?></h3>
 
         <div class="row mt-4">
             <div class="col-12 col-md-3">
                 <div class="material-input material-input-outline">
                     <label class="form-label-off" for="str_salutation">
-                        <?php echo $wordings['anrede'] ?? ''; ?><span class="required-marker">*</span>
+                        <?php echo '$Anrede£'; ?><span class="required-marker">*</span>
                     </label>
                     <select name="str_salutation"
                             id="str_salutation"
@@ -314,7 +313,7 @@ $str_institution_City     = $get_saved_value('str_institution_City');
             <div class="col-12 col-md-3" style="display:none-off;">
                 <div class="material-input material-input-outline">
                     <label class="form-label-off" for="str_academic_title">
-                        <?php echo $wordings['akad_titel'] ?? ''; ?>
+                        <?php echo '$Akad. Titel£'; ?>
                     </label>
                     <input type="text"
                            name="str_academic_title"
@@ -329,7 +328,7 @@ $str_institution_City     = $get_saved_value('str_institution_City');
             <div class="col-12 col-md-6">
                 <div class="material-input material-input-outline">
                     <label class="form-label-off" for="str_first_name">
-                        <?php echo $wordings['vorname'] ?? ''; ?><span class="required-marker">*</span>
+                        <?php echo '$Vorname£'; ?><span class="required-marker">*</span>
                     </label>
                     <input type="text"
                            name="str_first_name"
@@ -343,7 +342,7 @@ $str_institution_City     = $get_saved_value('str_institution_City');
             <div class="col-12 col-md-6">
                 <div class="material-input material-input-outline">
                     <label class="form-label-off" for="str_last_name">
-                        <?php echo $wordings['nachname'] ?? ''; ?><span class="required-marker">*</span>
+                        <?php echo '$Nachname£'; ?><span class="required-marker">*</span>
                     </label>
                     <input type="text"
                            name="str_last_name"
@@ -359,7 +358,7 @@ $str_institution_City     = $get_saved_value('str_institution_City');
             <div class="col-12 col-md-6">
                 <div class="material-input material-input-outline">
                     <label class="form-label-off" for="str_address">
-                        <?php echo $wordings['adresse'] ?? ''; ?><span class="required-marker">*</span>
+                        <?php echo '$Adresse£'; ?><span class="required-marker">*</span>
                     </label>
                     <input type="text"
                            name="str_address"
@@ -373,7 +372,7 @@ $str_institution_City     = $get_saved_value('str_institution_City');
             <div class="col-12 col-md-2">
                 <div class="material-input material-input-outline">
                     <label class="form-label-off" for="str_zip">
-                        <?php echo $wordings['plz'] ?? ''; ?>
+                        <?php echo '$PLZ£'; ?>
                     </label>
                     <input type="text"
                            name="str_zip"
@@ -386,7 +385,7 @@ $str_institution_City     = $get_saved_value('str_institution_City');
             <div class="col-12 col-md-4">
                 <div class="material-input material-input-outline">
                     <label class="form-label-off" for="str_city">
-                        <?php echo $wordings['ort'] ?? ''; ?><span class="required-marker">*</span>
+                        <?php echo '$Ort£'; ?><span class="required-marker">*</span>
                     </label>
                     <input type="text"
                            name="str_city"
@@ -402,7 +401,7 @@ $str_institution_City     = $get_saved_value('str_institution_City');
             <div class="col-12 col-md-6">
                 <div class="material-input material-input-outline">
                     <label class="form-label-off" for="str_job_title">
-                        <?php echo $wordings['berufliche_funktion'] ?? ''; ?>
+                        <?php echo '$Berufliche Funktion£'; ?>
                     </label>
                     <input type="text"
                            name="str_job_title"
@@ -415,7 +414,7 @@ $str_institution_City     = $get_saved_value('str_institution_City');
             <div class="col-12 col-md-6">
                 <div class="material-input material-input-outline">
                     <label class="form-label-off" for="str_country">
-                        <?php echo $wordings['land'] ?? ''; ?><span class="required-marker">*</span>
+                        <?php echo '$Land£'; ?><span class="required-marker">*</span>
                     </label>
                     <input type="text"
                            list="country-list"
@@ -442,7 +441,7 @@ $str_institution_City     = $get_saved_value('str_institution_City');
             <div class="col-12 col-md-6">
                 <div class="material-input material-input-outline">
                     <label class="form-label-off" for="str_email">
-                        <?php echo $wordings['e_mail'] ?? ''; ?><span class="required-marker">*</span>
+                        <?php echo '$E-Mail£'; ?><span class="required-marker">*</span>
                     </label>
                     <input type="email"
                            name="str_email"
@@ -456,7 +455,7 @@ $str_institution_City     = $get_saved_value('str_institution_City');
             <div class="col-12 col-md-6">
                 <div class="material-input material-input-outline">
                     <label class="form-label-off" for="str_phone">
-                        <?php echo $wordings['telefon'] ?? ''; ?>
+                        <?php echo '$Telefon£'; ?>
                     </label>
                     <input type="tel"
                            name="str_phone"
@@ -467,14 +466,14 @@ $str_institution_City     = $get_saved_value('str_institution_City');
             </div>
         </div>
 
-        <h3 class="mt-5 mb-3"><?php echo $wordings['angaben_zu_organisation_arbeitgeber'] ?? ''; ?></h3>
+        <h3 class="mt-5 mb-3"><?php echo '$Angaben zu Organisation/Arbeitgeber£'; ?></h3>
 
         <div class="row row_int_billing_address_2">
 
             <div class="col-12 col-md-6">
                 <div class="material-input material-input-outline">
                     <label class="form-label-off" for="str_institution">
-                        <?php echo $wordings['organisation_arbeitgeber'] ?? ''; ?><span class="required-marker js-org-required-marker">*</span>
+                        <?php echo '$Organisation/Arbeitgeber£'; ?><span class="required-marker js-org-required-marker">*</span>
                     </label>
                     <input type="text"
                            name="str_institution"
@@ -487,7 +486,7 @@ $str_institution_City     = $get_saved_value('str_institution_City');
             <div class="col-12 col-md-6">
                 <div class="material-input material-input-outline">
                     <label class="form-label-off" for="str_institution_Division">
-                        <?php echo $wordings['abteilung_institut'] ?? ''; ?>
+                        <?php echo '$Abteilung/Institut£'; ?>
                     </label>
                     <input type="text"
                            name="str_institution_Division"
@@ -502,7 +501,7 @@ $str_institution_City     = $get_saved_value('str_institution_City');
             <div class="col-12 col-md-6">
                 <div class="material-input material-input-outline">
                     <label class="form-label-off" for="str_institution_Address">
-                        <?php echo $wordings['adresse'] ?? ''; ?><span class="required-marker js-org-required-marker">*</span>
+                        <?php echo '$Adresse£'; ?><span class="required-marker js-org-required-marker">*</span>
                     </label>
                     <input type="text"
                            name="str_institution_Address"
@@ -515,7 +514,7 @@ $str_institution_City     = $get_saved_value('str_institution_City');
             <div class="col-12 col-md-2">
                 <div class="material-input material-input-outline">
                     <label class="form-label-off" for="str_institution_Zip">
-                        <?php echo $wordings['plz'] ?? ''; ?><span class="required-marker js-org-required-marker">*</span>
+                        <?php echo '$PLZ£'; ?><span class="required-marker js-org-required-marker">*</span>
                     </label>
                     <input type="text"
                            name="str_institution_Zip"
@@ -528,7 +527,7 @@ $str_institution_City     = $get_saved_value('str_institution_City');
             <div class="col-12 col-md-4">
                 <div class="material-input material-input-outline">
                     <label class="form-label-off" for="str_institution_City">
-                        <?php echo $wordings['ort'] ?? ''; ?><span class="required-marker js-org-required-marker">*</span>
+                        <?php echo '$Ort£'; ?><span class="required-marker js-org-required-marker">*</span>
                     </label>
                     <input type="text"
                            name="str_institution_City"
@@ -548,14 +547,14 @@ $str_institution_City     = $get_saved_value('str_institution_City');
                 value="prev"
                 class="btn btn-secondary"
                 formnovalidate>
-            <?php echo $wordings['zurueck'] ?? ''; ?>
+            <?php echo '$Zurück£'; ?>
         </button>
 
         <button type="submit"
                 name="registration_action"
                 value="next"
                 class="btn btn-primary">
-            <?php echo $wordings['jetzt_anmelden'] ?? ''; ?>
+            <?php echo '$Jetzt anmelden£'; ?>
         </button>
     </div>
 

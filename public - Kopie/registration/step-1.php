@@ -1,4 +1,4 @@
-<link rel='stylesheet' id='dashicons-css' href='/wp-content/themes/picostrap5-child-base/db-custom/event-registration/public/assets/time-table.css' media='all' />
+<link rel='stylesheet' id='dashicons-css' href='https://dev.local/wp-content/themes/picostrap5/db-custom/event-registration/public/assets/time-table.css' media='all' />
 
 <style>
     .js-workshop-item {
@@ -75,8 +75,8 @@
 
     #event_registration_workshop_modal .event-registration-modal-workshop:hover,
     #event_registration_workshop_modal .event-registration-modal-workshop:focus {
-        background: #e0b6d4;
-        border-color: #8b036b;
+        background: #eef5ff;
+        border-color: #0d6efd;
         transform: translateY(-1px);
     }
 
@@ -101,14 +101,6 @@
     }
 </style>
 
-<style>
-    .selected-workshop-wrapper .speaker-list li::before,
-    .selected-workshop-wrapper .free-places-list li::before ,
-    .selected-workshop-wrapper .price-list li::before
-    {
-         filter: invert(1);
-    }
-</style>
 
 <?php
     if (!defined('ABSPATH')) {
@@ -273,6 +265,10 @@
 
 <?php
 
+
+
+
+
     function event_registration_step1_sanitize_css_classes($class_value) {
         $class_value = trim((string) $class_value);
 
@@ -311,7 +307,7 @@
     }
 
     if (!function_exists('event_registration_step1_render_workshop_html')) {
-        function event_registration_step1_render_workshop_html(array $workshop, $color, $lang, array $wordings = []) {
+        function event_registration_step1_render_workshop_html(array $workshop, $color, $lang) {
             $id = !empty($workshop['id'])
                 ? absint($workshop['id'])
                 : 0;
@@ -396,8 +392,7 @@
         $workshops_obj,
         $event_uid,
         $lang,
-        $selected_workshop_ids,
-        $wordings
+        $selected_workshop_ids
     ) {
         $workshop_rows = array();
         $first_slot_id = 0;
@@ -530,8 +525,7 @@
             $workshop_html = event_registration_step1_render_workshop_html(
                 $workshop,
                 $color,
-                $lang,
-                $wordings
+                $lang
             );
 
             if ($workshop_html === '') {
@@ -669,15 +663,13 @@
 
 <div class="container-lg bg-light p-0 py-4">
     <div class="timetable" style="--start-time: <?php echo esc_attr((string) $timetable_start_hour); ?>; --end-time: <?php echo esc_attr((string) $timetable_end_hour); ?>;">
-        
         <div class="timetable--head" aria-hidden="true">
             <div class="timetable--inner-head">
-                <div class="stage-headline"><?php echo $wordings['programm'] ?? ''; ?></div>
+                <div class="stage-headline"><?php echo '$Programm£'; ?></div>
             </div>
         </div>
 
         <div class="timetable--body">
-            
             <div class="hours" aria-hidden="true">
                 <?php foreach ($timetable_hours as $hour_label) : ?>
                     <div><time datetime="<?php echo esc_attr($hour_label); ?>"><?php echo esc_html($hour_label); ?></time></div>
@@ -685,7 +677,6 @@
             </div>
 
             <div class="stage" style="--column: 2;">
-                
                 <h2 class="stage-headline">Programm</h2>
 
                 <ol class="session-list">
@@ -724,7 +715,7 @@
                                     <?php endif; ?>
 
                                     <?php if (!empty($session['presenters'])) : ?>
-                                        <ul class="speaker-list icon-inverted no-border">
+                                        <ul class="speaker-list no-border">
                                             <?php foreach ($session['presenters'] as $presenter) : ?>
                                                 <li>
                                                     <?php if (!empty($presenter['academic_title'])) : ?>
@@ -758,23 +749,23 @@
 
                                     <div class="mt-2">
                                         <span class="mr-1">
-                                            <?php echo $wordings['anzahl_angebote_zur_auswahl'] ?? ''; ?>
+                                            <?php echo '$Anzahl Angebote zur Auswahl:£'; ?>
                                             <?php echo esc_html((string) $session['workshop_count']); ?>
                                         </span>
 
                                         <a href="#" class="btn btn-select-workshop btn-sm js-workshop-add ps-2 pe-2">
-                                            <?php echo $wordings['angebot_auswaehlen'] ?? ''; ?>
+                                            <?php echo '$Angebot auswählen£'; ?>
                                         </a>
                                     </div>
 
                                     <div class="row">
                                         <div class="col-md-12">
                                             <div class="js-workshops-label js-workshops-label-no mt-2">
-                                                <?php echo $wordings['sie_haben_noch_kein_angebot_gewaehlt'] ?? ''; ?>
+                                                <?php echo '$Sie haben noch kein Angebot gewählt.£'; ?>
                                             </div>
 
                                             <div class="js-workshops-label js-workshops-label-yes mt-2" style="display:none">
-                                                <?php echo $wordings['sie_haben_folgendes_angebot_gewaehlt'] ?? ''; ?>
+                                                <?php echo '$Sie haben folgendes Angebot gewählt:£'; ?>
                                             </div>
                                         </div>
                                     </div>
@@ -817,11 +808,11 @@
     <div class="modal-dialog modal-xl modal-dialog-centered modal-dialog-scrollable">
         <div class="modal-content">
             <div class="modal-header">
-                <h2 class="modal-title h3" id="event_registration_workshop_modal_label"><?php echo $wordings['angebot_auswaehlen'] ?? ''; ?></h2>
+                <h2 class="modal-title h3" id="event_registration_workshop_modal_label"><?php echo '$Angebot auswählen£'; ?></h2>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Schliessen"></button>
             </div>
             <div class="modal-body js-workshop-modal-body">
-                <p class="lead"><?php echo $wordings['bitte_waehlen_sie_das_gewuenschte_angebot_durch_klick_auf_das_angebot'] ?? ''; ?></p>
+                <p class="lead"><?php echo '$Bitte wählen Sie das gewünschte Angebot durch Klick auf das Angebot.£'; ?></p>
                 <div class="row js-workshop-modal-list ps-3 pe-3"></div>
             </div>
         </div>
@@ -846,7 +837,7 @@
         name="registration_action"
         value="next"
         class="btn btn-primary btn-lg mt-3 float-right js-final-button">
-            <?php echo $wordings['weiter_in_der_anmeldung'] ?? ''; ?>
+            <?php echo '$Weiter in der Anmeldung£'; ?>
         </button>
 </div>
 
@@ -949,10 +940,7 @@
                 var workshopId = template.getAttribute('data-workshop') || '';
                 var node = template.content.firstElementChild.cloneNode(true);
 
-                var workshopItem = node.querySelector('.js-workshop-item');
-                var isBookedOut  = workshopItem && workshopItem.getAttribute('data-booked-out') === '1';
-
-                if (isBookedOut) {
+                if (selectedIds.indexOf(workshopId) !== -1) {
                     node.classList.remove('js-workshop-select');
                     node.classList.remove('workshop-select');
                     node.classList.add('workshop-select-denied');

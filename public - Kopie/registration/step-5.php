@@ -225,7 +225,7 @@ if (
 
 <div class="container my-4 registration-step-5">
 
-    <h2><?php echo $wordings['ihre_registrierung_ist_abgeschlossen'] ?? ''; ?></h2>
+    <h2><?php echo '$Ihre Registrierung ist abgeschlossen£'; ?></h2>
 
     <?php if ($debug_step5) : ?>
         <pre style="background:#111;color:#0f0;padding:12px;white-space:pre-wrap;overflow:auto;">
@@ -302,8 +302,8 @@ error_messages:
     ) : ?>
 
         <div class="alert alert-success">
-            <?php echo $wordings['ihre_registrierung_wurde_erfolgreich_gespeichert'] ?? ''; ?>
-            <?php echo $wordings['eine_bestaetigungs_e_mail_wurde_an_die_angegebene_e_mail_adresse_versendet'] ?? ''; ?>
+            <?php echo '$Ihre Registrierung wurde erfolgreich gespeichert.£'; ?>
+            <?php echo '$Eine Bestätigungs-E-Mail wurde an die angegebene E-Mail-Adresse versendet.£'; ?>
         </div>
 
         <?php if ($debug_step5) : ?>
@@ -319,7 +319,7 @@ error_messages:
     <?php else : ?>
 
         <div class="alert alert-danger">
-            <?php echo $wordings['die_registrierung_konnte_nicht_vollstaendig_abgeschlossen_werden'] ?? ''; ?>
+            <?php echo '$Die Registrierung konnte nicht vollständig abgeschlossen werden.£'; ?>
         </div>
 
         <?php if (!empty($error_messages)) : ?>
@@ -346,7 +346,7 @@ error_messages:
                 value="prev"
                 class="btn btn-secondary"
                 formnovalidate>
-            <?php echo $wordings['zurueck'] ?? ''; ?>
+            <?php echo '$Zurück£'; ?>
         </button>
     </div>
     -->
