@@ -1,3 +1,5 @@
+﻿<link rel='stylesheet' href='/wp-content/themes/picostrap5-child-base/db-custom/event-registration/pages/assets/dashboard.css' media='all' />
+
 <?php
 
 $wp_load = dirname(__FILE__, 7) . '/wp-load.php';
@@ -184,7 +186,7 @@ try {
             </div>
 
             <div class="col-12">
-                <button type="submit" class="btn btn-primary">Kosten anzeigen</button>
+                <button type="submit" class="btn btn-primary rounded-pill">Kosten anzeigen</button>
             </div>
         </form>
         <?php
@@ -239,7 +241,7 @@ try {
                                         </div>
                                     </td>
                                     <td>
-                                        <button type="submit" name="delete_billing_id" value="<?php echo esc_attr($billing_id); ?>" class="btn btn-outline-danger btn-sm" formnovalidate>löschen</button>
+                                        <button type="submit" name="delete_billing_id" value="<?php echo esc_attr($billing_id); ?>" class="btn btn-outline-danger btn-sm rounded-pill" formnovalidate>löschen</button>
                                     </td>
                                 </tr>
                             <?php endforeach; ?>
@@ -260,8 +262,8 @@ try {
                 </div>
             </section>
 
-            <button type="submit" class="btn btn-primary">Kosten aktualisieren</button>
-            <a href="<?php echo evtmgr_person_billing_admin_url(array('action' => 'select')); ?>" class="btn btn-outline-secondary">Andere Person wählen</a>
+            <button type="submit" class="btn btn-primary rounded-pill">Kosten aktualisieren</button>
+            <a href="<?php echo evtmgr_person_billing_admin_url(array('action' => 'select')); ?>" class="btn btn-outline-secondary rounded-pill">Andere Person wählen</a>
         </form>
         <?php
     } elseif ($action === 'save') {
@@ -379,8 +381,8 @@ try {
             </p>
         </div>
 
-        <a href="<?php echo evtmgr_person_billing_admin_url(array('action' => 'edit', 'person_id' => $person_id)); ?>" class="btn btn-primary">Kosten erneut bearbeiten</a>
-        <a href="<?php echo evtmgr_person_billing_admin_url(array('action' => 'select')); ?>" class="btn btn-outline-secondary">Andere Person wählen</a>
+        <a href="<?php echo evtmgr_person_billing_admin_url(array('action' => 'edit', 'person_id' => $person_id)); ?>" class="btn btn-primary rounded-pill">Kosten erneut bearbeiten</a>
+        <a href="<?php echo evtmgr_person_billing_admin_url(array('action' => 'select')); ?>" class="btn btn-outline-secondary rounded-pill">Andere Person wählen</a>
         <?php
     } else {
         throw new RuntimeException('Unbekannte Aktion.');
@@ -403,7 +405,7 @@ try {
                     <h1 class="h4 alert-heading">Fehler</h1>
                     <p class="mb-0"><?php echo esc_html($e->getMessage()); ?></p>
                 </div>
-                <a href="<?php echo evtmgr_person_billing_admin_url(array('action' => 'select')); ?>" class="btn btn-secondary">Zurück</a>
+                <a href="<?php echo evtmgr_person_billing_admin_url(array('action' => 'select')); ?>" class="btn btn-secondary rounded-pill">Zurück</a>
             </div>
         </div>
     </div>

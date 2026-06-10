@@ -1,3 +1,5 @@
+﻿<link rel='stylesheet' href='/wp-content/themes/picostrap5-child-base/db-custom/event-registration/pages/assets/dashboard.css' media='all' />
+
 <?php
 
 if (!defined('ABSPATH')) {
@@ -91,7 +93,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['duplicate_event_actio
                 <div class="form-text">Diese UID wird als neuer <code>event_uid</code> und als neue <code>fky_event_uid</code> in den kopierten Datensätzen verwendet.</div>
             </div>
 
-            <button type="submit" class="btn btn-primary">Event duplizieren</button>
+            <button type="submit" class="btn btn-primary rounded-pill">Event duplizieren</button>
         </div>
     </form>
 </div>

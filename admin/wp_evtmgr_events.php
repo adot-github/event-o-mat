@@ -1,4 +1,30 @@
 <?php
+add_action('wp_head', function () {
+    ?>
+    <meta name="color-scheme" content="dark">
+    <style>
+        html,
+        body {
+            margin: 0;
+            min-height: 100%;
+            background: #111 !important;
+            color: #fff;
+        }
+
+        #page,
+        .site,
+        .site-content,
+        .wp-site-blocks {
+            background: #111 !important;
+        }
+    </style>
+    <?php
+}, 0);
+?>
+
+<link rel='stylesheet' href='/wp-content/themes/picostrap5-child-base/db-custom/event-registration/pages/assets/dashboard.css' media='all' />
+
+<?php
     if (!defined('ABSPATH')) {
         exit;
     }

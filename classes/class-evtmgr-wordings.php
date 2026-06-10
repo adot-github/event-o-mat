@@ -26,7 +26,7 @@ class Evtmgr_Wordings {
      * echo $wordings['notwendige_angaben_zur_anmeldung_sind_nicht_verfuegbar_eventuell'] ?? '';
      *
      * @param string $lang      Language suffix, for example de, en, fr, it.
-     * @param string $event_uid Event / owner Uid, for example lll-2020-clone.
+     * @param string $event_uid Event / owner Uid, for example xxxx-2026.
      * @return array Associative array: str_var_name => translated text.
      */
     public function get_wordings($lang = 'de', $event_uid = '') {

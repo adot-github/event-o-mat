@@ -1,3 +1,5 @@
+﻿<link rel='stylesheet' href='/wp-content/themes/picostrap5-child-base/db-custom/event-registration/pages/assets/dashboard.css' media='all' />
+
 <?php
 
 $wp_load = dirname(__FILE__, 7) . '/wp-load.php';
@@ -114,7 +116,7 @@ try {
                 </select>
             </div>
 
-            <button type="submit" class="btn btn-primary mt-3"><?php echo esc_html($type_of_pdf); ?> erstellen</button>
+            <button type="submit" class="btn btn-primary mt-3 rounded-pill"><?php echo esc_html($type_of_pdf); ?> erstellen</button>
         </form>
 
         <?php
@@ -253,7 +255,7 @@ try {
     );
     ?>
 
-    <a href="<?php echo esc_url(remove_query_arg(array())); ?>" class="btn btn-secondary mt-4">Weitere <?php echo esc_html($type_of_pdf); ?> erstellen</a>
+    <a href="<?php echo esc_url(remove_query_arg(array())); ?>" class="btn btn-secondary mt-4 rounded-pill">Weitere <?php echo esc_html($type_of_pdf); ?> erstellen</a>
     <?php
     $pdf_creator->show_page_footer();
 } catch (Throwable $e) {

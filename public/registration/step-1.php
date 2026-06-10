@@ -131,33 +131,6 @@
     </div>
 <?php endif; ?>
 
-<?php if (!$cookie_ok) : ?>
-    <p class="event-registration-error">
-        <?php esc_html_e('Die Anmeldung kann auf diesem Gerät nicht fortgesetzt werden.', 'event-registration'); ?>
-    </p>
-<?php elseif (empty($qry_events)) : ?>
-    <p class="event-registration-error">
-        <?php echo esc_html(sprintf('Der Anlass mit der Uid %s wurde nicht gefunden.', $event_uid)); ?>
-    </p>
-<?php else : ?>
-    <h1>
-        <?php echo esc_html($registration->get_value($qry_events, 'str_event_name')); ?><br>
-        <span style="font-weight:300"><?php echo esc_html($registration->get_value($qry_events, 'str_event_subtitle')); ?></span>
-    </h1>
-
-    <div class="event-registration-description">
-        <?php echo wp_kses_post($registration->get_value($qry_events, 'mem_event_description')); ?>
-    </div>
-
-    <!--
-    <div class="event-registration-actions">
-        <button type="submit" class="btn btn-primary" name="go_next" value="1">
-            <?php esc_html_e('Weiter zu Schritt 2', 'event-registration'); ?>
-        </button>
-    </div>
-    -->
-<?php endif; ?>
-
 <?php
 
     $timezones_obj = new Evtmgr_Time_Zones();
@@ -669,6 +642,42 @@
 
 ?>
 
+<!-- TITEL -->
+<?php if (!$cookie_ok) : ?>
+    <p class="event-registration-error">
+        <?php esc_html_e('Die Anmeldung kann auf diesem Gerät nicht fortgesetzt werden.', 'event-registration'); ?>
+    </p>
+<?php elseif (empty($qry_events)) : ?>
+    <p class="event-registration-error">
+        <?php echo esc_html(sprintf('Der Anlass mit folgender UUID wurde nicht gefunden: %s ', $event_uid)); ?>
+    </p>
+<?php else : ?>
+    <!--
+    <h1>
+        <?php echo esc_html($registration->get_value($qry_events, 'str_event_name')); ?><br>
+        <span style="font-weight:300"><?php echo esc_html($registration->get_value($qry_events, 'str_event_subtitle')); ?></span>
+    </h1>
+    -->
+
+<?php
+echo '$Beginn der Anmeldung:£ ' . wp_date('l, j. F Y', strtotime($qry_events['dtm_registration_opened'])) . '<br>';
+echo '$Ende der Anmeldung:£ ' . wp_date('l, j. F Y', strtotime($qry_events['dtm_registration_closed']));
+?>
+
+    <div class="event-registration-description mt-3">
+        <?php echo wp_kses_post($registration->get_value($qry_events, 'mem_event_description')); ?>
+    </div>
+
+    <!--
+    <div class="event-registration-actions">
+        <button type="submit" class="btn btn-primary" name="go_next" value="1">
+            <?php esc_html_e('Weiter zu Schritt 2', 'event-registration'); ?>
+        </button>
+    </div>
+    -->
+<?php endif; ?>
+
+<!-- TIME TABLE-->
 <div class="container-lg bg-light p-0 mt-5">
     <!--
     <div class="timetable" style="--start-time: <?php echo esc_attr((string) $timetable_start_hour); ?>; --end-time: <?php echo esc_attr((string) $timetable_end_hour); ?>;">

@@ -1,3 +1,5 @@
+﻿<link rel='stylesheet' href='/wp-content/themes/picostrap5-child-base/db-custom/event-registration/pages/assets/dashboard.css' media='all' />
+
 <?php
 $manual_links = array(
     array(
@@ -30,33 +32,6 @@ $manual_links = array(
 );
 ?>
 
-<div class="container-xxl py-4">
-    <div class="row g-4">
-        <h2>Dozierende</h2>
-        <?php foreach ($manual_links as $item) : ?>
-<div class="col-12 col-md-6 col-xl-4">
-    <div class="card h-100 shadow-sm card-hover">
-        <div class="card-body d-flex flex-column">
-
-            <h2 class="h5 card-title">
-                <?php echo esc_html($item['str_title']); ?>
-            </h2>
-
-            <p class="card-text text-muted">
-                <?php echo esc_html($item['mem_description']); ?>
-            </p>
-
-            <div class="mt-auto">
-                <a href="<?php echo esc_url($item['str_url']); ?>"
-                   class="btn btn-primary">
-                    Öffnen
-                </a>
-            </div>
-
-        </div>
-    </div>
-</div>
-        <?php endforeach; ?>
-
-    </div>
-</div>
+<?php
+    include ('dashboard-card.php');
+?>

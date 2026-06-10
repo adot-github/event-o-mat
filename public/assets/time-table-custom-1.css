@@ -1,5 +1,7 @@
 .timetable {
     --stages: 1;
+    --start-time: 9;
+	--end-time: 17;
     --stage-gap: 0.5rem;
     --zebra-color-one: #efefef;
     --zebra-color-two: #dedede;

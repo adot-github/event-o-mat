@@ -1,3 +1,5 @@
+﻿<link rel='stylesheet' href='/wp-content/themes/picostrap5-child-base/db-custom/event-registration/pages/assets/dashboard.css' media='all' />
+
 <?php
 
 $wp_load = dirname(__FILE__, 7) . '/wp-load.php';
@@ -296,7 +298,7 @@ try {
                         </select>
                     </div>
                     <div class="col-12">
-                        <button type="submit" class="btn btn-primary">Buchungen anzeigen</button>
+                        <button type="submit" class="btn btn-primary rounded-pill">Buchungen anzeigen</button>
                     </div>
         </form>
         <?php
@@ -388,8 +390,8 @@ try {
                     <?php endif; ?>
             </section>
 
-            <button type="submit" class="btn btn-primary">Umbuchung prüfen</button>
-            <a href="<?php echo evtmgr_workshop_bookings_current_url(array('action' => 'select')); ?>" class="btn btn-outline-secondary">Andere Person wählen</a>
+            <button type="submit" class="btn btn-primary rounded-pill">Umbuchung prüfen</button>
+            <a href="<?php echo evtmgr_workshop_bookings_current_url(array('action' => 'select')); ?>" class="btn btn-outline-secondary rounded-pill">Andere Person wählen</a>
         </form>
         <?php
         ?>
@@ -534,8 +536,8 @@ try {
                     <?php endif; ?>
             </section>
 
-            <button type="submit" class="btn btn-primary">Umbuchung vornehmen</button>
-            <a href="<?php echo evtmgr_workshop_bookings_current_url(array('action' => 'edit', 'person_id' => $person_id)); ?>" class="btn btn-outline-secondary">Zurück bearbeiten</a>
+            <button type="submit" class="btn btn-primary rounded-pill">Umbuchung vornehmen</button>
+            <a href="<?php echo evtmgr_workshop_bookings_current_url(array('action' => 'edit', 'person_id' => $person_id)); ?>" class="btn btn-outline-secondary rounded-pill">Zurück bearbeiten</a>
         </form>
         <?php
         ?>
@@ -697,8 +699,8 @@ try {
             </div>
         <?php endif; ?>
 
-        <a href="<?php echo evtmgr_workshop_bookings_current_url(array('action' => 'edit', 'person_id' => $person_id)); ?>" class="btn btn-primary">Aktuelle Buchungen anzeigen</a>
-        <a href="<?php echo evtmgr_workshop_bookings_current_url(array('action' => 'select')); ?>" class="btn btn-outline-secondary">Andere Person wählen</a>
+        <a href="<?php echo evtmgr_workshop_bookings_current_url(array('action' => 'edit', 'person_id' => $person_id)); ?>" class="btn btn-primary rounded-pill">Aktuelle Buchungen anzeigen</a>
+        <a href="<?php echo evtmgr_workshop_bookings_current_url(array('action' => 'select')); ?>" class="btn btn-outline-secondary rounded-pill">Andere Person wählen</a>
         <?php
         ?>
         </div>
@@ -720,7 +722,7 @@ try {
         <h1 class="h4 alert-heading">Fehler</h1>
         <p class="mb-0"><?php echo esc_html($e->getMessage()); ?></p>
     </div>
-    <a href="<?php echo evtmgr_workshop_bookings_current_url(array('action' => 'select')); ?>" class="btn btn-secondary">Zurück</a>
+    <a href="<?php echo evtmgr_workshop_bookings_current_url(array('action' => 'select')); ?>" class="btn btn-secondary rounded-pill">Zurück</a>
     <?php
     ?>
         </div>

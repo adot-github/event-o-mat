@@ -1,81 +1,81 @@
 <?php
 
-if (!defined('ABSPATH')) {
-    exit;
-}
+    if (!defined('ABSPATH')) {
+        exit;
+    }
 
-$registration_values = isset($registration_values) && is_array($registration_values)
-    ? $registration_values
-    : array();
+    $registration_values = isset($registration_values) && is_array($registration_values)
+        ? $registration_values
+        : array();
 
-$event_uid = isset($event_uid) ? sanitize_text_field((string) $event_uid) : '';
-$lang      = isset($lang) ? sanitize_key((string) $lang) : 'de';
+    $event_uid = isset($event_uid) ? sanitize_text_field((string) $event_uid) : '';
+    $lang      = isset($lang) ? sanitize_key((string) $lang) : 'de';
 
-$selected_workshops = isset($registration_values['selected_workshops'])
-    ? sanitize_text_field((string) $registration_values['selected_workshops'])
-    : '';
+    $selected_workshops = isset($registration_values['selected_workshops'])
+        ? sanitize_text_field((string) $registration_values['selected_workshops'])
+        : '';
 
-$selected_workshop_ids = array();
+    $selected_workshop_ids = array();
 
-if ($selected_workshops !== '') {
-    $selected_workshop_ids = array_values(
-        array_unique(
-            array_filter(
-                array_map('absint', explode(',', $selected_workshops))
+    if ($selected_workshops !== '') {
+        $selected_workshop_ids = array_values(
+            array_unique(
+                array_filter(
+                    array_map('absint', explode(',', $selected_workshops))
+                )
             )
-        )
-    );
-}
-
-$pricing_group = isset($registration_values['pricing_group'])
-    ? sanitize_text_field((string) $registration_values['pricing_group'])
-    : '';
-
-$total_cost = isset($registration_values['total_cost'])
-    ? sanitize_text_field((string) $registration_values['total_cost'])
-    : '';
-
-$workshops_obj = new Evtmgr_Workshops();
-$pricing_obj = new Evtmgr_Pricing();
-
-$selected_workshop_rows = array();
-
-foreach ($selected_workshop_ids as $workshop_id) {
-    $workshop = $workshops_obj->get_workshop_by_id($workshop_id, $lang);
-
-    if (!empty($workshop)) {
-        $selected_workshop_rows[] = $workshop;
+        );
     }
-}
 
-$selected_pricing_option = $pricing_obj->find_registration_pricing_option(
-    $event_uid,
-    $lang,
-    $selected_workshop_ids,
-    $pricing_group
-);
+    $pricing_group = isset($registration_values['pricing_group'])
+        ? sanitize_text_field((string) $registration_values['pricing_group'])
+        : '';
 
-if (!empty($selected_pricing_option)) {
-    $pricing_group = (string) ($selected_pricing_option['pricing_group'] ?? $pricing_group);
+    $total_cost = isset($registration_values['total_cost'])
+        ? sanitize_text_field((string) $registration_values['total_cost'])
+        : '';
 
-    if ($total_cost === '') {
-        $total_cost = (string) ($selected_pricing_option['total_cost'] ?? '');
-    }
-}
+    $workshops_obj = new Evtmgr_Workshops();
+    $pricing_obj = new Evtmgr_Pricing();
 
-if (!function_exists('event_registration_format_price')) {
-    function event_registration_format_price($value) {
-        if ($value === '' || $value === null) {
-            return '';
+    $selected_workshop_rows = array();
+
+    foreach ($selected_workshop_ids as $workshop_id) {
+        $workshop = $workshops_obj->get_workshop_by_id($workshop_id, $lang);
+
+        if (!empty($workshop)) {
+            $selected_workshop_rows[] = $workshop;
         }
-
-        return number_format((float) $value, 2, '.', "'");
     }
-}
 
-$pricing_lines = !empty($selected_pricing_option['lines']) && is_array($selected_pricing_option['lines'])
-    ? $selected_pricing_option['lines']
-    : array();
+    $selected_pricing_option = $pricing_obj->find_registration_pricing_option(
+        $event_uid,
+        $lang,
+        $selected_workshop_ids,
+        $pricing_group
+    );
+
+    if (!empty($selected_pricing_option)) {
+        $pricing_group = (string) ($selected_pricing_option['pricing_group'] ?? $pricing_group);
+
+        if ($total_cost === '') {
+            $total_cost = (string) ($selected_pricing_option['total_cost'] ?? '');
+        }
+    }
+
+    if (!function_exists('event_registration_format_price')) {
+        function event_registration_format_price($value) {
+            if ($value === '' || $value === null) {
+                return '';
+            }
+
+            return number_format((float) $value, 2, '.', "'");
+        }
+    }
+
+    $pricing_lines = !empty($selected_pricing_option['lines']) && is_array($selected_pricing_option['lines'])
+        ? $selected_pricing_option['lines']
+        : array();
 
 ?>
 

@@ -1,3 +1,5 @@
+﻿<link rel='stylesheet' href='/wp-content/themes/picostrap5-child-base/db-custom/event-registration/pages/assets/dashboard.css' media='all' />
+
 <?php
 
 $wp_load = dirname(__FILE__, 7) . '/wp-load.php';
@@ -39,24 +41,7 @@ if (!is_array($events)) {
 ?>
 <div class="container py-4 py-lg-5 event-dashboard-page">
 
-    <div class="mb-4 event-dashboard-header">
-        <h1 class="display-6 fw-bold mb-3">Event Dashboard</h1>
-
-        <?php if (!empty($current_event_uid)) : ?>
-            <div class="alert alert-info" role="alert">
-                Aktueller Event:
-                <strong><?php echo esc_html($current_event_uid); ?></strong>
-
-                <?php if (!empty($current_event_languages)) : ?>
-                    <br>
-                    Sprachen:
-                    <strong><?php echo esc_html($current_event_languages); ?></strong>
-                <?php endif; ?>
-            </div>
-        <?php endif; ?>
-    </div>
-
-    <?php if (empty($events)) : ?>
+<?php if (empty($events)) : ?>
 
         <div class="alert alert-warning" role="alert">
             Es wurden keine Events gefunden.
@@ -87,7 +72,7 @@ if (!is_array($events)) {
                 $card_classes = 'card h-100 shadow-sm';
 
                 if ($is_active) {
-                    $card_classes .= ' border-primary border-3 bg-primary-subtle';
+                    $card_classes .= ' evtmgr-card-active';
                 }
                 ?>
 
@@ -103,17 +88,17 @@ if (!is_array($events)) {
                                 </div>
                             <?php endif; ?>
 
-                            <h2 class="h5 card-title fw-bold mb-2">
+                            <h2 class="h5 card-title fw-bold mb-3">
                                 <?php echo esc_html($title); ?>
                             </h2>
 
                             <?php if (!empty($subtitle)) : ?>
-                                <p class="card-subtitle text-muted mb-3">
+                                <p class="card-subtitle mb-3">
                                     <?php echo esc_html($subtitle); ?>
                                 </p>
                             <?php endif; ?>
 
-                            <dl class="row small mb-4">
+                            <dl class="row small mb-0">
                                 <dt class="col-5">Event UID</dt>
                                 <dd class="col-7 mb-1"><?php echo esc_html($event_uid); ?></dd>
 
@@ -135,7 +120,7 @@ if (!is_array($events)) {
 
                             <div class="mt-auto">
                                 <button type="button"
-                                        class="btn btn-primary js-open-event"
+                                        class="btn btn-primary js-open-event rounded-pill"
                                         data-event-uid="<?php echo esc_attr($event_uid); ?>"
                                         data-event-languages="<?php echo esc_attr($event_languages); ?>">
                                     Event aktivieren
