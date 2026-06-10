@@ -5,6 +5,7 @@
 
     require_once get_stylesheet_directory() . '/db-custom/event-registration/classes/class-evtmgr-events.php';
     $event_obj = new Evtmgr_Events();
+    $event_uid = $event_obj->get_current_event_uid();
     $event_languages = $event_obj->get_current_event_languages();
     $additional_sql_condition = $event_obj->get_current_event_sql_condition();
     $additional_sql_condition_for_tbx = $event_obj->get_current_event_sql_condition('record');
@@ -107,7 +108,7 @@
 
         ],
         'fields' => [
-'id' => [
+            'id' => [
                 'label' => 'ID',
                 'langs' => [
                     'de' => ['label' => 'id (deutsch)'],
@@ -120,7 +121,14 @@
                     'readonly'=> true,
                 ]
             ],
-           'int_type_of_address' => [
+            'fullname' => [
+                'label' => 'Name',
+                'formatter' => [
+                    'list' => 'actions'
+                ],
+                'is_form_hidden' => true
+            ],
+            'int_type_of_address' => [
                 'label' => 'Art der Adresse',
                 'langs' => [
                     'de' => ['label' => 'int_type_of_address (deutsch)'],
@@ -269,22 +277,24 @@
                 'acf' => [
                     'type' => 'text',
                     'readonly'=> true,
+                    'default_value'=> $event_uid,
                 ],
 
             ],
            'dtm_date_created' => [
                 'label' => 'Erstellt am',
                 'acf' => [
-                    'type' => 'date_picker',
+                    'type' => 'date_time_picker',
                     'readonly'=> true,
                 ]
             ],
            'dtm_date_updated' => [
                 'label' => 'Geändert am',
                 'acf' => [
-                    'type' => 'date_picker',
+                    'type' => 'date_time_picker',
                     'readonly'=> true,
-                ]
+                ],
+                'value_force' => 'now()'
             ],
            'str_registration_cookie' => [
                 'label' => 'Cookie',

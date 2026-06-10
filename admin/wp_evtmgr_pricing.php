@@ -6,6 +6,7 @@
     require_once get_stylesheet_directory() . '/db-custom/event-registration/classes/class-evtmgr-events.php';
     $event_obj = new Evtmgr_Events();
     $event_languages = $event_obj->get_current_event_languages();
+    $event_uid = $event_obj->get_current_event_uid();
     $additional_sql_condition = $event_obj->get_current_event_sql_condition();
     $additional_sql_condition_for_tbx_pricing = $event_obj->get_current_event_sql_condition('wp_evtmgr_pricing');
     $additional_sql_condition_for_tbx_pricing = $additional_sql_condition_for_tbx_pricing.' AND fky_pricing_parent_id = 0';
@@ -26,7 +27,7 @@
         'list'  => [
             'fields' => ["str_pricing_name_{$lang}"],
             'fields_iframe' => ["str_pricing_name_{$lang}", "num_price", "int_sort_order"],
-            'orderby_default' => "str_pricing_name_{$lang}",
+            'orderby_default' => "int_sort_order, str_pricing_name_{$lang}",
             'condition' => "$additional_sql_condition",
             'order_default' => 'asc',
             'labels' => [
@@ -88,6 +89,7 @@
                 'acf' => [
                     'type' => 'text',
                     'readonly' => true,
+                    'default_value'=> $event_uid,
                 ]
             ],
 
@@ -168,14 +170,17 @@
            'dtm_date_created' => [
                 'label' => 'dtm_date_created',
                 'acf' => [
-                    'type' => 'date_picker'
+                    'type' => 'date_time_picker',
+                    'readonly'=> true,
                 ]
             ],
            'dtm_date_updated' => [
                 'label' => 'dtm_date_updated',
                 'acf' => [
-                    'type' => 'date_picker'
-                ]
+                    'type' => 'date_time_picker',
+                    'readonly'=> true,
+                ],
+                'value_force' => 'now()'
             ],
         ]
     ]);

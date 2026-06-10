@@ -6,6 +6,7 @@
     require_once get_stylesheet_directory() . '/db-custom/event-registration/classes/class-evtmgr-events.php';
     $event_obj = new Evtmgr_Events();
     $event_languages = $event_obj->get_current_event_languages();
+    $event_uid = $event_obj->get_current_event_uid();
     $additional_sql_condition = $event_obj->get_current_event_sql_condition();
     $additional_sql_condition_for_tbx = $event_obj->get_current_event_sql_condition('record');
     $additional_sql_condition_for_tbx_timezone = $event_obj->get_current_event_sql_condition('wp_evtmgr_timezones');
@@ -26,8 +27,8 @@
         ],
 
         'list'  => [
-            'fields' => ["str_timezone_name_de"],
-            'fields_iframe' => ["id","int_sort_order","str_timezone_name_de", "dtm_time_from" , "dtm_time_to"],
+            'fields' => ["str_timezone_name_{$lang}"],
+            'fields_iframe' => ["id", "int_sort_order","str_timezone_name_{$lang}", "dtm_time_from" , "dtm_time_to"],
             'orderby_default' => "int_sort_order, str_timezone_name_{$lang}",
             'order_default' => 'asc',
             'condition' => "$additional_sql_condition",
@@ -269,22 +270,24 @@
                 'label' => 'fky_event_uid',
                 'acf' => [
                     'type' => 'text',
-                    'readonly'=> true    
+                    'readonly'=> true,
+                    'default_value'=> $event_uid,
                 ],
             ],
            'dtm_date_created' => [
                 'label' => 'dtm_date_created',
                 'acf' => [
-                    'type' => 'date_picker',
+                    'type' => 'date_time_picker',
                     'readonly'=> true
                 ]
             ],
            'dtm_date_updated' => [
                 'label' => 'dtm_date_updated',
                 'acf' => [
-                    'type' => 'date_picker',
+                    'type' => 'date_time_picker',
                     'readonly'=> true
-                ]
+                ],
+                'value_force' => 'now()'
             ],
             'fky_presenters' => [
             'label' => 'Dozierende',

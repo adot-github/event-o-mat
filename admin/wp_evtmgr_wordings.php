@@ -6,6 +6,7 @@
     require_once get_stylesheet_directory() . '/db-custom/event-registration/classes/class-evtmgr-events.php';
     $event_obj = new Evtmgr_Events();
     $event_languages = $event_obj->get_current_event_languages();
+    $event_uid = $event_obj->get_current_event_uid();
     $additional_sql_condition = $event_obj->get_current_event_sql_condition();
     $additional_sql_condition_for_tbx = $event_obj->get_current_event_sql_condition('record');
 ?>
@@ -41,7 +42,8 @@
             'labels' => [
                 'title_add'     => 'Neuen Datensatz hinzufügen',
                 'title_edit'    => 'evtmgr_wordings bearbeiten',
-                'button_add'   => 'Datensatz speichern',
+                'button_add'   => 'Da
+                tensatz speichern',
                 'button_edit'   => 'Datensatz bearbeiten',
             ],
             'fields_visual' => '
@@ -145,19 +147,23 @@
                 'acf' => [
                     'type' => 'text',
                     'readonly' => true,
+                    'default_value'=> $event_uid,
                 ],
             ],
            'dtm_date_created' => [
                 'label' => 'dtm_date_created',
                 'acf' => [
-                    'type' => 'date_picker'
+                    'type' => 'date_time_picker',
+                    'readonly'=> true,
                 ]
             ],
            'dtm_date_updated' => [
                 'label' => 'dtm_date_updated',
                 'acf' => [
-                    'type' => 'date_picker'
-                ]
+                    'type' => 'date_time_picker',
+                    'readonly'=> true,
+                ],
+                'value_force' => 'now()'
             ],
         ]
     ]);

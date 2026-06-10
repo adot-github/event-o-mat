@@ -206,22 +206,23 @@
                 'acf' => [
                     'type' => 'text',
                     'readonly' => true,
-                    'default_value'=> "$event_uid",
+                    'default_value'=> $event_uid,
                 ],
             ],
            'dtm_date_created' => [
                 'label' => 'Erstellt am',
                 'acf' => [
-                    'type' => 'date_picker',
+                    'type' => 'date_time_picker',
                     'readonly' => true,
                 ]
             ],
            'dtm_date_updated' => [
                 'label' => 'Geändert am',
                 'acf' => [
-                    'type' => 'date_picker',
+                    'type' => 'date_time_picker',
                     'readonly' => true,
-                ]
+                ],
+                'value_force' => 'now()'
             ],
         ]
     ]);

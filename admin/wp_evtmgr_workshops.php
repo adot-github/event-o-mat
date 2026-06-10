@@ -92,7 +92,7 @@
                 str_presenters_print:col-lg-3 col-md-4'
         ],
         'fields' => [
-'id' => [
+            'id' => [
                 'label' => 'ID',
                 'langs' => [
                     'de' => ['label' => 'id (deutsch)'],
@@ -320,14 +320,15 @@
            'dtm_date_updated' => [
                 'label' => 'Geändert am',
                 'acf' => [
-                    'type' => 'date_picker',
+                    'type' => 'date_time_picker',
                     'readonly'=> true,
-                ]
+                ],
+                'value_force' => 'now()'
             ],
            'dtm_date_created' => [
                 'label' => 'Erstellt am',
                 'acf' => [
-                    'type' => 'date_picker',
+                    'type' => 'date_time_picker',
                     'readonly'=> true,
                 ]
             ],
@@ -340,11 +341,11 @@
                 ],
             ],
             'fky_dozierende' => [
-            'label' => 'Dozierende',
-            'acf' => [
-                'type' => 'adot_relationship'
-            ],
-            'dbx' => [
+                'label' => 'Dozierende',
+                'acf' => [
+                    'type' => 'adot_relationship'
+                ],
+                'dbx' => [
                     'allow_new' => true,
                     'db' => [
                         'allow_new_data'       => ["id" => 0, "str_type" => 'some type', "fky_person_id" => 'some category'],
@@ -352,7 +353,7 @@
                         'tbx_id_main'          => 'fky_workshop_id',
                         'tbx_id_linked'        => 'fky_person_id',
                         'linked_table'         => 'evtmgr_presenters',
-                        'linked_labe_00'       => "CONCAT(IFNULL(str_last_name, ''), '–' ,IFNULL(str_first_name, ''))",
+                        'linked_label_sql'       => "CONCAT(IFNULL(str_last_name, ''), '–' ,IFNULL(str_first_name, ''))",
                         'linked_label'         => 'str_last_name',
                         'linked_condition'     => "$additional_sql_condition_for_tbx",
                         'linked_pid'           => '0'
