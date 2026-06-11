@@ -28,6 +28,27 @@
                 'button_add'   => 'Neuen Datensatz hinzufügen',
             ],
             
+
+            'screen_options' => [
+                 'custom_filter_1' => [
+                    'label' => __("Filter", "domain"),
+                    'default' => '',
+                    'type' => 'select',
+                    'callback' => function($value){
+                    $sql = '';
+                    if ($value){
+                        $value = esc_sql($value);
+                        $sql = "FIND_IN_SET('{$value}', str_group)";
+                    }
+                    return $sql;
+                        },
+                    'db' => [
+                        'table' => 'evtmgr_wordings',
+                        'field_single' => 'str_group',
+                    ]
+                ]
+            ]
+           
         ],
         'langs' => function($table_config) {
             return ["de","fr","it"];

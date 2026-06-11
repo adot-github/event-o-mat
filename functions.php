@@ -1,6 +1,10 @@
 <?php
 add_action('admin_enqueue_scripts', function ($hook_suffix) {
-    if (strpos($hook_suffix, 'evtmgr') === false) {
+    global $admin_page_hooks;
+    $evtmgr_prefix = $admin_page_hooks['adot_evtmgr_events'] ?? '';
+    $is_evtmgr = strpos($hook_suffix, 'evtmgr') !== false
+              || ($evtmgr_prefix !== '' && strpos($hook_suffix, $evtmgr_prefix) !== false);
+    if (!$is_evtmgr) {
         return;
     }
     wp_enqueue_style(
