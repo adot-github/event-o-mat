@@ -1,30 +1,4 @@
 <?php
-add_action('wp_head', function () {
-    ?>
-    <meta name="color-scheme" content="dark">
-    <style>
-        html,
-        body {
-            margin: 0;
-            min-height: 100%;
-            background: #111 !important;
-            color: #fff;
-        }
-
-        #page,
-        .site,
-        .site-content,
-        .wp-site-blocks {
-            background: #111 !important;
-        }
-    </style>
-    <?php
-}, 0);
-?>
-
-<link rel='stylesheet' href='/wp-content/themes/picostrap5-child-base/db-custom/event-registration/pages/assets/dashboard.css' media='all' />
-
-<?php
     if (!defined('ABSPATH')) {
         exit;
     }
@@ -47,7 +21,7 @@ add_action('wp_head', function () {
         'skin' => 'iframe',
         'menu' => [
             'page_title' => 'Event-Manager',
-            'menu_title' => 'evtmgr_events',
+            'menu_title' => 'Event-Manager',
             'icon'       => get_stylesheet_directory_uri() . '/db-custom/event-registration/admin/assets/event-icon.svg',
             'position'   => 32
         ],

@@ -19,10 +19,9 @@
             'position'   => 40
         ],
         'list'  => [
-            'fields' => ["text_{$lang}"],
-            'fields_iframe' => ["text_de_for_tree"],
-            'orderby_default' => "text_de_for_tree",
-            'condition' => "$additional_sql_condition",
+            'fields' => ["str_text_for_tree"],
+            'fields_iframe' => ["str_text_for_tree"],
+            'orderby_default' => "str_text_for_tree",
             'order_default' => 'asc',
             'labels' => [
                 'title'     => 'evtmgr_wordings bearbeiten',
@@ -30,8 +29,8 @@
             ],
             
         ],
-        'langs' => function($table_config) use ($event_languages) {
-            return $event_languages;
+        'langs' => function($table_config) {
+            return ["de","fr","it"];
         },
         'form'  => [
             'labels' => [
@@ -41,14 +40,8 @@
                 'button_edit'   => 'Datensatz bearbeiten',
             ],
             'fields_visual' => '
-                str_template:col-lg-3 col-md-4
-                str_var_string:col-lg-3 col-md-4
-                str_var_string_short:col-lg-3 col-md-4
                 str_var_name:col-lg-3 col-md-4
-                s_var_name_cf:col-lg-3 col-md-4
-                text_de_for_tree:col-lg-3 col-md-4
-                text_{{lang}}:col-md-{{lang_col_count}}
-                text_be:col-lg-3 col-md-4
+                str_text_{{lang}}:col-md-{{lang_col_count}}
                 str_group:col-lg-3 col-md-4
                 int_num_of_occurences:col-lg-3 col-md-4
                 int_len_of_german:col-lg-3 col-md-4
@@ -63,6 +56,12 @@
             ],
            'str_template' => [
                 'label' => 'str_template',
+                'acf' => [
+                    'type' => 'text',
+                ]
+            ],
+           'str_backup' => [
+                'label' => 'str_backup',
                 'acf' => [
                     'type' => 'text',
                 ]
@@ -83,30 +82,28 @@
                 'label' => 'str_var_name',
                 'acf' => [
                     'type' => 'text',
+                    'readonly' => true,
                 ]
             ],
-           's_var_name_cf' => [
-                'label' => 's_var_name_cf',
+           'str_text_for_tree' => [
+                'label' => 'str_text_for_tree',
+                'formatter' => [
+                    'list' => 'actions'
+                ],
                 'acf' => [
                     'type' => 'text',
                 ]
             ],
-           'text_de_for_tree' => [
-                'label' => 'text_de_for_tree',
-                'acf' => [
-                    'type' => 'text',
-                ]
-            ],
-           'text_{{lang}}' => [
-                'label' => 'text',
+           'str_text_{{lang}}' => [
+                'label' => 'str_text',
                 'langs' => [
-                    'de' => ['label' => 'text (deutsch)'],
-                    'fr' => ['label' => 'text (französisch)'],
-                    'it' => ['label' => 'text (italienisch)'],
+                    'de' => ['label' => 'str_text (deutsch)'],
+                    'fr' => ['label' => 'str_text (französisch)'],
+                    'it' => ['label' => 'str_text (italienisch)'],
                 ],
                 'searchable' => true,
                 'acf' => [
-                    'type' => 'adot_ckeditor',
+                    'type' => 'textarea',
                 ],
                 'ckeditor' => [
                     'mode' => 'standalone',    
@@ -146,13 +143,15 @@
            'dtm_date_created' => [
                 'label' => 'dtm_date_created',
                 'acf' => [
-                    'type' => 'date_picker'
+                    'type' => 'date_picker',
+                    'readonly' => true,
                 ]
             ],
            'dtm_date_updated' => [
                 'label' => 'dtm_date_updated',
                 'acf' => [
-                    'type' => 'date_picker'
+                    'type' => 'date_picker',
+                    'readonly' => true,
                 ]
             ],
         ]
