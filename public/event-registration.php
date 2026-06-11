@@ -167,7 +167,7 @@
             gap: .75rem;
         }
 
-        .event-registration-wrapper p, .event-registration-wrapper li, .event-registration-wrapper td, .event-registration-wrapper th, .event-registration-wrapper label  {
+        .event-registration-wrapper p, .event-registration-wrapper li, .event-registration-wrapper td, .event-registration-wrapper th, .event-registration-wrapper label, .event-registration-steps  {
             font-size:1rem;
         }
     </style>
