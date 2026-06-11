@@ -1,3 +1,5 @@
+﻿<link rel='stylesheet' href='/wp-content/themes/picostrap5-child-base/db-custom/event-registration/pages/assets/dashboard.css' media='all' />
+
 <?php
 
 if (!defined('ABSPATH')) {
@@ -114,7 +116,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete_event_action']
                 </div>
             </div>
 
-            <button type="submit" class="btn btn-danger">
+            <button type="submit" class="btn btn-danger rounded-pill">
                 Event endgültig löschen
             </button>
         </div>

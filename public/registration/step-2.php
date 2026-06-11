@@ -13,127 +13,130 @@
         border-top: 1px solid #dee2e6;
         font-weight: 700;
     }
+    .pricing-group-odd td {
+        background-color: #f5f5f5;
+    }
 </style>
 <?php
 
-if (!defined('ABSPATH')) {
-    exit;
-}
+    if (!defined('ABSPATH')) {
+        exit;
+    }
 
-$registration_values = isset($registration_values) && is_array($registration_values)
-    ? $registration_values
-    : array();
+    $registration_values = isset($registration_values) && is_array($registration_values)
+        ? $registration_values
+        : array();
 
-$wordings = isset($wordings) && is_array($wordings)
-    ? $wordings
-    : array();
+    $wordings = isset($wordings) && is_array($wordings)
+        ? $wordings
+        : array();
 
-$event_uid = isset($event_uid) ? sanitize_text_field((string) $event_uid) : '';
-$lang      = isset($lang) ? sanitize_key((string) $lang) : 'de';
-$lang_key  = strtoupper($lang);
+    $event_uid = isset($event_uid) ? sanitize_text_field((string) $event_uid) : '';
+    $lang      = isset($lang) ? sanitize_key((string) $lang) : 'de';
+    $lang_key  = strtoupper($lang);
 
-$selected_workshops = isset($registration_values['selected_workshops'])
-    ? sanitize_text_field((string) $registration_values['selected_workshops'])
-    : '';
+    $selected_workshops = isset($registration_values['selected_workshops'])
+        ? sanitize_text_field((string) $registration_values['selected_workshops'])
+        : '';
 
-$selected_workshop_ids = array();
+    $selected_workshop_ids = array();
 
-if ($selected_workshops !== '') {
-    $selected_workshop_ids = array_values(array_unique(array_filter(array_map('absint', explode(',', $selected_workshops)))));
-}
+    if ($selected_workshops !== '') {
+        $selected_workshop_ids = array_values(array_unique(array_filter(array_map('absint', explode(',', $selected_workshops)))));
+    }
 
-$pricing_group_saved = isset($registration_values['pricing_group'])
-    ? sanitize_text_field((string) $registration_values['pricing_group'])
-    : '';
+    $pricing_group_saved = isset($registration_values['pricing_group'])
+        ? sanitize_text_field((string) $registration_values['pricing_group'])
+        : '';
 
-$total_cost_saved = isset($registration_values['total_cost'])
-    ? sanitize_text_field((string) $registration_values['total_cost'])
-    : '';
+    $total_cost_saved = isset($registration_values['total_cost'])
+        ? sanitize_text_field((string) $registration_values['total_cost'])
+        : '';
 
-$pricing_obj = new Evtmgr_Pricing();
-$qry_billings = $pricing_obj->build_registration_pricing_options($event_uid, $lang, $selected_workshop_ids);
-$pricing_group_saved_normalized = $pricing_obj->normalize_pricing_group($pricing_group_saved);
+    $pricing_obj = new Evtmgr_Pricing();
+    $qry_billings = $pricing_obj->build_registration_pricing_options($event_uid, $lang, $selected_workshop_ids);
+    $pricing_group_saved_normalized = $pricing_obj->normalize_pricing_group($pricing_group_saved);
 
-if (!function_exists('event_registration_format_discount_date')) {
-    function event_registration_format_discount_date($date_value) {
-        if (empty($date_value)) {
+    if (!function_exists('event_registration_format_discount_date')) {
+        function event_registration_format_discount_date($date_value) {
+            if (empty($date_value)) {
+                return '';
+            }
+
+            $timestamp = strtotime((string) $date_value);
+
+            if (!$timestamp) {
+                return '';
+            }
+
+            return date_i18n(get_option('date_format'), $timestamp);
+        }
+    }
+
+    if (!function_exists('event_registration_discount_text')) {
+        function event_registration_discount_text($pricing, $lang_key) {
+            $field = 'mem_pricing_description' . $lang_key;
+
+            if (!empty($pricing[$field])) {
+                return $pricing[$field];
+            }
+
+            if (!empty($pricing['mem_pricing_description'])) {
+                return $pricing['mem_pricing_description'];
+            }
+
             return '';
         }
-
-        $timestamp = strtotime((string) $date_value);
-
-        if (!$timestamp) {
-            return '';
-        }
-
-        return date_i18n(get_option('date_format'), $timestamp);
     }
-}
 
-if (!function_exists('event_registration_discount_text')) {
-    function event_registration_discount_text($pricing, $lang_key) {
-        $field = 'mem_pricing_description' . $lang_key;
+    if (!function_exists('event_registration_step2_format_price')) {
+        function event_registration_step2_format_price($value) {
+            if ($value === '' || $value === null) {
+                return '';
+            }
 
-        if (!empty($pricing[$field])) {
-            return $pricing[$field];
-        }
-
-        if (!empty($pricing['mem_pricing_description'])) {
-            return $pricing['mem_pricing_description'];
-        }
-
-        return '';
-    }
-}
-
-if (!function_exists('event_registration_step2_format_price')) {
-    function event_registration_step2_format_price($value) {
-        if ($value === '' || $value === null) {
-            return '';
-        }
-
-        return number_format((float) $value, 2, '.', "'");
-    }
-}
-
-$selected_pricing_option = array();
-
-if (!empty($qry_billings)) {
-    foreach ($qry_billings as $option) {
-        $option_group = $pricing_obj->normalize_pricing_group($option['pricing_group'] ?? '');
-
-        if ($pricing_group_saved_normalized !== '' && $option_group === $pricing_group_saved_normalized) {
-            $selected_pricing_option = $option;
-            break;
+            return number_format((float) $value, 2, '.', "'");
         }
     }
 
-    if (empty($selected_pricing_option)) {
-        $selected_pricing_option = $qry_billings[0];
+    $selected_pricing_option = array();
+
+    if (!empty($qry_billings)) {
+        foreach ($qry_billings as $option) {
+            $option_group = $pricing_obj->normalize_pricing_group($option['pricing_group'] ?? '');
+
+            if ($pricing_group_saved_normalized !== '' && $option_group === $pricing_group_saved_normalized) {
+                $selected_pricing_option = $option;
+                break;
+            }
+        }
+
+        if (empty($selected_pricing_option)) {
+            $selected_pricing_option = $qry_billings[0];
+        }
     }
-}
 
-$calculated_total_cost = $total_cost_saved;
+    $calculated_total_cost = $total_cost_saved;
 
-if ($calculated_total_cost === '' && !empty($selected_pricing_option)) {
-    $calculated_total_cost = (string) ($selected_pricing_option['total_cost'] ?? '');
-}
+    if ($calculated_total_cost === '' && !empty($selected_pricing_option)) {
+        $calculated_total_cost = (string) ($selected_pricing_option['total_cost'] ?? '');
+    }
 
-$selected_pricing_group_value = !empty($selected_pricing_option)
-    ? (string) ($selected_pricing_option['pricing_group'] ?? '')
-    : $pricing_group_saved_normalized;
+    $selected_pricing_group_value = !empty($selected_pricing_option)
+        ? (string) ($selected_pricing_option['pricing_group'] ?? '')
+        : $pricing_group_saved_normalized;
 
 ?>
 
 <div class="container my-4 event-registration-step-2">
 
-    <h2>Schritt 2</h2>
+    <!--<h2>Schritt 2</h2>-->
 
     <?php if (empty($selected_workshop_ids)) : ?>
 
         <div class="alert alert-warning">
             <?php
-                echo '$Sie haben keine Workshops ausgewählt. Bitte gehen Sie einen Schritt zurück und wählen Sie die gewünschten Workshops.£';
+                echo $wordings['sie_haben_keine_workshops_ausgewaehlt_bitte_gehen_sie_einen_schritt_zurueck_und_waehlen_sie_die_gewuenschten_workshops'] ?? '';
             ?>
         </div>
 
@@ -149,9 +152,7 @@ $selected_pricing_group_value = !empty($selected_pricing_option)
             <div class="alert alert-info">
                 <p class="mb-0">
                     <?php
-                    echo $wordings['t86DieKostenFuerDenKongressSindNichtFuerAlleTeilnehmenden'] ?? '';
-                    echo '<br>';
-                    echo $wordings['t87BitteWaehlenSieDiePassendeOptionUndFahrenSieWeiter'] ?? '';
+                        echo $wordings['die_kosten_fuer_den_kongress_sind_nicht_fuer_alle_teilnehmenden_gleich'] ?? '';
                     ?>
                 </p>
             </div>
@@ -184,9 +185,10 @@ $selected_pricing_group_value = !empty($selected_pricing_option)
                                         : array();
 
                                     $parent_line = !empty($lines[0]) ? $lines[0] : array();
+                                    $group_class = ($discount_index % 2 === 0) ? 'pricing-group-odd' : '';
                                     ?>
 
-                                    <tr>
+                                    <tr class="<?php echo esc_attr($group_class); ?>">
                                         <td>
                                             <label class="d-block mb-0">
                                                 <input type="radio"
@@ -228,7 +230,7 @@ $selected_pricing_group_value = !empty($selected_pricing_option)
                                             ? 'event-registration-pricing-total'
                                             : 'event-registration-pricing-child';
                                         ?>
-                                        <tr class="<?php echo esc_attr($row_class); ?>">
+                                        <tr class="<?php echo esc_attr(trim($row_class . ' ' . $group_class)); ?>">
                                             <td style="padding-left:3rem;">
                                                 <?php if ($is_total) : ?>
                                                     <?php echo esc_html($line['label'] ?? ''); ?>
@@ -258,7 +260,7 @@ $selected_pricing_group_value = !empty($selected_pricing_option)
                         </table>
                     </div>
 
-                    <div class="mb-3">
+                    <div class="mb-3 d-none">
                         <label for="total_cost" class="form-label">Total Cost</label>
                         <input type="text"
                                name="total_cost"
@@ -289,17 +291,19 @@ $selected_pricing_group_value = !empty($selected_pricing_option)
                 name="registration_action"
                 value="prev"
                 class="btn btn-secondary">
-            $Zurück£
+            <?php echo $wordings['zurueck'] ?? ''; ?>
         </button>
 
-        <button type="submit"
-                name="registration_action"
-                value="next"
-                class="btn btn-primary">
-            <?php
-            echo $wordings['t5Weiter'] ?? '$Weiter£';
-            ?>
-        </button>
+        <?php if (!empty($selected_workshop_ids)) : ?>
+            <button type="submit"
+                    name="registration_action"
+                    value="next"
+                    class="btn btn-primary">
+                <?php
+                echo $wordings['weiter_in_der_anmeldung'] ?? '';
+                ?>
+            </button>
+        <?php endif; ?>
     </div>
 
 </div>

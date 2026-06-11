@@ -1,0 +1,30 @@
+.timetable {
+    --stages: 1;
+    --zebra-color-one: #51516d;
+    --zebra-color-two: rgb(102, 102, 131);
+}
+
+h1,
+h2,
+h3,
+h4 {
+    line-height: 1.2;
+}
+
+.session {
+    background: rgba(0, 0, 0, 0.15);
+    border: 1.5px solid #f09;
+}
+
+.session.pitch {
+    background: rgba(77, 27, 112, 0.85);
+}
+
+.hours time {
+    color: #fff;
+    font-weight: 600;
+}
+
+.icon-svg {
+    width: 24px;
+}

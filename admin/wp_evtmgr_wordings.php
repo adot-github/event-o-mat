@@ -1,8 +1,4 @@
 <?php
-    if (!defined('ABSPATH')) {
-        exit;
-    }
-
     require_once get_stylesheet_directory() . '/db-custom/event-registration/classes/class-evtmgr-events.php';
     $event_obj = new Evtmgr_Events();
     $event_languages = $event_obj->get_current_event_languages();
@@ -25,8 +21,8 @@
         ],
         'list'  => [
             'fields' => ["text_{$lang}"],
-            'fields_iframe' => ["text_{$lang}"],
-            'orderby_default' => "text_{$lang}",
+            'fields_iframe' => ["text_de_for_tree"],
+            'orderby_default' => "text_de_for_tree",
             'condition' => "$additional_sql_condition",
             'order_default' => 'asc',
             'labels' => [

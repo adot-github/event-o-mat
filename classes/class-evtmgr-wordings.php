@@ -23,10 +23,10 @@ class Evtmgr_Wordings {
      *
      * Usage:
      * $wordings = $wordings_obj->get_wordings($lang, $event_uid);
-     * echo $wordings['t80NotwendigeAngabenZurAnmeldungSindNichtVerfuegbarEventuell'] ?? '';
+     * echo $wordings['notwendige_angaben_zur_anmeldung_sind_nicht_verfuegbar_eventuell'] ?? '';
      *
      * @param string $lang      Language suffix, for example de, en, fr, it.
-     * @param string $event_uid Event / owner Uid, for example lll-2020-clone.
+     * @param string $event_uid Event / owner Uid, for example xxxx-2026.
      * @return array Associative array: str_var_name => translated text.
      */
     public function get_wordings($lang = 'de', $event_uid = '') {
@@ -40,10 +40,10 @@ class Evtmgr_Wordings {
         $sql = "
             SELECT
                 str_var_name,
-                text_{$lang} AS text
+                str_text_{$lang} AS text
             FROM {$this->table_name}
-            WHERE fky_event_uid = %s
-            ORDER BY str_var_name
+            WHERE fky_event_uid = %s OR fky_event_uid IS NULL
+            ORDER BY (fky_event_uid IS NULL) DESC, str_var_name
         ";
 
         $rows = $this->wpdb->get_results(

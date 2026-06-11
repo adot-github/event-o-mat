@@ -305,11 +305,9 @@ class Event_Registration_Pdf_Creation {
     }
 
     public function get_pdf_url(string $subfolder_for_pdf, string $event_uid, string $file_name = ''): string {
-        $url = content_url(
-            'themes/picostrap5/db-custom/event-registration/file-storage/' .
+        $url = get_stylesheet_directory_uri() . '/db-custom/event-registration/file-storage/' .
             rawurlencode($subfolder_for_pdf) . '/' .
-            rawurlencode($event_uid)
-        );
+            rawurlencode($event_uid);
 
         if ($file_name !== '') {
             $url .= '/' . rawurlencode($file_name);
@@ -483,7 +481,7 @@ class Event_Registration_Pdf_Creation {
                                 <?php foreach ($existing_pdf_files as $file) : ?>
                                     <a class="list-group-item list-group-item-action" href="<?php echo esc_url($file['file_url']); ?>" target="_blank" rel="noopener">
                                         <div class="d-flex w-100 justify-content-between gap-3">
-                                            <span class="fw-semibold text-break"><?php echo esc_html($file['file_name']); ?></span>
+                                            <span class="text-break"><?php echo esc_html($file['file_name']); ?></span>
                                             <?php if (isset($file['size'])) : ?>
                                                 <small class="text-muted text-nowrap"><?php echo esc_html(size_format((int) $file['size'])); ?></small>
                                             <?php endif; ?>
@@ -513,7 +511,7 @@ class Event_Registration_Pdf_Creation {
                             <div class="list-group list-group-flush">
                                 <?php foreach ($missing_items as $item) : ?>
                                     <div class="list-group-item">
-                                        <div class="fw-semibold">
+                                        <div class="">
                                             <?php echo esc_html($missing_label_callback ? (string) $missing_label_callback($item) : $this->person_label($item)); ?>
                                         </div>
                                         <?php if (!empty($item['expected_pdf_file'])) : ?>
@@ -574,7 +572,7 @@ class Event_Registration_Pdf_Creation {
 
     public function show_page_header(string $title = 'PDF-Erstellung'): void {
         $css_file = $this->base_dir . DIRECTORY_SEPARATOR . 'css' . DIRECTORY_SEPARATOR . 'pdf-creation.css';
-        $css_url  = content_url('themes/picostrap5/db-custom/event-registration/pages/css/pdf-creation.css');
+        $css_url  = get_stylesheet_directory_uri() . '/db-custom/event-registration/pages/css/pdf-creation.css';
         ?>
         <?php if (file_exists($css_file)) : ?>
             <link rel="stylesheet" href="<?php echo esc_url($css_url); ?>">

@@ -1,3 +1,5 @@
+﻿<link rel='stylesheet' href='/wp-content/themes/picostrap5-child-base/db-custom/event-registration/pages/assets/dashboard.css' media='all' />
+
 <style>
 .event-report-table-scroll {
     width: 100%;
@@ -117,27 +119,27 @@ if ($event_uid !== '' && class_exists('Evtmgr_Events')) {
     </h1>
 
     <?php if ($event_title !== '') : ?>
-        <h2 class="h5 mb-3 text-muted">
+        <h2 class="h5 mb-3">
             <?php echo esc_html($event_title); ?>
         </h2>
     <?php endif; ?>
 
-    <p class="text-muted mb-1">
+    <p class="mb-1">
         Event Uid:
         <strong><?php echo esc_html($event_uid); ?></strong>
     </p>
 
-    <p class="text-muted">
+    <p class="">
         Anzahl Datensätze:
         <strong><?php echo esc_html((string) $record_count); ?></strong>
     </p>
 
     <div class="mb-3">
-        <button type="button" class="btn btn-success" id="event-report-download-excel">
+        <button type="button" class="btn btn-success rounded-pill" id="event-report-download-excel">
             Excel herunterladen
         </button>
 
-        <button type="button" class="btn btn-primary" id="event-report-download-word">
+        <button type="button" class="btn btn-primary rounded-pill ms-4" id="event-report-download-word">
             Word herunterladen
         </button>
     </div>

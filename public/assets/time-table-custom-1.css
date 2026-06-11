@@ -1,0 +1,62 @@
+.timetable {
+    --stages: 1;
+    --start-time: 9;
+	--end-time: 17;
+    --stage-gap: 0.5rem;
+    --zebra-color-one: #efefef;
+    --zebra-color-two: #dedede;
+}
+
+.hours > div {
+    border-top: 3px solid #cccccc;
+}
+
+.hours > div:nth-child(odd) {
+    border-top: 3px solid #cccccc;
+}
+
+h1,
+h2,
+h3,
+h4 {
+    line-height: 1.2;
+}
+
+.session {
+    background: rgba(255, 255, 255, 0.95);
+    border: 0 solid #f09;
+    border-top: 2.5px solid #f09;
+    color: #000;
+    border-radius: 0;
+}
+
+.session.pitch {
+    background: #c06ca9;
+    border-color: #c06ca9;
+    color: #fff;
+}
+
+.session.info {
+    background: #8b036b;
+    border-color: #c06ca9;
+    color: #fff !important;
+}
+
+.session.alert {
+    background: #cc0000;
+    border-color: #cc0000;
+    color: #fff;
+}
+
+.stage-headline {
+    color: #fff;
+    background: #8b036b;
+    margin-left: 1rem;
+}
+
+.hours time {
+    color: #000;
+    font-weight: 600;
+    padding: 0.75rem 0;
+}
+

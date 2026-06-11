@@ -1,3 +1,5 @@
+﻿<link rel='stylesheet' href='/wp-content/themes/picostrap5-child-base/db-custom/event-registration/pages/assets/dashboard.css' media='all' />
+
 <?php
 
 global $wpdb;
@@ -144,121 +146,91 @@ $manual_links = array(
 
 <div class="container-xxl py-4">
 
-    <section class="mb-0">
-        <h2 class="h4 mb-3">Workshop-Auslastung</h2>
+    <section class="m-0">
+        <div class="accordion" id="accordion-workshop-auslastung">
+            <div class="accordion-item">
+                <h2 class="accordion-header m-0" id="accordion-workshop-auslastung-heading">
+                    <button class="accordion-button collapsed"
+                            type="button"
+                            data-bs-toggle="collapse"
+                            data-bs-target="#accordion-workshop-auslastung-body"
+                            aria-expanded="false"
+                            aria-controls="accordion-workshop-auslastung-body">
+                        Workshop-Auslastung
+                    </button>
+                </h2>
+                <div id="accordion-workshop-auslastung-body"
+                     class="accordion-collapse collapse"
+                     aria-labelledby="accordion-workshop-auslastung-heading">
+                    <div class="accordion-body p-0">
 
-        <?php if (empty($event_uid)) : ?>
-            <div class="alert alert-warning mb-0">
-                Kein aktiver Event gewählt.
+                        <?php if (empty($event_uid)) : ?>
+                            <div class="alert alert-warning m-3">
+                                Kein aktiver Event gewählt.
+                            </div>
+                        <?php elseif (empty($workshop_report_rows)) : ?>
+                            <div class="alert alert-info m-3">
+                                Für diesen Event wurden keine Workshops gefunden.
+                            </div>
+                        <?php else : ?>
+                            <div class="table-responsive">
+                                <table class="table table-sm table-striped table-hover align-middle mb-0">
+                                    <thead>
+                                        <tr>
+                                            <th>Workshop</th>
+                                            <th class="text-end">Anmeldungen</th>
+                                            <th class="text-end">Max. Plätze</th>
+                                            <th class="text-end">Freie Plätze</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <?php foreach ($workshop_report_rows as $workshop_report_row) : ?>
+                                            <?php
+                                            $registration_count = isset($workshop_report_row['registration_count'])
+                                                ? (int) $workshop_report_row['registration_count']
+                                                : 0;
+
+                                            $max_places = isset($workshop_report_row['int_max_number_of_registrations'])
+                                                ? (int) $workshop_report_row['int_max_number_of_registrations']
+                                                : 0;
+
+                                            $free_places = $max_places > 0
+                                                ? max(0, $max_places - $registration_count)
+                                                : null;
+
+                                            $workshop_label = trim(
+                                                (string) ($workshop_report_row['str_workshop_number'] ?? '') . ' ' .
+                                                (string) ($workshop_report_row['str_workshop_title_de'] ?? '')
+                                            );
+
+                                            if ($workshop_label === '') {
+                                                $workshop_label = 'Workshop ID ' . (string) ($workshop_report_row['workshop_id'] ?? '');
+                                            }
+                                            ?>
+                                            <tr>
+                                                <td><?php echo esc_html($workshop_label); ?></td>
+                                                <td class="text-end"><?php echo esc_html((string) $registration_count); ?></td>
+                                                <td class="text-end">
+                                                    <?php echo $max_places > 0 ? esc_html((string) $max_places) : '&ndash;'; ?>
+                                                </td>
+                                                <td class="text-end">
+                                                    <?php echo $free_places !== null ? esc_html((string) $free_places) : '&ndash;'; ?>
+                                                </td>
+                                            </tr>
+                                        <?php endforeach; ?>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <?php endif; ?>
+
+                    </div>
+                </div>
             </div>
-        <?php elseif (empty($workshop_report_rows)) : ?>
-            <div class="alert alert-info mb-0">
-                Für diesen Event wurden keine Workshops gefunden.
-            </div>
-        <?php else : ?>
-            <div class="table-responsive">
-                <table class="table table-sm table-striped table-hover align-middle">
-                    <thead>
-                        <tr>
-                            <th>Workshop</th>
-                            <th class="text-end">Anmeldungen</th>
-                            <th class="text-end">Max. Plätze</th>
-                            <th class="text-end">Freie Plätze</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <?php foreach ($workshop_report_rows as $workshop_report_row) : ?>
-                            <?php
-                            $registration_count = isset($workshop_report_row['registration_count'])
-                                ? (int) $workshop_report_row['registration_count']
-                                : 0;
-
-                            $max_places = isset($workshop_report_row['int_max_number_of_registrations'])
-                                ? (int) $workshop_report_row['int_max_number_of_registrations']
-                                : 0;
-
-                            $free_places = $max_places > 0
-                                ? max(0, $max_places - $registration_count)
-                                : null;
-
-                            $workshop_label = trim(
-                                (string) ($workshop_report_row['str_workshop_number'] ?? '') . ' ' .
-                                (string) ($workshop_report_row['str_workshop_title_de'] ?? '')
-                            );
-
-                            if ($workshop_label === '') {
-                                $workshop_label = 'Workshop ID ' . (string) ($workshop_report_row['workshop_id'] ?? '');
-                            }
-                            ?>
-                            <tr>
-                                <td><?php echo esc_html($workshop_label); ?></td>
-                                <td class="text-end"><?php echo esc_html((string) $registration_count); ?></td>
-                                <td class="text-end">
-                                    <?php echo $max_places > 0 ? esc_html((string) $max_places) : '&ndash;'; ?>
-                                </td>
-                                <td class="text-end">
-                                    <?php echo $free_places !== null ? esc_html((string) $free_places) : '&ndash;'; ?>
-                                </td>
-                            </tr>
-                        <?php endforeach; ?>
-                    </tbody>
-                </table>
-            </div>
-        <?php endif; ?>
+        </div>
     </section>
 
     <?php
-    $current_group = '';
-
-    foreach ($manual_links as $item) :
-        $item_group = isset($item['str_group']) ? (string) $item['str_group'] : '';
-
-        if ($item_group !== $current_group) :
-            if ($current_group !== '') :
-                ?>
-                </div>
-                <?php
-            endif;
-
-            $current_group = $item_group;
-            ?>
-            <br>
-            <hr class="mt-4">
-            <h3 class="mt-0 mb-0">
-                <?php echo esc_html($current_group); ?>
-            </h3>
-
-
-            <div class="row g-4 mb-4">
-        <?php endif; ?>
-
-        <div class="col-12 col-md-6 col-xl-4">
-            <div class="card h-100 shadow-sm card-hover">
-                <div class="card-body d-flex flex-column">
-
-                    <h2 class="h5 card-title">
-                        <?php echo esc_html($item['str_title']); ?>
-                    </h2>
-
-                    <p class="card-text text-muted m-0">
-                        <?php echo esc_html($item['mem_description']); ?>
-                    </p>
-
-                    <div class="mt-auto">
-                        <a href="<?php echo esc_url($item['str_url']); ?>"
-                           class="btn btn-primary">
-                            Öffnen
-                        </a>
-                    </div>
-
-                </div>
-            </div>
-        </div>
-
-    <?php endforeach; ?>
-
-    <?php if ($current_group !== '') : ?>
-        </div>
-    <?php endif; ?>
+    include ('dashboard-card-2.php');
+    ?>
 
 </div>

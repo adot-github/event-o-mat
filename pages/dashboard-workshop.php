@@ -1,3 +1,5 @@
+<link rel='stylesheet' href='/wp-content/themes/picostrap5-child-base/db-custom/event-registration/pages/assets/dashboard.css' media='all' />
+
 <?php
 $manual_links = array(
     array(
@@ -35,60 +37,6 @@ $manual_links = array(
 );
 ?>
 
-<div class="container-xxl py-4">
-
-    <?php
-    $current_group = '';
-
-    foreach ($manual_links as $item) :
-        $item_group = isset($item['str_group']) ? (string) $item['str_group'] : '';
-
-        if ($item_group !== $current_group) :
-            if ($current_group !== '') :
-                ?>
-                </div>
-                <?php
-            endif;
-
-            $current_group = $item_group;
-            ?>
-            <br>
-            <hr class="mt-4">
-            <h3 class="mt-0 mb-0">
-                <?php echo esc_html($current_group); ?>
-            </h3>
-
-
-            <div class="row g-4 mb-4">
-        <?php endif; ?>
-
-        <div class="col-12 col-md-6 col-xl-4">
-            <div class="card h-100 shadow-sm card-hover">
-                <div class="card-body d-flex flex-column">
-
-                    <h2 class="h5 card-title">
-                        <?php echo esc_html($item['str_title']); ?>
-                    </h2>
-
-                    <p class="card-text text-muted">
-                        <?php echo esc_html($item['mem_description']); ?>
-                    </p>
-
-                    <div class="mt-auto">
-                        <a href="<?php echo esc_url($item['str_url']); ?>"
-                           class="btn btn-primary">
-                            Öffnen
-                        </a>
-                    </div>
-
-                </div>
-            </div>
-        </div>
-
-    <?php endforeach; ?>
-
-    <?php if ($current_group !== '') : ?>
-        </div>
-    <?php endif; ?>
-
-</div>
+<?php
+    include ('dashboard-card-2.php');
+?>

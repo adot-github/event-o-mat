@@ -1,4 +1,6 @@
-<link rel='stylesheet' id='dashicons-css' href='https://dev.local/wp-content/themes/picostrap5/db-custom/event-registration/public/assets/time-table.css' media='all' />
+<link rel='stylesheet' id='dashicons-css' href='/wp-content/themes/picostrap5-child-base/db-custom/event-registration/public/assets/time-table.css' media='all' />
+<link rel='stylesheet' id='dashicons-css' href='/wp-content/themes/picostrap5-child-base/db-custom/event-registration/public/assets/time-table-custom-1.css' media='all' />
+<link rel='stylesheet' id='dashicons-css' href='/wp-content/themes/picostrap5-child-base/db-custom/event-registration/public/assets/workshops.css' media='all' />
 
 <style>
     .js-workshop-item {
@@ -75,8 +77,8 @@
 
     #event_registration_workshop_modal .event-registration-modal-workshop:hover,
     #event_registration_workshop_modal .event-registration-modal-workshop:focus {
-        background: #eef5ff;
-        border-color: #0d6efd;
+        background: #e0b6d4;
+        border-color: #8b036b;
         transform: translateY(-1px);
     }
 
@@ -96,8 +98,19 @@
         padding-right:1rem !important;
         color:white;
         }
+        .btn-select-workshop:hover {
+        background-color: #000000;
+    }
 </style>
 
+<style>
+    .selected-workshop-wrapper .speaker-list li::before,
+    .selected-workshop-wrapper .free-places-list li::before ,
+    .selected-workshop-wrapper .price-list li::before
+    {
+         filter: invert(1);
+    }
+</style>
 
 <?php
     if (!defined('ABSPATH')) {
@@ -116,33 +129,6 @@
     <div class="event-registration-message <?php echo $cookie_ok ? 'is-success' : 'is-error'; ?>">
         <?php echo esc_html($message); ?>
     </div>
-<?php endif; ?>
-
-<?php if (!$cookie_ok) : ?>
-    <p class="event-registration-error">
-        <?php esc_html_e('Die Anmeldung kann auf diesem Gerät nicht fortgesetzt werden.', 'event-registration'); ?>
-    </p>
-<?php elseif (empty($qry_events)) : ?>
-    <p class="event-registration-error">
-        <?php echo esc_html(sprintf('Der Anlass mit der Uid %s wurde nicht gefunden.', $event_uid)); ?>
-    </p>
-<?php else : ?>
-    <h1>
-        <?php echo esc_html($registration->get_value($qry_events, 'str_event_name')); ?><br>
-        <span style="font-weight:300"><?php echo esc_html($registration->get_value($qry_events, 'str_event_subtitle')); ?></span>
-    </h1>
-
-    <div class="event-registration-description">
-        <?php echo wp_kses_post($registration->get_value($qry_events, 'mem_event_description')); ?>
-    </div>
-
-    <!--
-    <div class="event-registration-actions">
-        <button type="submit" class="btn btn-primary" name="go_next" value="1">
-            <?php esc_html_e('Weiter zu Schritt 2', 'event-registration'); ?>
-        </button>
-    </div>
-    -->
 <?php endif; ?>
 
 <?php
@@ -262,10 +248,6 @@
 
 <?php
 
-
-
-
-
     function event_registration_step1_sanitize_css_classes($class_value) {
         $class_value = trim((string) $class_value);
 
@@ -304,7 +286,7 @@
     }
 
     if (!function_exists('event_registration_step1_render_workshop_html')) {
-        function event_registration_step1_render_workshop_html(array $workshop, $color, $lang) {
+        function event_registration_step1_render_workshop_html(array $workshop, $color, $lang, array $wordings = []) {
             $id = !empty($workshop['id'])
                 ? absint($workshop['id'])
                 : 0;
@@ -389,7 +371,8 @@
         $workshops_obj,
         $event_uid,
         $lang,
-        $selected_workshop_ids
+        $selected_workshop_ids,
+        $wordings
     ) {
         $workshop_rows = array();
         $first_slot_id = 0;
@@ -522,7 +505,8 @@
             $workshop_html = event_registration_step1_render_workshop_html(
                 $workshop,
                 $color,
-                $lang
+                $lang,
+                $wordings
             );
 
             if ($workshop_html === '') {
@@ -658,145 +642,73 @@
 
 ?>
 
-<div class="container-lg bg-light p-0 py-4">
+<!-- TITEL -->
+<?php if (!$cookie_ok) : ?>
+    <p class="event-registration-error">
+        <?php esc_html_e('Die Anmeldung kann auf diesem Gerät nicht fortgesetzt werden.', 'event-registration'); ?>
+    </p>
+<?php elseif (empty($qry_events)) : ?>
+    <p class="event-registration-error">
+        <?php echo esc_html(sprintf('Der Anlass mit folgender UUID wurde nicht gefunden: %s ', $event_uid)); ?>
+    </p>
+<?php else : ?>
+    <!--
+    <h1>
+        <?php echo esc_html($registration->get_value($qry_events, 'str_event_name')); ?><br>
+        <span style="font-weight:300"><?php echo esc_html($registration->get_value($qry_events, 'str_event_subtitle')); ?></span>
+    </h1>
+    -->
+
+<?php
+echo '$Beginn der Anmeldung:£ ' . wp_date('l, j. F Y', strtotime($qry_events['dtm_registration_opened'])) . '<br>';
+echo '$Ende der Anmeldung:£ ' . wp_date('l, j. F Y', strtotime($qry_events['dtm_registration_closed']));
+?>
+
+    <div class="event-registration-description mt-3">
+        <?php echo wp_kses_post($registration->get_value($qry_events, 'mem_event_description')); ?>
+    </div>
+
+    <!--
+    <div class="event-registration-actions">
+        <button type="submit" class="btn btn-primary" name="go_next" value="1">
+            <?php esc_html_e('Weiter zu Schritt 2', 'event-registration'); ?>
+        </button>
+    </div>
+    -->
+<?php endif; ?>
+
+<!-- TIME TABLE-->
+<div class="container-lg bg-light p-0 mt-5">
+    <!--
     <div class="timetable" style="--start-time: <?php echo esc_attr((string) $timetable_start_hour); ?>; --end-time: <?php echo esc_attr((string) $timetable_end_hour); ?>;">
+    -->
+    <div class="timetable">
+        
         <div class="timetable--head" aria-hidden="true">
             <div class="timetable--inner-head">
-                <div class="stage-headline"><?php echo '$Programm£'; ?></div>
+                <div class="stage-headline m-0 ms-4"><?php echo $wordings['programm'] ?? ''; ?></div>
+                <!--
+                KEEP!
+                <div class="stage-headline m-0"><?php echo $wordings['programm'] ?? ''; ?></div>
+                <div class="stage-headline m-0"><?php echo $wordings['programm'] ?? ''; ?></div>
+                -->
             </div>
         </div>
 
         <div class="timetable--body">
+            
             <div class="hours" aria-hidden="true">
                 <?php foreach ($timetable_hours as $hour_label) : ?>
                     <div><time datetime="<?php echo esc_attr($hour_label); ?>"><?php echo esc_html($hour_label); ?></time></div>
                 <?php endforeach; ?>
             </div>
 
-            <div class="stage" style="--column: 2;">
-                <h2 class="stage-headline">Programm</h2>
+            <?php include('col-2.php'); ?>
+            <!--
+            <?php include('col-3.php'); ?>
+            <?php include('col-4.php'); ?>
+            -->
 
-                <ol class="session-list">
-                    <?php foreach ($timetable_sessions as $session) : ?>
-                        <li class="session <?php echo esc_attr($session['session_class']); ?>"
-                            style="--start: <?php echo esc_attr($session['time_from']); ?>; --end: <?php echo esc_attr($session['time_to']); ?>;">
-
-                            <div data-slot="<?php echo esc_attr((string) $session['slot_id']); ?>"
-                                 data-timezone="<?php echo esc_attr((string) $session['timezone_id']); ?>"
-                                 class="js-session-container session-eno session-1 track-all">
-
-                                <?php if (!empty($debug_step1)) : ?>
-                                    <details class="alert alert-warning small mb-2" open>
-                                        <summary>
-                                            Step 1 Debug — timezone <?php echo esc_html((string) $session['timezone_id']); ?>,
-                                            source: <?php echo esc_html((string) ($session['debug']['source_mode'] ?? '')); ?>,
-                                            slot: <?php echo esc_html((string) ($session['debug']['final_slot_id'] ?? 0)); ?>,
-                                            workshops: <?php echo esc_html((string) ($session['debug']['final_workshop_count'] ?? 0)); ?>
-                                        </summary>
-                                        <pre class="mb-0 mt-2" style="white-space:pre-wrap;max-height:320px;overflow:auto;"><?php echo esc_html(print_r($session['debug'], true)); ?></pre>
-                                    </details>
-                                <?php endif; ?>
-
-                                <?php if (!empty($session['show_time_in_output'])) : ?>
-                                    <span class="time">
-                                        <?php echo esc_html($session['time_label_from']); ?>–<?php echo esc_html($session['time_label_to']); ?>
-                                    </span>
-                                <?php endif; ?>
-
-                                <h3 class="session-title m-0">
-                                        <?php echo esc_html($session['timezone_name']); ?>
-                                    </h3>
-
-                                    <?php if (trim((string) $session['timezone_text']) !== '') : ?>
-                                        <p><?php echo wp_kses_post($session['timezone_text']); ?></p>
-                                    <?php endif; ?>
-
-                                    <?php if (!empty($session['presenters'])) : ?>
-                                        <ul class="speaker-list no-border">
-                                            <?php foreach ($session['presenters'] as $presenter) : ?>
-                                                <li>
-                                                    <?php if (!empty($presenter['academic_title'])) : ?>
-                                                        <?php echo esc_html($presenter['academic_title']); ?>
-                                                    <?php endif; ?>
-
-                                                    <?php echo esc_html($presenter['name']); ?>
-
-                                                    <?php if (!empty($presenter['details'])) : ?>
-                                                        | <?php echo esc_html($presenter['details']); ?><br>
-                                                    <?php else : ?>
-                                                        <br>
-                                                    <?php endif; ?>
-                                                </li>
-                                            <?php endforeach; ?>
-                                        </ul>
-                                    <?php endif; ?>
-
-                                <?php if ($session['workshop_count'] === 1) : ?>
-                                    <div class="workshop">
-                                        <?php foreach ($session['single_workshops'] as $workshop_item) : ?>
-                                            <div class="workshop-item">
-                                                <?php echo $workshop_item['html']; ?>
-                                            </div>
-                                        <?php endforeach; ?>
-                                    </div>
-                                <?php elseif ($session['workshop_count'] > 1) : ?>
-                                    <div class="time" style="display:none";>
-                                        <?php echo esc_html($session['time_label_from']); ?>–<?php echo esc_html($session['time_label_to']); ?>
-                                    </div>
-
-                                    <div class="mt-2">
-                                        <span class="mr-1">
-                                            <?php echo '$Anzahl Angebote zur Auswahl:£'; ?>
-                                            <?php echo esc_html((string) $session['workshop_count']); ?>
-                                        </span>
-
-                                        <a href="#" class="btn btn-select-workshop btn-sm js-workshop-add ps-2 pe-2">
-                                            <?php echo '$Angebot auswählen£'; ?>
-                                        </a>
-                                    </div>
-
-                                    <div class="row">
-                                        <div class="col-md-12">
-                                            <div class="js-workshops-label js-workshops-label-no mt-2">
-                                                <?php echo '$Sie haben noch kein Angebot gewählt.£'; ?>
-                                            </div>
-
-                                            <div class="js-workshops-label js-workshops-label-yes mt-2" style="display:none">
-                                                <?php echo '$Sie haben folgendes Angebot gewählt:£'; ?>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <div class="row js-wokshop-container">
-                                        <?php foreach ($session['selected_workshops'] as $workshop_item) : ?>
-                                            <div class="col-md-12 mt-3 selected-workshop-wrapper"
-                                                 data-workshop="<?php echo esc_attr((string) $workshop_item['id']); ?>">
-                                                <div class="workshop">
-                                                    <?php echo $workshop_item['html']; ?>
-                                                </div>
-                                            </div>
-                                        <?php endforeach; ?>
-                                    </div>
-
-                                    <div class="js-workshop-options" hidden>
-                                        <?php foreach ($session['workshop_options'] as $workshop_item) : ?>
-                                            <template class="js-workshop-option-template"
-                                                      data-workshop="<?php echo esc_attr((string) $workshop_item['id']); ?>">
-                                                <div class="col-md-12 event-registration-modal-workshop js-workshop-select workshop-select"
-                                                     data-workshop="<?php echo esc_attr((string) $workshop_item['id']); ?>">
-                                                    <div class="workshop p-1 m-1">
-                                                        <?php echo $workshop_item['html']; ?>
-                                                    </div>
-                                                </div>
-                                            </template>
-                                        <?php endforeach; ?>
-                                    </div>
-                                <?php endif; ?>
-                            </div>
-                        </li>
-                    <?php endforeach; ?>
-                </ol>
-            </div>
         </div>
     </div>
 </div>
@@ -805,11 +717,11 @@
     <div class="modal-dialog modal-xl modal-dialog-centered modal-dialog-scrollable">
         <div class="modal-content">
             <div class="modal-header">
-                <h2 class="modal-title h3" id="event_registration_workshop_modal_label"><?php echo '$Angebot auswählen£'; ?></h2>
+                <h2 class="modal-title h3" id="event_registration_workshop_modal_label"><?php echo $wordings['angebot_auswaehlen'] ?? ''; ?></h2>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Schliessen"></button>
             </div>
             <div class="modal-body js-workshop-modal-body">
-                <p class="lead"><?php echo '$Bitte wählen Sie das gewünschte Angebot durch Klick auf das Angebot.£'; ?></p>
+                <p class="lead"><?php echo $wordings['bitte_waehlen_sie_das_gewuenschte_angebot_durch_klick_auf_das_angebot'] ?? ''; ?></p>
                 <div class="row js-workshop-modal-list ps-3 pe-3"></div>
             </div>
         </div>
@@ -834,7 +746,7 @@
         name="registration_action"
         value="next"
         class="btn btn-primary btn-lg mt-3 float-right js-final-button">
-            <?php echo '$Weiter in der Anmeldung£'; ?>
+            <?php echo $wordings['weiter_in_der_anmeldung'] ?? ''; ?>
         </button>
 </div>
 
@@ -937,7 +849,10 @@
                 var workshopId = template.getAttribute('data-workshop') || '';
                 var node = template.content.firstElementChild.cloneNode(true);
 
-                if (selectedIds.indexOf(workshopId) !== -1) {
+                var workshopItem = node.querySelector('.js-workshop-item');
+                var isBookedOut  = workshopItem && workshopItem.getAttribute('data-booked-out') === '1';
+
+                if (isBookedOut) {
                     node.classList.remove('js-workshop-select');
                     node.classList.remove('workshop-select');
                     node.classList.add('workshop-select-denied');

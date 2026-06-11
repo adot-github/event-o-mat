@@ -34,7 +34,6 @@ class Event_Registration {
         if ($existing_cookie !== '') {
             return array(
                 'success' => true,
-                'message' => 'Für die Anmedung muss es erlaubt sein, dass wir ein Cookie mit einer Identifikations-Nummer setzen können. Ihr System erlaubt das und ist kompatibel für die Anmeldung.',
                 'cookie'  => $existing_cookie,
             );
         }
@@ -51,7 +50,6 @@ class Event_Registration {
 
             return array(
                 'success' => true,
-                'message' => 'Für die Anmedung muss es erlaubt sein, dass wir ein Cookie mit einer Identifikations-Nummer setzen können. Ihr System erlaubt das und ist kompatibel für die Anmeldung.',
                 'cookie'  => $posted_cookie,
             );
         }
@@ -63,14 +61,13 @@ class Event_Registration {
         if ($set_result) {
             return array(
                 'success' => true,
-                'message' => 'Für die Anmedung muss es erlaubt sein, dass wir ein Cookie mit einer Identifikations-Nummer setzen können. Ihr System erlaubt das und ist kompatibel für die Anmeldung.',
                 'cookie'  => $uuid,
             );
         }
 
         return array(
             'success' => false,
-            'message' => 'Ihr System ist nicht kompatibel für die Anmeldung. Sie müssen erlauben, dass wir ein Cookie mit einer Identifikations-Nummer setzen können.',
+            'message' => 'Für die Anmedung muss es erlaubt sein, dass wir ein Cookie mit einer Kunden-Nummer setzen können. Ihr System erlaubt das nicht und eine Anmeldung ist deshalb nicht möglich.',
             'cookie'  => '',
         );
     }
@@ -191,7 +188,7 @@ class Event_Registration {
         if (!empty($_POST['registration_action'])) {
             $action = sanitize_key(wp_unslash($_POST['registration_action']));
 
-            if (in_array($action, array('prev', 'next', 'finish'), true)) {
+            if (in_array($action, array('prev', 'next', 'finish', 'new_registration'), true)) {
                 return $action;
             }
         }
@@ -360,9 +357,9 @@ class Event_Registration {
             </style>
         ';
 
-        $greeting_text = $wordings['t74GutenTag'] ?? 'Guten Tag';
-        $notice_text   = $wordings['t76BitteBeachtenSieIhreAnmeldungIstVerbindlichAbmeldungen'] ?? '';
-        $subject_text  = $wordings['t79IhreAnmeldung'] ?? 'Ihre Anmeldung';
+        $greeting_text = $wordings['guten_tag'] ?? 'Guten Tag';
+        $notice_text   = $wordings['bitte_beachten_sie_ihre_anmeldung_ist_verbindlich_abmeldungen'] ?? '';
+        $subject_text  = $wordings['ihre_anmeldung'] ?? 'Ihre Anmeldung';
 
         $show_email_text = '
             <p>' . esc_html($greeting_text) . ' ' . esc_html(trim($first_name . ' ' . $last_name)) . '<br><br>'
