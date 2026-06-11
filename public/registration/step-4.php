@@ -260,7 +260,6 @@ $str_institution_City     = $get_saved_value('str_institution_City');
 
 ?>
 
-
 <div class="container my-4 registration-step-4">
 
     <fieldset>
