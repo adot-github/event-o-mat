@@ -166,6 +166,10 @@
             display: flex;
             gap: .75rem;
         }
+
+        .event-registration-wrapper p, .event-registration-wrapper li, .event-registration-wrapper td, .event-registration-wrapper th, .event-registration-wrapper label  {
+            font-size:1rem;
+        }
     </style>
 
     <div class="event-registration-wrapper">

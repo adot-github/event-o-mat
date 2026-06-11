@@ -269,7 +269,7 @@ $str_institution_City     = $get_saved_value('str_institution_City');
             <div class="col-12 col-md-9 form-field radio-group">
 
                 <h3 style="margin-bottom:10px;"><?php echo $wordings['angaben_zur_verrechnung'] ?? ''; ?></h3>
-                <?php echo $wordings['die_rechung_wird_ausgestellt_auf'] ?? ''; ?>
+                <p><?php echo $wordings['die_rechung_wird_ausgestellt_auf'] ?? ''; ?></p>
 
                 <label>
                     <input type="radio"
