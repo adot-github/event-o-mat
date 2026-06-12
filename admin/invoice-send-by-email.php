@@ -1,10 +1,6 @@
 <?php
-// Add filter, which will return Instance of the Class above with the config for the component
-add_filter('adot_email_sendout_datasource', function() {
-    require_once dirname(EVENT_REGISTRATION_DIR) . '/classes/class-email-invoice.php';
-    $email_sendout = new Email_Invoice();    
-    return $email_sendout;
-});
+require_once dirname(EVENT_REGISTRATION_DIR) . '/classes/class-email-invoice.php';
+$email_sendout_datasource = new Email_Invoice();    
 
 // Include the component's admin page. All the options (like parent menu, labels, etc. Are stored in above config class)
 include ADOT_SYS_COMPONENTS_PATH . '/email_sendout/admin.php';

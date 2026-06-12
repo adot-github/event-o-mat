@@ -18,9 +18,9 @@ class Email_Invoice extends AdotEmailSendoutDatasource {
                 'attachement_pdf'=> 'Rechnung als PDF mitsenden',
                 'change_billing_status' => 'Rechnungsstatus der belieferten Personen aktualisieren'
             ],
-            'tags_default' => "attachement_pdf",
+            'tags_default' => "attachement_pdf,change_billing_status",
             'filters' => [
-                'type' => 'radio',
+                'type' => 'checkbox',
                 //'layout' => 'horizontal',
                 'choices' => [
                     '0' => "Alle Personen, welche die Rechnung noch nicht erhalten haben",
@@ -30,7 +30,8 @@ class Email_Invoice extends AdotEmailSendoutDatasource {
                     '13' => "Alle Personen, welche die dritte Mahnung erhalten haben, aber noch nicht bezahlt haben"
                 ]
             ],
-            "pdf_folder" => wp_upload_dir()["path"],
+            "pdf_folder_abs" => wp_upload_dir()["path"],
+            "pdf_folder_http" => wp_upload_dir()["url"],
             'hide_in_menu' => true
         ], $options));
     }
@@ -55,19 +56,18 @@ class Email_Invoice extends AdotEmailSendoutDatasource {
         $where = [];
         $data = [];
         if ($ids) {
-            $where[] = "{$wpdb->prefix}evtmgr_registrations_billing.id in ({$ids})";
+            $where[] = "id in ({$ids})";
         }
         if ($filters) {
-            $where[] = "{$wpdb->prefix}evtmgr_registrations_billing.int_billing_status in ({$filters})";
+            $where[] = "int_billing_status in ({$filters})";
         }
-        if ($search && $search != "*") {
-            $search = str_replace("*", "%", $search);
-            $search = implode("%", array_map(function($str){
-                global $wpdb;
-                return '%' . $wpdb->esc_like( $str ) . '%';
-            }, explode("%", $search)));
-            $where[] = "label like %s";
-            $data[] = $search;
+
+        if ($search) {
+            $search = implode("%", array_map(function($el) use ($wpdb){
+                return $wpdb->esc_like($el);
+            }, explode("*", $search)));
+            $where[] = "CONCAT(ifnull(str_first_name, '-'), ' ', ifnull(str_last_name, '-'), ', ', ifnull(str_email, '-'), ', ID=', id) like %s";
+            $data[] = '%' . $search . '%';
         }
         if (!count($where)){
             $where[] = '1 = 0';
@@ -75,18 +75,16 @@ class Email_Invoice extends AdotEmailSendoutDatasource {
         $where_str = implode(" AND ", $where);
         $sql = "
             SELECT  
-                {$wpdb->prefix}evtmgr_registrations_billing.id AS id, 
-                CONCAT(str_first_name, ' ', str_last_name, ', ', str_email, ', ID=', {$wpdb->prefix}evtmgr_registrations_billing.id) AS label, 
+                id,
+                CONCAT(ifnull(str_first_name, '-'), ' ', ifnull(str_last_name, '-'), ', ', ifnull(str_email, '-'), ', ID=', id) AS label, 
                 str_email AS email,
                 int_billing_status AS filter_value,
                 str_language AS lang,
-                {$wpdb->prefix}evtmgr_persons.*,
-                {$wpdb->prefix}evtmgr_registrations_billing.fky_congress_id,
-                {$wpdb->prefix}evtmgr_registrations_billing.fky_person_id,
-                {$wpdb->prefix}evtmgr_registrations_billing.id
+                str_invoice_pdf,
+                str_first_name,
+                str_last_name
             FROM 
-                {$wpdb->prefix}evtmgr_persons INNER JOIN 
-                    {$wpdb->prefix}evtmgr_registrations_billing ON {$wpdb->prefix}evtmgr_persons.id = {$wpdb->prefix}evtmgr_registrations_billing.fky_person_id
+                {$wpdb->prefix}evtmgr_persons 
             WHERE 
                 {$where_str}
             ORDER BY label";
@@ -105,9 +103,33 @@ class Email_Invoice extends AdotEmailSendoutDatasource {
     }
 
     public function get_attachments(array $st_person, string $tags): array {
+
+        if (!$st_person['str_invoice_pdf']){
+            return [];
+        }
+        if (!in_array("attachement_pdf", explode(",", $tags))) {
+            return [];
+        }
         $files = [
-            $this->options["pdf_folder"] . "/{$st_person['str_invoice_pdf']}"
+            [
+                "abs" => $this->options["pdf_folder_abs"] . "/{$st_person['str_invoice_pdf']}",
+                "http" => $this->options["pdf_folder_http"] . "/{$st_person['str_invoice_pdf']}"
+            ]
         ];
         return $files;
+    }
+
+    public function on_send(array $st_person, string $tags){
+        global $wpdb;
+        $billing_status = $st_person["filter_value"];
+        $mapping_update_statuses = [
+            "0" => "1",
+            "1" => "11",
+            "11" => "12",
+            "12" => "13"
+        ];
+        if (in_array("change_billing_status", explode(",", $tags)) && !empty($mapping_update_statuses[$billing_status])) {
+            $wpdb->update("{$wpdb->prefix}evtmgr_persons", ["int_billing_status" => $mapping_update_statuses[$billing_status]], ["id" => $st_person["id"]]);
+        }
     }
 }

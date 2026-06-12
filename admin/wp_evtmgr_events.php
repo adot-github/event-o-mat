@@ -18,11 +18,12 @@ add_action('wp_head', function () {
             background: #111 !important;
         }
     </style>
+    <link rel='stylesheet' href='/wp-content/themes/picostrap5-child-base/db-custom/event-registration/pages/assets/dashboard.css' media='all' />
     <?php
 }, 0);
 ?>
 
-<link rel='stylesheet' href='/wp-content/themes/picostrap5-child-base/db-custom/event-registration/pages/assets/dashboard.css' media='all' />
+
 
 <?php
     if (!defined('ABSPATH')) {
