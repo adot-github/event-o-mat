@@ -22,22 +22,23 @@ h4 {
     line-height: 1.2;
 }
 
+
 .session {
     background: rgba(255, 255, 255, 0.95);
     border: 0 solid #f09;
-    border-top: 2.5px solid #f09;
+    border-top: 2.5px solid #c06ca9;
     color: #000;
     border-radius: 0;
 }
 
 .session.pitch {
-    background: #c06ca9;
-    border-color: #c06ca9;
+    background: #d59cc5;
+    border-color: #d59cc5;
     color: #fff;
 }
 
 .session.info {
-    background: #8b036b;
+    background: #c06ca9;
     border-color: #c06ca9;
     color: #fff !important;
 }
@@ -48,10 +49,11 @@ h4 {
     color: #fff;
 }
 
-.stage-headline {
+.stage-headline, .timetable--inner-head {
     color: #fff;
-    background: #8b036b;
+    background: #c06ca9;
     margin-left: 1rem;
+    margin:0;
 }
 
 .hours time {
@@ -60,3 +62,10 @@ h4 {
     padding: 0.75rem 0;
 }
 
+.timetable p, .timetable li, .timetable time {
+    font-size:1rem;
+}
+
+.timetable h3 {
+    font-size:1.25rem;
+}

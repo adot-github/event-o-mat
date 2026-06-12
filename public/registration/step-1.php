@@ -5,11 +5,14 @@
 <style>
     .js-workshop-item {
         position: relative;
+        border:1.5px solid rgba(255,255,255,.5);
+        padding:.5rem;
+        border-radius:.5rem;
     }
 
     .js-workshop-close {
         position: absolute;
-        top: -10px;
+        top: 8px;
         right: 10px;
         z-index: 5;
 
@@ -21,8 +24,7 @@
         justify-content: center;
 
         background: rgba(255,255,255,.5);
-        border: 2px solid #333;
-        color: #333;
+        border: 2px solid rgba(0,0,0,.5);
 
         font-size: 24px;
         color:black !important;
@@ -44,7 +46,7 @@
         font-size: 30px;
         line-height: 1;
         font-weight: 700;
-        color: #fff;
+        color: rgba(0,0,0,.5);
         margin-top:-3px;
     }
 

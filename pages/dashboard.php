@@ -1,6 +1,4 @@
-﻿<link rel='stylesheet' href='/wp-content/themes/picostrap5-child-base/db-custom/event-registration/pages/assets/dashboard.css' media='all' />
-
-<?php
+﻿<?php
 
 $wp_load = dirname(__FILE__, 7) . '/wp-load.php';
 

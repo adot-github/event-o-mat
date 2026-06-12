@@ -1,5 +1,4 @@
-﻿<link rel='stylesheet' href='/wp-content/themes/picostrap5-child-base/db-custom/event-registration/pages/assets/dashboard.css' media='all' />
-
+﻿
 <style>
 .event-report-table-scroll {
     width: 100%;

@@ -569,3 +569,21 @@ a.button {
 .cke_bottom {
 	background-color: #c6c2ca !important;
 }
+
+/* Chrome, Edge, Safari */
+::-webkit-scrollbar-track {
+  background-color: #73617f !important;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: #888;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background-color: #555;
+}
+
+/* Firefox */
+* {
+  scrollbar-color: #888 #73617f;
+}

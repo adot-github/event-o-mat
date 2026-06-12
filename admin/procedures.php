@@ -4,7 +4,7 @@ $editor->add_page_config([
     'menu' => [
         'menu_parent'=> $root_config_id,
         'page_title' => "Dashboard",
-        'menu_title' => "Dashboard",
+        'menu_title' => "DASHBOARD",
         'icon'       => get_stylesheet_directory_uri() . '/db-custom/lernorte/admin/assets/fhnw-logo-weiss.svg',
         'position'   => 0
     ],
@@ -17,7 +17,7 @@ $editor->add_page_config([
         'menu_parent'=> $root_config_id,
         'page_title' => "EVENT",
         'menu_title' => "EVENT",
-        'position'   => 20
+        'position'   => 1
     ],
     'page' => 'dashboard-event'
 ]);
@@ -28,7 +28,7 @@ $editor->add_page_config([
         'menu_parent'=> $root_config_id,
         'page_title' => "WORKSHOPS",
         'menu_title' => "WORKSHOPS",
-        'position'   => 20
+        'position'   => 2
     ],
     'page' => 'dashboard-workshop'
 ]);
@@ -40,7 +40,7 @@ $editor->add_page_config([
         'menu_parent'=> $root_config_id,
         'page_title' => "ANMELDUNGEN",
         'menu_title' => "ANMELDUNGEN",
-        'position'   => 20
+        'position'   => 2
     ],
     'page' => 'dashboard-anmeldungen'
 ]);
@@ -201,6 +201,10 @@ $adot_evtmgr_hidden_sys_pages = array(
         'menu_slug'         => 'adot_evtmgr_persons',
         'active_submenu'    => 'dashboard',
     ),
+    array(
+        'menu_slug'         => 'adot_evtmgr_presenters',
+        'active_submenu'    => 'dashboard',
+    ),
 );
 
 add_action('admin_menu', function () use ($adot_evtmgr_hidden_pages) {
@@ -232,7 +236,7 @@ add_action('admin_head', function () use ($adot_evtmgr_hidden_pages,$adot_evtmgr
         echo ' #adminmenu a[href*="page=' . esc_attr($page['menu_slug']) . '"] { display: none !important; }';
     }
     foreach ($adot_evtmgr_hidden_sys_pages as $page) {
-        echo ' #adminmenu a[href*="page=' . esc_attr($page['menu_slug']) . '"] { display: none !important ££££; }';
+        echo ' #adminmenu a[href*="page=' . esc_attr($page['menu_slug']) . '"] { display: none !important; }';
     }
     echo '</style>';
 });
