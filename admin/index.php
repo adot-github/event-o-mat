@@ -1,11 +1,4 @@
 <?php
-    wp_enqueue_style(
-        'event-registration-admin-theme',
-        get_stylesheet_directory_uri() . '/db-custom/event-registration/admin/css/admin-bootstrap-theme.css',
-        array('bootstrap-5'),
-        '1.0.0'
-    );
-
 (function(){
     if (!function_exists('Adot_DB_Editor')) {
         return;
@@ -18,5 +11,9 @@
     require_once __DIR__ . '/wp_evtmgr_timezones.php';
     require_once __DIR__ . '/wp_evtmgr_pricing.php';
     require_once __DIR__ . '/wp_evtmgr_wordings.php';
+
+    require_once __DIR__ . '/diploma-send-by-email.php';
+    require_once __DIR__ . '/invoice-send-by-email.php';
+
     require_once __DIR__ . '/procedures.php';
 })();

@@ -141,6 +141,7 @@ $adot_evtmgr_hidden_pages = array(
         'file'              => '/db-custom/event-registration/pages/etiketten-pdf-create.php',
         'active_submenu'    => 'dashboard-anmeldungen',
     ),
+    /*
     array(
         'page_title'        => '> invoice-send-by-email',
         'menu_title'        => '> invoice-send-by-email',
@@ -149,6 +150,7 @@ $adot_evtmgr_hidden_pages = array(
         'file'              => '/db-custom/event-registration/pages/invoice-send-by-email.php',
         'active_submenu'    => 'dashboard-anmeldungen',
     ),
+    */
     array(
         'page_title'        => '> report-persons',
         'menu_title'        => '> report-persons',
@@ -166,6 +168,7 @@ $adot_evtmgr_hidden_pages = array(
         'file'              => '/db-custom/event-registration/pages/diploma-pdf-create.php',
         'active_submenu'    => 'dashboard-anmeldungen',
     ),
+    /*
     array(
         'page_title'        => '> diploma-send-by-email',
         'menu_title'        => '> diploma-send-by-email',
@@ -174,6 +177,7 @@ $adot_evtmgr_hidden_pages = array(
         'file'              => '/db-custom/event-registration/pages/diploma-send-by-email.php',
         'active_submenu'    => 'dashboard-anmeldungen',
     ),
+    */
     array(
         'page_title'        => '> person-program-pdf-create',
         'menu_title'        => '> person-program-pdf-create',

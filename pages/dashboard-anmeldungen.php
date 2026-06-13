@@ -104,14 +104,14 @@ $manual_links = array(
         'str_url'         => '/wp-admin/admin.php?page=invoice-send-by-email',
         'mem_description' => 'Erstellt eine Rechnung als PDF für alle angemeldeten Personen',
     ),
-
+    
     array(
         'str_group'       => 'Teilnahmebestätigungen',
         'str_title'       => 'Teilnahmebestätigungen für Teilnehmende als PDF erstellen',
         'str_url'         => '/wp-admin/admin.php?page=diploma-pdf-create',
         'mem_description' => 'Erstellt eine Teilnahmebestätigung als PDF für alle angemeldeten Personen',
     ),
-
+    
     array(
         'str_group'       => 'Teilnahmebestätigungen',
         'str_title'       => 'Teilnahmebestätigungen versenden',
