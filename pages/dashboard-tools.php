@@ -1,0 +1,35 @@
+
+<?php
+$manual_links = array(
+    array(
+        'str_group'       => 'Dateiablage',
+        'str_title'       => 'Dateiablage bereinigen',
+        'str_url'         => '/wp-admin/admin.php?page=filestorage-clean',
+        'mem_description' => 'Alle generierten Dateien des aktuellen Events löschen (Tickets, Rechnungen, Diplome, etc.).',
+    ),
+    array(
+        'str_group'       => 'Wordings',
+        'str_title'       => 'Wordings bearbeiten',
+        'str_url'         => '/wp-admin/admin.php?page=adot_evtmgr_wordings',
+        'mem_description' => 'Texte in der Anmeldung bearbeiten',
+    ),
+    array(
+        
+        'str_group'       => 'Wordings',
+        'str_title'       => 'Wordings extrahieren',
+        'str_url'         => '/wp-admin/admin.php?page=wordings-extract',
+        'mem_description' => 'Neue Wordings finden und extrahieren.',
+    ),
+    array(
+        'str_group'       => 'Wordings',
+        'str_title'       => 'Wordings scannen',
+        'str_url'         => '/wp-admin/admin.php?page=wordings-scan',
+        'mem_description' => 'Anzahl Verwendungen in der Datenbank aktualisieren.',
+    ),    
+);
+
+?>
+
+<?php
+    include ('dashboard-card-2.php');
+?>

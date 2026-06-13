@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 
     if (!defined('ABSPATH')) {
         exit;
@@ -168,6 +168,112 @@
     }
 
     /**
+     * 4.5 Generate ticket PDF and attach to confirmation email.
+     */
+    $ticket_pdf_attachments = [];
+
+    if (empty($error_messages) && $person_id > 0) {
+        try {
+            global $wpdb;
+
+            $wpdb->query(
+                "ALTER TABLE {$wpdb->prefix}evtmgr_persons
+                 ADD COLUMN IF NOT EXISTS str_ticket_pdf VARCHAR(255) NOT NULL DEFAULT ''"
+            );
+
+            if (isset($persons_obj) && method_exists($persons_obj, 'person_update_ticket_pdf')) {
+                $persons_obj->person_update_ticket_pdf($event_uid ?? '');
+            }
+
+            $ticket_person = $wpdb->get_row(
+                $wpdb->prepare("SELECT * FROM {$wpdb->prefix}evtmgr_persons WHERE id = %d", $person_id),
+                ARRAY_A
+            );
+
+            if (!empty($ticket_person)) {
+                $pages_dir = get_stylesheet_directory() . '/db-custom/event-registration/pages/';
+
+                require_once get_stylesheet_directory() . '/db-custom/event-registration/classes/class-pdf-creation.php';
+
+                $events_class_file = get_stylesheet_directory() . '/db-custom/event-registration/classes/class-evtmgr-events.php';
+                if (!class_exists('Evtmgr_Events') && file_exists($events_class_file)) {
+                    require_once $events_class_file;
+                }
+
+                $pdf_creator = new Event_Registration_Pdf_Creation($pages_dir);
+                $layout      = $pdf_creator->load_pdf_layout('dachverband-ticket.php');
+
+                $ticket_event    = [];
+                $str_event_name_ = '';
+                $dtm_event_date  = '';
+
+                if (class_exists('Evtmgr_Events')) {
+                    $ev_obj          = new Evtmgr_Events();
+                    $ticket_event    = (array) ($ev_obj->get_events_by_event_uid($event_uid ?? '', 'de') ?? []);
+                    $str_event_name_ = $ticket_event['str_event_name'] ?? $ticket_event['str_event_name_de'] ?? '';
+                    $dtm_event_date  = $pdf_creator->format_date((string) ($ticket_event['dtm_event_date'] ?? ''));
+                }
+
+                $person_lang = strtolower(trim($pdf_creator->value_ci($ticket_person, 'str_language', $current_lang)));
+                if ($person_lang === '') {
+                    $person_lang = $current_lang;
+                }
+
+                $file_name = $pdf_creator->file_name_from_person_field($ticket_person, 'str_ticket_pdf');
+
+                if ($file_name !== '') {
+                    $person_event_name     = $pdf_creator->event_text_by_language($ticket_event, 'str_event_name', $person_lang, $str_event_name_);
+                    $person_event_subtitle = $pdf_creator->event_text_by_language($ticket_event, 'str_event_subtitle', $person_lang, '');
+
+                    $image_replacements = $pdf_creator->get_image_replacements($layout);
+                    $text_replacements  = $pdf_creator->text_replacements($layout, $person_lang);
+                    $core_replacements  = $pdf_creator->person_replacements($ticket_person, [
+                        '{str_language}'          => esc_attr($person_lang),
+                        '{str_event_name}'        => esc_html($person_event_name),
+                        '{str_event_subtitle}'    => esc_html($person_event_subtitle),
+                        '{str_event_subtitle_de}' => esc_html($person_event_subtitle),
+                        '{id}'                    => esc_html($pdf_creator->get_person_id($ticket_person)),
+                        '{dtm_event_date}'        => esc_html($dtm_event_date),
+                    ]);
+
+                    $callback_replacements = [];
+                    if (!empty($layout['per_person_callback']) && is_callable($layout['per_person_callback'])) {
+                        $callback_replacements = (array) call_user_func(
+                            $layout['per_person_callback'],
+                            $ticket_person,
+                            $ticket_event,
+                            $person_lang
+                        );
+                    }
+
+                    $all_replacements = array_merge($image_replacements, $text_replacements, $core_replacements, $callback_replacements);
+                    $html             = $pdf_creator->render_html((string) $layout['html_template'], $all_replacements);
+                    $html             = strtr($html, $all_replacements);
+
+                    $docraptor = $pdf_creator->create_docraptor_client();
+
+                    $doc = new DocRaptor\Doc();
+                    $doc->setTest(true);
+                    $doc->setDocumentType('pdf');
+                    $doc->setName($file_name);
+                    $doc->setDocumentContent($html);
+
+                    $pdf_data = $docraptor->createDoc($doc);
+
+                    $pdf_path  = $pdf_creator->get_pdf_path('tickets', $event_uid ?? '');
+                    $pdf_creator->ensure_directory($pdf_path);
+                    $full_path = rtrim($pdf_path, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR . $file_name;
+                    file_put_contents($full_path, $pdf_data);
+
+                    $ticket_pdf_attachments = [$full_path];
+                }
+            }
+        } catch (Throwable $e) {
+            // PDF failure must not block the confirmation email.
+        }
+    }
+
+    /**
      * 5. Send confirmation email.
      */
 
@@ -185,7 +291,8 @@
                 $registration_values,
                 $event_uid ?? '',
                 $customer_cookie ?? '',
-                $current_lang
+                $current_lang,
+                $ticket_pdf_attachments
             );
 
             if (!$confirmation_email_sent) {
@@ -225,7 +332,7 @@
 
 <div class="container my-4 registration-step-5">
 
-    <h2><?php echo $wordings['ihre_registrierung_ist_abgeschlossen'] ?? ''; ?></h2>
+    <h2><?php echo $wordings['ihre_registrierung_ist_abgeschlossen'] ?? 'ihre_registrierung_ist_abgeschlossen'; ?></h2>
 
     <?php if ($debug_step5) : ?>
         <pre style="background:#111;color:#0f0;padding:12px;white-space:pre-wrap;overflow:auto;">
@@ -234,18 +341,14 @@
     customer_cookie:
     <?php echo esc_html($customer_cookie ?? ''); ?>
 
-
     event_uid:
     <?php echo esc_html($event_uid ?? ''); ?>
-
 
     lang:
     <?php echo esc_html($lang ?? ''); ?>
 
-
     registration_values:
     <?php print_r($registration_values); ?>
-
 
     person_save_result:
     <?php print_r($person_save_result); ?>
@@ -253,15 +356,11 @@
     person_id:
     <?php print_r($person_id); ?>
 
-
-
     registration_workshops_saved:
     <?php print_r($registration_workshops_saved); ?>
 
-
     registration_billing_saved:
     <?php print_r($registration_billing_saved); ?>
-
 
     workshop_sync_result:
     <?php print_r($workshop_sync_result); ?>
@@ -269,22 +368,17 @@
     workshop_sync_success:
     <?php print_r($workshop_sync_success); ?>
 
-
     confirmation_email_sent:
     <?php print_r($confirmation_email_sent); ?>
-
 
     email_error:
     <?php echo esc_html($email_error ?: ($GLOBALS['event_registration_last_email_error'] ?? '')); ?>
 
-
     last_query:
     <?php echo esc_html($GLOBALS['wpdb']->last_query ?? ''); ?>
 
-
     last_error:
     <?php echo esc_html($GLOBALS['wpdb']->last_error ?? ''); ?>
-
 
     error_messages:
     <?php print_r($error_messages); ?>
@@ -302,8 +396,8 @@
     ) : ?>
 
         <div class="alert alert-success">
-            <?php echo $wordings['ihre_registrierung_wurde_erfolgreich_gespeichert'] ?? ''; ?>
-            <?php echo $wordings['eine_bestaetigungs_e_mail_wurde_an_die_angegebene_e_mail_adresse_versendet'] ?? ''; ?>
+            <?php echo $wordings['ihre_registrierung_wurde_erfolgreich_gespeichert'] ?? 'ihre_registrierung_wurde_erfolgreich_gespeichert'; ?>
+            <?php echo $wordings['eine_bestaetigungs_e_mail_wurde_an_die_angegebene_e_mail_adresse_versendet'] ?? 'eine_bestaetigungs_e_mail_wurde_an_die_angegebene_e_mail_adresse_versendet'; ?>
         </div>
 
         <?php if ($debug_step5) : ?>
@@ -319,7 +413,7 @@
     <?php else : ?>
 
         <div class="alert alert-danger">
-            <?php echo $wordings['die_registrierung_konnte_nicht_vollstaendig_abgeschlossen_werden'] ?? ''; ?>
+            <?php echo $wordings['die_registrierung_konnte_nicht_vollstaendig_abgeschlossen_werden'] ?? 'die_registrierung_konnte_nicht_vollstaendig_abgeschlossen_werden'; ?>
         </div>
 
         <?php if (!empty($error_messages)) : ?>
@@ -339,14 +433,13 @@
 
     <?php endif; ?>
 
-
     <div class="mt-4">
         <button type="submit"
                 name="registration_action"
                 value="new_registration"
                 class="btn btn-secondary"
                 formnovalidate>
-            <?php echo '$Weitere Anmeldung tätigen£'; ?>
+            <?php echo $wordings['weitere_anmeldung_taetigen'] ?? 'weitere_anmeldung_taetigen'; ?>
         </button>
     </div>
 

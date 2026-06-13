@@ -1,4 +1,4 @@
-<div class="stage" style="--column: 2;">
+﻿<div class="stage" style="--column: 2;">
         <h2 class="stage-headline m-0">Programm</h2>
 
         <ol class="session-list">
@@ -24,16 +24,16 @@
 
                         <?php if (!empty($session['show_time_in_output'])) : ?>
                             <span class="time">
-                                <?php echo esc_html($session['time_label_from']); ?>–<?php echo esc_html($session['time_label_to']); ?>
+                                <?php echo esc_html($session['time_label_from']); ?>–<?php echo esc_html($session['time_label_to']); ?> Uhr
                             </span>
                         <?php endif; ?>
 
-                        <h3 class="session-title m-0">
+                        <h3 class="session-title mb-1 mt-2">
                                 <?php echo esc_html($session['timezone_name']); ?>
                             </h3>
 
                             <?php if (trim((string) $session['timezone_text']) !== '') : ?>
-                                <p><?php echo wp_kses_post($session['timezone_text']); ?></p>
+                                <?php echo wp_kses_post($session['timezone_text']); ?>
                             <?php endif; ?>
 
                             <?php if (!empty($session['presenters'])) : ?>
@@ -71,23 +71,23 @@
 
                             <div class="mt-2">
                                 <span class="mr-1">
-                                    <?php echo $wordings['anzahl_angebote_zur_auswahl'] ?? ''; ?>
+                                    <?php echo $wordings['anzahl_angebote_zur_auswahl'] ?? 'anzahl_angebote_zur_auswahl'; ?>
                                     <?php echo esc_html((string) $session['workshop_count']); ?>
                                 </span>
 
                                 <a href="#" class="btn btn-select-workshop btn-sm js-workshop-add ps-2 pe-2">
-                                    <?php echo $wordings['angebot_auswaehlen'] ?? ''; ?>
+                                    <?php echo $wordings['angebot_auswaehlen'] ?? 'angebot_auswaehlen'; ?>
                                 </a>
                             </div>
 
                             <div class="row">
                                 <div class="col-md-12">
                                     <div class="js-workshops-label js-workshops-label-no mt-2">
-                                        <?php echo $wordings['sie_haben_noch_kein_angebot_gewaehlt'] ?? ''; ?>
+                                        <?php echo $wordings['sie_haben_noch_kein_angebot_gewaehlt'] ?? 'sie_haben_noch_kein_angebot_gewaehlt'; ?>
                                     </div>
 
                                     <div class="js-workshops-label js-workshops-label-yes mt-2" style="display:none">
-                                        <?php echo $wordings['sie_haben_folgendes_angebot_gewaehlt'] ?? ''; ?>
+                                        <?php echo $wordings['sie_haben_folgendes_angebot_gewaehlt'] ?? 'sie_haben_folgendes_angebot_gewaehlt'; ?>
                                     </div>
                                 </div>
                             </div>

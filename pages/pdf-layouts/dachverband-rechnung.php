@@ -23,46 +23,141 @@ return array(
     ),
 
     /*
-     * Language-specific content placeholders.
-     * These values may contain HTML and may also contain other placeholders
-     * such as {str_first_name}, {str_last_name}, {dtm_event_date}.
+     * Per-person dynamic replacements: address block, invoice text, bill total.
+     * Called once per person inside the PDF generation loop.
      */
-    'texts' => array(
-        'de' => array(
-            'teilnamebestaetigung' => 'TEILNAHME-<br> BESTÄTIGUNG',
-            'invoice_text'    => '
-BETRAG 110.00 CHF<br>
-Datum: 25.11.2025<br>
-Zeit : 9.30–17.00 Uhr<br>
-Ort : Welle 7, Schanzenstrasse 5, 3008 Bern<br>
-Gebühr für: Jacqueline Gabi Pauli<br>
-Die Rechnung gilt gleichzeitig als Teilnahmebestätigung<br>
-Wir bedanken uns für die Überweisung innerhalb von 10 Tagen nach Rechnungsstellung.',
-        ),
-        'fr' => array(
-            'teilnamebestaetigung' => 'CONFIRMATION<br>DE PARTICIPATION',
-            'invoice_text'    => 'L\'association faîtière suisse<br>
-Lecture et écriture confirme que<br><br>
-<span class="participant-name">{str_first_name} {str_last_name}</span><br><br>
-a participé, le {dtm_event_date}, au<br>
-colloque national sur les compétences de base.',
-        ),
-        'it' => array(
-            'teilnamebestaetigung' => 'CONFERMA DI PARTECIPAZIONE',
-            'invoice_text'    => 'L\'associazione mantello svizzera<br>
-Leggere e scrivere conferma che<br><br>
-<span class="participant-name">{str_first_name} {str_last_name}</span><br><br>
-ha partecipato il {dtm_event_date} al convegno nazionale<br>
-sulle competenze di base.',
-        ),
-    ),
+    'per_person_callback' => static function(array $person, array $event = [], string $person_lang = ''): array {
+        global $wpdb;
+
+        $p    = array_change_key_case($person, CASE_LOWER);
+        $lang = $person_lang !== '' ? $person_lang : strtolower(trim($p['str_language'] ?? 'de'));
+
+        $wordings = [
+            'de' => [
+                'rechnung'        => 'Rechnung',
+                'rechnungsnummer' => 'Rechnungsnummer:',
+                'gebuehr_fuer'    => 'Gebühr für:',
+                'total'           => 'Total',
+                'mwst'            => 'inkl. 8.1% MWSt.',
+                'danke'           => 'Wir bedanken uns für die Überweisung innerhalb von 10 Tagen.',
+            ],
+            'fr' => [
+                'rechnung'        => 'Facture',
+                'rechnungsnummer' => 'N° de facture :',
+                'gebuehr_fuer'    => 'Émoluments pour :',
+                'total'           => 'Total',
+                'mwst'            => 'TVA 8.1% incluse.',
+                'danke'           => 'Nous vous remercions de votre virement dans un délai de 10 jours.',
+            ],
+            'it' => [
+                'rechnung'        => 'Fattura',
+                'rechnungsnummer' => 'N. fattura:',
+                'gebuehr_fuer'    => 'Emolumento per:',
+                'total'           => 'Totale',
+                'mwst'            => 'IVA 8.1% inclusa.',
+                'danke'           => 'La ringraziamo per il bonifico entro 10 giorni.',
+            ],
+        ];
+
+        $w    = $wordings[$lang] ?? $wordings['de'];
+
+        /* ---- language-specific event name ---- */
+        $event_lc = array_change_key_case($event, CASE_LOWER);
+        $str_event_name = '';
+        foreach (['str_event_name_' . $lang, 'str_event_name_de', 'str_event_name'] as $key) {
+            $val = trim($event_lc[$key] ?? '');
+            if ($val !== '') {
+                $str_event_name = $val;
+                break;
+            }
+        }
+
+        $type = (int) ($p['int_type_of_address'] ?? 1);
+
+        /* ---- address block ---- */
+        if ($type === 2) {
+            $parts = array_filter([
+                esc_html($p['str_institution'] ?? ''),
+                esc_html($p['str_institution_division'] ?? ''),
+                trim(esc_html($p['str_first_name'] ?? '') . ' ' . esc_html($p['str_last_name'] ?? '')),
+                esc_html($p['str_institution_address'] ?? ''),
+                trim(esc_html($p['str_institution_zip'] ?? '') . ' ' . esc_html($p['str_institution_city'] ?? '')),
+            ]);
+            $address_block = implode('<br>', $parts);
+        } else {
+            $address_block =
+                trim(esc_html($p['str_first_name'] ?? '') . ' ' . esc_html($p['str_last_name'] ?? '')) . '<br>' .
+                esc_html($p['str_address'] ?? '') . '<br>' .
+                trim(esc_html($p['str_zip'] ?? '') . ' ' . esc_html($p['str_city'] ?? ''));
+        }
+
+        /* ---- billing rows ---- */
+        $person_id = absint($p['id'] ?? $p['fky_person_id'] ?? 0);
+
+        $rows = $person_id > 0 ? (array) $wpdb->get_results(
+            $wpdb->prepare(
+                "SELECT str_billing_text, str_billing_text_detail, int_price
+                   FROM {$wpdb->prefix}evtmgr_registrations_billing
+                  WHERE fky_person_id = %d
+               ORDER BY id ASC",
+                $person_id
+            ),
+            ARRAY_A
+        ) : [];
+
+        $bill_total   = 0.0;
+        $billing_rows = '';
+
+        /* cell styles — inline for Outlook/PDF compatibility */
+        $td   = 'padding:2px 5px;vertical-align:top;';
+        $td_r = $td . 'text-align:right;white-space:nowrap;';
+
+        foreach ($rows as $row) {
+            $row         = array_change_key_case((array) $row, CASE_LOWER);
+            $text        = esc_html($row['str_billing_text'] ?? '');
+            $detail      = esc_html($row['str_billing_text_detail'] ?? '');
+            $price       = (float) ($row['int_price'] ?? 0);
+            $bill_total += $price;
+
+            $billing_rows .=
+                '<tr>' .
+                    '<td style="' . $td . '">' . $text . '<br>' . $detail . '</td>' .
+                    '<td style="' . $td_r . '">' . number_format($price, 2, '.', "'") . '</td>' .
+                '</tr>';
+        }
+
+        $total_fmt  = number_format($bill_total, 2, '.', "'");
+        $first_name = esc_html($p['str_first_name'] ?? '');
+        $last_name  = esc_html($p['str_last_name'] ?? '');
+
+        $invoice_text =
+            '<table cellpadding="0" cellspacing="0" style="width:100%;border-collapse:collapse;font-size:inherit;color:inherit;line-height:1.2">' .
+            '<tr><td colspan="2" style="' . $td . '">' . $w['gebuehr_fuer'] . ' ' . $first_name . ' ' . $last_name . '</td></tr>' .
+            $billing_rows .
+            '<tr>' .
+                '<td style="' . $td . 'border-top:1px solid #315d7d;font-weight:bold;"><strong>' . $w['total'] . '</strong></td>' .
+                '<td style="' . $td_r . 'border-top:1px solid #315d7d;font-weight:bold;"><strong>' . $total_fmt . '</strong></td>' .
+            '</tr>' .
+            '<tr><td colspan="2" style="border:none;padding-top:20px;">' . $w['mwst'] . '</td></tr>' .
+            '<tr><td colspan="2" style="border:none;padding-top:6px;">' . $w['danke'] . '</td></tr>' .
+            '</table>';
+
+        return [
+            '{address_block}'        => $address_block,
+            '{invoice_text}'         => $invoice_text,
+            '{bill_total}'           => $total_fmt,
+            '{wording_rechnung}'     => $w['rechnung'],
+            '{wording_rechnungsnr}'  => $w['rechnungsnummer'],
+            '{str_event_name}'       => esc_html($str_event_name),
+        ];
+    },
 
     'html_template' => <<<'HTML'
 <!doctype html>
 <html lang="{str_language}">
 <head>
   <meta charset="utf-8">
-  <title>Rechnung</title>
+  <title>{wording_rechnung}</title>
   <style>
     @page {
       size: A4;
@@ -139,10 +234,14 @@ sulle competenze di base.',
       line-height: 1.2;
     }
 
+    .event-title h3 {
+      margin: 0;
+    }
+
     .event-subtitle {
-      margin: 0 0 38mm 0;
       font-size: 12pt;
       line-height: 1.35;
+      margin: 0;
     }
 
     .invoice-text {
@@ -195,7 +294,7 @@ sulle competenze di base.',
     .address_user_ez_1 {
       position: absolute;
       left: 10mm;
-      top: 255mm;
+      top: 254mm;
       z-index: 3;
       font-size: 8pt;
       line-height: 1.2;
@@ -205,7 +304,7 @@ sulle competenze di base.',
     .address_user_ez_2 {
       position: absolute;
       left: 130mm;
-      top: 247mm;
+      top: 245mm;
       z-index: 3;
       font-size: 8pt;
       line-height: 1.2;
@@ -264,29 +363,23 @@ sulle competenze di base.',
     </div>
 
     <div class="address_user">
-      {str_first_name} {str_last_name}<br>
-      {str_address}<br>
-      {str_zip} {str_city}
+      {address_block}
     </div>
 
     <div class="address_user_ez_1">
-      {str_first_name} {str_last_name}<br>
-      {str_address}<br>
-      {str_zip} {str_city}
+      {address_block}
     </div>
 
     <div class="address_user_ez_2">
-      {str_first_name} {str_last_name}<br>
-      {str_address}<br>
-      {str_zip} {str_city}
+      {address_block}
     </div>
 
     <div class="amount_ez_1">
-      CHF 100.00
+      CHF {bill_total}
     </div>
 
     <div class="amount_ez_2">
-      CHF 100.00
+      CHF {bill_total}
     </div>
 
     <div class="rg-datum">
@@ -294,17 +387,16 @@ sulle competenze di base.',
     </div>
 
     <div class="rg-nummer">
-      Rechnungsnummer: {xxxxxxxxxxxxxxx}
+      {wording_rechnungsnr} {id}
     </div>
 
     <div class="event-title">
-        <h3>Rechnung<br>
+        <h3>{wording_rechnung}<br>
         {str_event_name}</h3>
+        <div class="event-subtitle">
+          {str_event_subtitle}
+        </div>
     </div>
-
-      <div class="event-subtitle">
-        {str_event_subtitle}
-      </div>
 
     <div class="content">
       <div class="invoice-text">

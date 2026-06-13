@@ -1,23 +1,4 @@
-<style>
-    input[type="radio"] {
-        transform: scale(1.5);
-        margin-right: 0.5rem;
-    }
-    label {cursor: pointer;}
-    .event-registration-pricing-child td {
-        border-top: 0;
-        padding-top: .25rem;
-        padding-bottom: .25rem;
-    }
-    .event-registration-pricing-total td {
-        border-top: 1px solid #dee2e6;
-        font-weight: 700;
-    }
-    .pricing-group-odd td {
-        background-color: #f5f5f5;
-    }
-</style>
-<?php
+﻿<?php
 
     if (!defined('ABSPATH')) {
         exit;
@@ -31,9 +12,10 @@
         ? $wordings
         : array();
 
-    $event_uid = isset($event_uid) ? sanitize_text_field((string) $event_uid) : '';
-    $lang      = isset($lang) ? sanitize_key((string) $lang) : 'de';
-    $lang_key  = strtoupper($lang);
+    $event_uid   = isset($event_uid) ? sanitize_text_field((string) $event_uid) : '';
+    $lang        = isset($lang) ? sanitize_key((string) $lang) : 'de';
+    $lang_key    = strtoupper($lang);
+    $debug_step2 = isset($_GET['debug_step2']) && $_GET['debug_step2'] === '1';
 
     $selected_workshops = isset($registration_values['selected_workshops'])
         ? sanitize_text_field((string) $registration_values['selected_workshops'])
@@ -130,13 +112,39 @@
 
 <div class="container my-4 event-registration-step-2">
 
+    <?php if ($debug_step2) : ?>
+        <pre style="background:#111;color:#0f0;padding:12px;white-space:pre-wrap;overflow:auto;font-size:11px;">
+STEP 2 DEBUG
+
+event_uid: <?php echo esc_html($event_uid); ?>
+
+lang: <?php echo esc_html($lang); ?>
+
+selected_workshop_ids:
+<?php print_r($selected_workshop_ids); ?>
+
+pricing_group_saved: <?php echo esc_html($pricing_group_saved); ?>
+
+total_cost_saved: <?php echo esc_html($total_cost_saved); ?>
+
+qry_billings:
+<?php print_r($qry_billings); ?>
+
+selected_pricing_option:
+<?php print_r($selected_pricing_option); ?>
+
+registration_values:
+<?php print_r($registration_values); ?>
+        </pre>
+    <?php endif; ?>
+
     <!--<h2>Schritt 2</h2>-->
 
     <?php if (empty($selected_workshop_ids)) : ?>
 
         <div class="alert alert-warning">
             <?php
-                echo $wordings['sie_haben_keine_workshops_ausgewaehlt_bitte_gehen_sie_einen_schritt_zurueck_und_waehlen_sie_die_gewuenschten_workshops'] ?? '';
+                echo $wordings['sie_haben_keine_workshops_ausgewaehlt_bitte_gehen_sie_einen_schritt_zurueck_und_waehlen_sie_die_gewuenschten_workshops'] ?? 'sie_haben_keine_workshops_ausgewaehlt_bitte_gehen_sie_einen_schritt_zurueck_und_waehlen_sie_die_gewuenschten_workshops';
             ?>
         </div>
 
@@ -144,7 +152,7 @@
 
         <header class="h3 mb-3">
             <?php
-            echo $wordings['t85AuswahlFuerDiePreisberechnung'] ?? '';
+            echo $wordings['t85AuswahlFuerDiePreisberechnung'] ?? 't85AuswahlFuerDiePreisberechnung';
             ?>
         </header>
 
@@ -152,7 +160,7 @@
             <div class="alert alert-info">
                 <p class="mb-0">
                     <?php
-                        echo $wordings['die_kosten_fuer_den_kongress_sind_nicht_fuer_alle_teilnehmenden_gleich'] ?? '';
+                        echo $wordings['die_kosten_fuer_den_kongress_sind_nicht_fuer_alle_teilnehmenden_gleich'] ?? 'die_kosten_fuer_den_kongress_sind_nicht_fuer_alle_teilnehmenden_gleich';
                     ?>
                 </p>
             </div>
@@ -291,7 +299,7 @@
                 name="registration_action"
                 value="prev"
                 class="btn btn-secondary">
-            <?php echo $wordings['zurueck'] ?? ''; ?>
+            <?php echo $wordings['zurueck'] ?? 'zurueck'; ?>
         </button>
 
         <?php if (!empty($selected_workshop_ids)) : ?>
@@ -300,7 +308,7 @@
                     value="next"
                     class="btn btn-primary">
                 <?php
-                echo $wordings['weiter_in_der_anmeldung'] ?? '';
+                echo $wordings['weiter_in_der_anmeldung'] ?? 'weiter_in_der_anmeldung';
                 ?>
             </button>
         <?php endif; ?>

@@ -79,6 +79,20 @@ class class_evtmgr_persons {
         );
     }
 
+    /**
+     * Update str_ticket_pdf for all persons of this event where the field is empty.
+     *
+     * @param string $event_uid Event / owner Uid.
+     * @return array Update summary.
+     */
+    public function person_update_ticket_pdf($event_uid) {
+        return $this->person_update_pdf_field(
+            'str_ticket_pdf',
+            $event_uid,
+            'ticket'
+        );
+    }
+
     protected function person_update_pdf_field($target_field, $event_uid, $type) {
         $event_uid = sanitize_text_field((string) $event_uid);
 
@@ -100,7 +114,7 @@ class class_evtmgr_persons {
             return $summary;
         }
 
-        if (!in_array($target_field, array('str_diploma_pdf', 'str_invoice_pdf', 'str_program_pdf'), true)) {
+        if (!in_array($target_field, array('str_diploma_pdf', 'str_invoice_pdf', 'str_program_pdf', 'str_ticket_pdf'), true)) {
             $summary['success']  = false;
             $summary['errors'][] = 'Invalid target field.';
             return $summary;
@@ -301,6 +315,8 @@ class class_evtmgr_persons {
             $last_part = $this->get_invoice_file_suffix($language);
         } elseif ($type === 'program') {
             $last_part = $this->get_program_file_suffix($language);
+        } elseif ($type === 'ticket') {
+            $last_part = $this->get_ticket_file_suffix($language);
         } else {
             $last_part = $this->get_diploma_file_suffix($language);
         }
@@ -318,6 +334,17 @@ class class_evtmgr_persons {
         }
 
         return strtolower(implode('-', $parts) . '.pdf');
+    }
+
+    protected function get_ticket_file_suffix($language) {
+        $map = array(
+            'de' => 'ticket',
+            'fr' => 'ticket',
+            'it' => 'ticket',
+            'en' => 'ticket',
+        );
+
+        return $map[$language] ?? 'ticket';
     }
 
     protected function get_diploma_file_suffix($language) {
@@ -775,8 +802,13 @@ class class_evtmgr_persons {
             if ($id > 0 && $this->person_exists($primary_key, $id)) {
                 return $id;
             }
+
+            // Cookie provided but not in DB → fresh session (e.g. "weitere Anmeldung").
+            // Do NOT fall back to email, so a genuinely new registration is created.
+            return 0;
         }
 
+        // No cookie at all → try email (e.g. user lost cookie mid-registration and restarted).
         $email_column = $this->get_column_name($columns, array('str_email'));
 
         if ($email !== '' && $email_column !== '') {

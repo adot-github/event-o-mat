@@ -21,18 +21,32 @@ $manual_links = array(
     ),
 
     array(
-        'str_group'       => 'Workshops: Präsentierende Personen',
+        'str_group'       => 'Präsentierende Personen',
         'str_title'       => 'Präsentierende Personen bearbeiten',
         'str_url'         => '/wp-admin/admin.php?page=adot_evtmgr_presenters',
         'mem_description' => 'Formular zur Bearbeitung aller vorhandenen Dozierenden.',
     ),
 
     array(
-        'str_group'       => 'Workshops: Präsentierende Personen',
+        'str_group'       => 'Präsentierende Personen',
         'str_title'       => 'Lister der präsentierende Personen',
         'str_url'         => '/wp-admin/admin.php?page=report-presenters',
         'mem_description' => 'Liste aller Personen, welche in Workshops etc. präsentieren',
     ),
+    array(
+        'str_group'       => 'Workshop-Konfigurationen',
+        'str_title'       => 'Zeitplan bearbeiten',
+        'str_url'         => '/wp-admin/admin.php?page=adot_evtmgr_timezones',
+        'mem_description' => 'Den Ablauf des Events erfassen oder mutieren.',
+    ),
+    array(
+        'str_group'       => 'Workshop-Konfigurationen',
+        'str_title'       => 'Preisstruktur bearbeiten',
+        'str_url'         => '/wp-admin/admin.php?page=adot_evtmgr_pricing',
+        'mem_description' => 'Die Kostenstruktur des Events erfassen oder bearbeiten',
+    ),
+
+    
 );
 ?>
 

@@ -45,6 +45,16 @@ $editor->add_page_config([
     'page' => 'dashboard-anmeldungen'
 ]);
 
+$editor->add_page_config([
+    'id' => 'dashboard-anmeldungen',
+    'menu' => [
+        'menu_parent'=> $root_config_id,
+        'page_title' => "TOOLS",
+        'menu_title' => "TOOLS",
+        'position'   => 4
+    ],
+    'page' => 'dashboard-tools'
+]);
 
 /** ENO */
 /**
@@ -114,7 +124,23 @@ $adot_evtmgr_hidden_pages = array(
         'menu_slug'         => 'invoice-pdf-create',
         'file'              => '/db-custom/event-registration/pages/invoice-pdf-create.php',
         'active_submenu'    => 'dashboard-anmeldungen',
-    ),    
+    ),
+    array(
+        'page_title'        => '> ticket-pdf-create',
+        'menu_title'        => '> ticket-pdf-create',
+        'capability'        => 'manage_options',
+        'menu_slug'         => 'ticket-pdf-create',
+        'file'              => '/db-custom/event-registration/pages/ticket-pdf-create.php',
+        'active_submenu'    => 'dashboard-anmeldungen',
+    ),
+    array(
+        'page_title'        => '> etiketten-pdf-create',
+        'menu_title'        => '> etiketten-pdf-create',
+        'capability'        => 'manage_options',
+        'menu_slug'         => 'etiketten-pdf-create',
+        'file'              => '/db-custom/event-registration/pages/etiketten-pdf-create.php',
+        'active_submenu'    => 'dashboard-anmeldungen',
+    ),
     array(
         'page_title'        => '> invoice-send-by-email',
         'menu_title'        => '> invoice-send-by-email',
@@ -181,6 +207,30 @@ $adot_evtmgr_hidden_pages = array(
         'file'              => '/db-custom/event-registration/pages/registration-delete.php',
         'active_submenu'    => 'dashboard-anmeldungen',
     ),
+    array(
+        'page_title'        => '> wordings scan',
+        'menu_title'        => '> wordings scan',
+        'capability'        => 'manage_options',
+        'menu_slug'         => 'wordings-scan',
+        'file'              => '/db-custom/event-registration/pages/wordings-scan.php',
+        'active_submenu'    => 'dashboard-event',
+    ),
+    array(
+        'page_title'        => '> wordings extract',
+        'menu_title'        => '> wordings extract',
+        'capability'        => 'manage_options',
+        'menu_slug'         => 'wordings-extract',
+        'file'              => '/db-custom/event-registration/pages/wordings_extract.php',
+        'active_submenu'    => 'dashboard-event',
+    ),
+    array(
+        'page_title'        => '> filestorage clean',
+        'menu_title'        => '> filestorage clean',
+        'capability'        => 'edit_posts',
+        'menu_slug'         => 'filestorage-clean',
+        'file'              => '/db-custom/event-registration/pages/filestorage-cean.php',
+        'active_submenu'    => 'dashboard-tools',
+    ),
 
 );
 
@@ -199,6 +249,18 @@ $adot_evtmgr_hidden_sys_pages = array(
     ),
     array(
         'menu_slug'         => 'adot_evtmgr_presenters',
+        'active_submenu'    => 'dashboard',
+    ),
+    array(
+        'menu_slug'         => 'adot_evtmgr_wordings',
+        'active_submenu'    => 'dashboard',
+    ),
+    array(
+        'menu_slug'         => 'adot_evtmgr_timezones',
+        'active_submenu'    => 'dashboard',
+    ),
+    array(
+        'menu_slug'         => 'adot_evtmgr_pricing',
         'active_submenu'    => 'dashboard',
     ),
 );

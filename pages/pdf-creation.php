@@ -1,4 +1,4 @@
-﻿
+﻿st
 <?php
 
 $wp_load = dirname(__FILE__, 7) . '/wp-load.php';
@@ -145,118 +145,128 @@ try {
         throw new RuntimeException('Keine gültigen Teilnehmenden ausgewählt.');
     }
 
-    $pdf_creator->ensure_directory($pdf_path);
+    /* ---- async AJAX generation job ---- */
+    $job_id = wp_generate_uuid4();
+    set_transient('evtmgr_pdf_job_' . $job_id, [
+        'pdf_layout'       => $pdf_layout,
+        'file_name_field'  => $file_name_field,
+        'subfolder'        => $subfolder_for_pdf,
+        'type_of_pdf'      => $type_of_pdf,
+        'type_of_pdf_sing' => $type_of_pdf_sing,
+        'event_uid'        => $event_uid,
+        'event'            => $event,
+        'str_event_name_'  => $str_event_name_,
+        'dtm_event_date'   => $dtm_event_date,
+        'persons'          => array_values($selected_persons),
+    ], HOUR_IN_SECONDS);
 
-    $image_replacements = $pdf_creator->get_image_replacements($layout);
-    $docraptor = $pdf_creator->create_docraptor_client();
+    $total = count($selected_persons);
 
-    $generated_files = array();
-
-    foreach ($selected_persons as $person) {
-        $person_id   = $pdf_creator->get_person_id($person);
-        $first_name  = $pdf_creator->value_ci($person, 'str_first_name');
-        $last_name   = $pdf_creator->value_ci($person, 'str_last_name');
-        $person_lang = strtolower(trim($pdf_creator->value_ci($person, 'str_language', 'de')));
-
-        if ($person_lang === '') {
-            $person_lang = 'de';
-        }
-
-        $file_name_from_person = $pdf_creator->file_name_from_person_field($person, $file_name_field);
-
-        if ($file_name_from_person === '') {
-            throw new RuntimeException('Für ' . trim($first_name . ' ' . $last_name) . ' fehlt der Dateiname im Feld ' . $file_name_field . '.');
-        }
-
-        $person_event_name = $pdf_creator->event_text_by_language(
-            $event,
-            'str_event_name',
-            $person_lang,
-            $str_event_name_
-        );
-
-        $person_event_subtitle = $pdf_creator->event_text_by_language(
-            $event,
-            'str_event_subtitle',
-            $person_lang,
-            ''
-        );
-
-        $text_replacements = $pdf_creator->text_replacements($layout, $person_lang);
-
-        $core_replacements = $pdf_creator->person_replacements($person, array(
-            '{str_language}'           => esc_attr($person_lang),
-            '{str_event_name}'       => esc_html($person_event_name),
-            '{str_event_subtitle}'   => esc_html($person_event_subtitle),
-            '{str_event_subtitle_de}' => esc_html($person_event_subtitle),
-            '{id}'           => esc_html($person_id),
-            '{dtm_event_date}'          => esc_html($dtm_event_date),
-        ));
-
-        $all_replacements = array_merge(
-            $image_replacements,
-            $text_replacements,
-            $core_replacements
-        );
-
-        $html = $pdf_creator->render_html((string) $layout['html_template'], $all_replacements);
-        $html = strtr($html, $all_replacements);
-
-        $doc = new DocRaptor\Doc();
-        $doc->setTest(true);
-        $doc->setDocumentType('pdf');
-        $doc->setName($file_name_from_person);
-        $doc->setDocumentContent($html);
-
-        $pdf = $docraptor->createDoc($doc);
-
-        $target_path = rtrim($pdf_path, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR . $file_name_from_person;
-        file_put_contents($target_path, $pdf);
-
-        $generated_files[] = array(
-            'file_name' => $file_name_from_person,
-            'file_url'  => $pdf_creator->get_pdf_url($subfolder_for_pdf, $event_uid, $file_name_from_person),
-            'person'    => trim($first_name . ' ' . $last_name),
-        );
-    }
-
-    $existing_pdf_files   = $pdf_creator->get_existing_pdf_files($pdf_path, $event_uid, $subfolder_for_pdf);
-    $persons_without_file = $pdf_creator->get_persons_without_file($persons, $pdf_path, $file_name_field);
-    $zip_download_data    = $pdf_creator->get_zip_download_data($pdf_path, $existing_pdf_files, $type_of_pdf, $event_uid, $subfolder_for_pdf);
-
-    $pdf_creator->show_page_header($type_of_pdf . ' erstellt');
+    $pdf_creator->show_page_header($type_of_pdf . ' wird erstellt');
     ?>
-    <h1 class="mb-3"><?php echo esc_html($type_of_pdf); ?> erstellt</h1>
+    <h1 class="mb-3"><?php echo esc_html($type_of_pdf); ?> werden erstellt</h1>
     <p><strong>Kongress:</strong> <?php echo esc_html($str_event_name_); ?></p>
 
-    <div class="alert alert-success">
-        <?php echo esc_html(count($generated_files)); ?> Datei(en) wurden erstellt.
+    <div class="progress mb-2" style="height:28px;" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">
+        <div id="evtmgr-pdf-bar" class="progress-bar progress-bar-striped progress-bar-animated" style="width:0%">0 %</div>
+    </div>
+    <p id="evtmgr-pdf-status" class="text-muted mb-3">Starte …</p>
+
+    <ul id="evtmgr-pdf-log" class="list-group mb-4" style="max-height:300px;overflow-y:auto;font-size:.9em;"></ul>
+
+    <div id="evtmgr-pdf-done" class="d-none">
+        <div class="alert alert-success" id="evtmgr-pdf-summary"></div>
+        <ul id="evtmgr-pdf-files" class="list-group mb-4"></ul>
+        <a href="<?php echo esc_url(remove_query_arg(array())); ?>" class="btn btn-secondary rounded-pill">
+            Weitere <?php echo esc_html($type_of_pdf); ?> erstellen
+        </a>
     </div>
 
-    <ul class="list-group mb-4">
-        <?php foreach ($generated_files as $file) : ?>
-            <li class="list-group-item">
-                <?php echo esc_html($file['person']); ?> —
-                <a href="<?php echo esc_url($file['file_url']); ?>" target="_blank" rel="noopener">
-                    <?php echo esc_html($file['file_name']); ?>
-                </a>
-            </li>
-        <?php endforeach; ?>
-    </ul>
+    <script>
+    (function () {
+        var ajaxUrl   = <?php echo wp_json_encode(admin_url('admin-ajax.php')); ?>;
+        var nonce     = <?php echo wp_json_encode(wp_create_nonce('evtmgr_pdf_generate')); ?>;
+        var jobId     = <?php echo wp_json_encode($job_id); ?>;
+        var total     = <?php echo (int) $total; ?>;
 
-    <?php
-    $pdf_creator->render_status_accordion(
-        $existing_pdf_files,
-        $persons_without_file,
-        $type_of_pdf,
-        $type_of_pdf_sing,
-        $zip_download_data
-    );
-    ?>
+        var bar       = document.getElementById('evtmgr-pdf-bar');
+        var statusEl  = document.getElementById('evtmgr-pdf-status');
+        var logEl     = document.getElementById('evtmgr-pdf-log');
+        var doneEl    = document.getElementById('evtmgr-pdf-done');
+        var summaryEl = document.getElementById('evtmgr-pdf-summary');
+        var filesEl   = document.getElementById('evtmgr-pdf-files');
+        var generated = [];
 
-    <a href="<?php echo esc_url(remove_query_arg(array())); ?>" class="btn btn-secondary mt-4 rounded-pill">Weitere <?php echo esc_html($type_of_pdf); ?> erstellen</a>
+        function setProgress(n) {
+            var pct = total > 0 ? Math.round(n / total * 100) : 100;
+            bar.style.width = pct + '%';
+            bar.textContent = pct + ' %';
+            bar.setAttribute('aria-valuenow', String(pct));
+            statusEl.textContent = n + ' / ' + total;
+        }
+
+        function addLog(text, ok) {
+            var li = document.createElement('li');
+            li.className = 'list-group-item py-1 ' + (ok ? 'list-group-item-success' : 'list-group-item-danger');
+            li.textContent = text;
+            logEl.appendChild(li);
+            logEl.scrollTop = logEl.scrollHeight;
+        }
+
+        function esc(s) {
+            return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+        }
+
+        function finish() {
+            bar.classList.remove('progress-bar-animated');
+            setProgress(total);
+            summaryEl.textContent = generated.length + ' Datei(en) erstellt.';
+            generated.forEach(function (f) {
+                var li = document.createElement('li');
+                li.className = 'list-group-item';
+                li.innerHTML = esc(f.person) + ' — <a href="' + esc(f.file_url) + '" target="_blank" rel="noopener">' + esc(f.file_name) + '</a>';
+                filesEl.appendChild(li);
+            });
+            doneEl.classList.remove('d-none');
+        }
+
+        function next(idx) {
+            if (idx >= total) { finish(); return; }
+            statusEl.textContent = idx + ' / ' + total + ' …';
+
+            fetch(ajaxUrl, {
+                method: 'POST',
+                body: new URLSearchParams({
+                    action:     'evtmgr_pdf_generate_person',
+                    nonce:      nonce,
+                    job_id:     jobId,
+                    person_idx: String(idx)
+                })
+            })
+            .then(function (r) { return r.json(); })
+            .then(function (d) {
+                if (d.success && d.data) {
+                    generated.push(d.data);
+                    addLog(d.data.person, true);
+                } else {
+                    addLog((d.data && d.data.message) || ('Fehler bei Person ' + idx), false);
+                }
+                setProgress(idx + 1);
+                next(idx + 1);
+            })
+            .catch(function (e) {
+                addLog('Netzwerkfehler: ' + e.message, false);
+                setProgress(idx + 1);
+                next(idx + 1);
+            });
+        }
+
+        next(0);
+    }());
+    </script>
     <?php
     $pdf_creator->show_page_footer();
+    return;
 } catch (Throwable $e) {
     if (!isset($pdf_creator) || !$pdf_creator instanceof Event_Registration_Pdf_Creation) {
         $pdf_creator = new Event_Registration_Pdf_Creation(__DIR__);

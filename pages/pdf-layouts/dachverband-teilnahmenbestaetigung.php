@@ -23,6 +23,37 @@ return array(
     ),
 
     /*
+     * Per-person dynamic replacements: language-correct event name + subtitle.
+     * Overrides the core replacements resolved by pdf-creation.php.
+     */
+    'per_person_callback' => static function(array $person, array $event = [], string $person_lang = ''): array {
+        $p    = array_change_key_case($person, CASE_LOWER);
+        $lang = $person_lang !== '' ? $person_lang : strtolower(trim($p['str_language'] ?? 'de'));
+        if ($lang === '') {
+            $lang = 'de';
+        }
+
+        $event_lc = array_change_key_case($event, CASE_LOWER);
+
+        $str_event_name = '';
+        foreach (['str_event_name_' . $lang, 'str_event_name_de', 'str_event_name'] as $key) {
+            $val = trim($event_lc[$key] ?? '');
+            if ($val !== '') { $str_event_name = $val; break; }
+        }
+
+        $str_event_subtitle = '';
+        foreach (['str_event_subtitle_' . $lang, 'str_event_subtitle_de', 'str_event_subtitle'] as $key) {
+            $val = trim($event_lc[$key] ?? '');
+            if ($val !== '') { $str_event_subtitle = $val; break; }
+        }
+
+        return [
+            '{str_event_name}'     => esc_html($str_event_name),
+            '{str_event_subtitle}' => esc_html($str_event_subtitle),
+        ];
+    },
+
+    /*
      * Language-specific content placeholders.
      * These values may contain HTML and may also contain other placeholders
      * such as {str_first_name}, {str_last_name}, {dtm_event_date}.

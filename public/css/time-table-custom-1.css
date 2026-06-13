@@ -1,0 +1,124 @@
+/* =============================================================================
+   Timetable Variables
+   ============================================================================= */
+
+.timetable {
+    /* column adjust */
+    --stages: 1;
+    --start-time: 9;
+    --end-time: 17;
+    --stage-gap: 0.5rem;
+    --zebra-color-one: #efefef;
+    --zebra-color-two: #dedede;
+
+    	--time-unit-height: 1rem;
+}
+
+
+/* =============================================================================
+   Timetable Header
+   ============================================================================= */
+
+.stage-headline,
+.timetable--inner-head {
+    color: #fff;
+    background: #c06ca9;
+    margin: 0;
+}
+
+
+/* =============================================================================
+   Hours Column
+   ============================================================================= */
+
+.hours > div {
+    border-top: 3px solid #cccccc;
+}
+
+.hours time {
+    color: #000;
+    font-weight: 500;
+    padding: .95rem 0 .95rem 4px;
+}
+
+
+/* =============================================================================
+   Sessions
+   ============================================================================= */
+
+.session {
+    background: rgba(255, 255, 255, 0.95);
+    border: none;
+    border-top: 3px solid #c06ca9;
+    border-radius: 0;
+    color: #000;
+    padding-top: .5rem;
+    padding-bottom: .5rem;
+}
+
+.session.pitch {
+    background: #d59cc5;
+    border-color: #d59cc5;
+    color: #fff !important;
+}
+
+.session.info {
+    background: #c06ca9;
+    border-color: #c06ca9;
+    color: #fff !important;
+}
+
+.session.alert {
+    background: #cc0000;
+    border-color: #cc0000;
+    color: #fff;
+}
+
+.session-list {
+    margin: 0 !important;
+    padding: 0 !important;
+    box-sizing: border-box !important;
+}
+
+
+/* =============================================================================
+   Typography
+   ============================================================================= */
+
+h1,
+h2,
+h3,
+h4 {
+    line-height: 1.2;
+}
+
+.timetable :is(p, li, time, h3),
+.event-registration-wrapper :is(p, li, td, th, label),
+.event-registration-steps {
+    font-size: 1rem !important;
+}
+
+.timetable :is(h3),
+.event-registration-wrapper :is(h3) {
+    font-size: 1.25rem !important;
+}
+.required-marker {font-size:1.25rem;
+font-weight:bold;}
+
+@media (min-width: 992px) {
+    .timetable p,
+    .timetable li,
+    .timetable time,
+    .event-registration-wrapper p,
+    .event-registration-wrapper li,
+    .event-registration-wrapper td,
+    .event-registration-wrapper th,
+    .event-registration-wrapper label,
+    .event-registration-steps {
+        font-size: 1.25rem;
+    }
+
+    .timetable h3 {
+        font-size: 1.5rem;
+    }
+}

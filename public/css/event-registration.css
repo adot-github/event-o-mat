@@ -1,0 +1,361 @@
+/* =============================================================================
+   CSS Variables
+   ============================================================================= */
+
+:root {
+    --mk-primary: #e91e63;
+    --mk-gray: #d2d6da;
+    --mk-muted: #7b809a;
+    --mk-bg: #fff;
+}
+
+
+/* =============================================================================
+   Wrapper & Layout
+   ============================================================================= */
+
+.event-registration-wrapper {
+    max-width: 100%;
+    margin: 1rem auto 6rem;
+}
+
+.event-registration-actions {
+    margin-top: 1.5rem;
+    display: flex;
+    gap: .75rem;
+}
+
+
+/* =============================================================================
+   Step Navigation
+   ============================================================================= */
+
+.event-registration-steps {
+    display: flex;
+    gap: .5rem;
+    flex-wrap: wrap;
+    margin: 1rem 0 1.5rem;
+}
+
+.event-registration-step {
+    padding: .5rem .8rem;
+    border: 0;
+    border-bottom: 3px solid #d7dee8;
+    color: #777;
+    background: transparent;
+    cursor: pointer;
+}
+
+.event-registration-step.is-active {
+    border-color: #c06ca9;
+    color: #000;
+    font-weight: 700;
+}
+
+.event-registration-step:hover,
+.event-registration-step:focus {
+    color: #000;
+    border-color: #9eaab8;
+}
+
+
+/* =============================================================================
+   Messages & Errors
+   ============================================================================= */
+
+.event-registration-message,
+.event-registration-error {
+    padding: .8rem 1rem;
+    border-radius: .5rem;
+    margin-bottom: 1rem;
+}
+
+.event-registration-message.is-success {
+    background: #eef9f0;
+    border: 1px solid #b9e2c0;
+    color: #1d5f2b;
+}
+
+.event-registration-message.is-error,
+.event-registration-error {
+    background: #fff3f3;
+    border: 1px solid #f0b8b8;
+    color: #8d2020;
+}
+
+
+/* =============================================================================
+   Step 1 – Timetable / Session Container
+   ============================================================================= */
+
+.js-session-container p {
+    margin: 0;
+}
+
+
+/* =============================================================================
+   Step 1 – Workshop Item
+   ============================================================================= */
+
+.js-workshop-item {
+    position: relative;
+    border: 1.5px solid rgba(255,255,255,.5);
+    padding: .5rem;
+    border-radius: .5rem;
+}
+
+.selected-workshop-wrapper .speaker-list li::before,
+.selected-workshop-wrapper .free-places-list li::before,
+.selected-workshop-wrapper .price-list li::before {
+    filter: invert(1);
+}
+
+
+/* =============================================================================
+   Step 1 – Workshop Close Button
+   ============================================================================= */
+
+.js-workshop-close {
+    position: absolute;
+    top: 8px;
+    right: 10px;
+    z-index: 5;
+
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+
+    align-items: center;
+    justify-content: center;
+
+    background: rgba(255,255,255,.5);
+    border: 2px solid rgba(0,0,0,.5);
+
+    font-size: 24px;
+    color: black !important;
+    line-height: 1;
+    font-weight: 700;
+
+    cursor: pointer;
+}
+
+.js-workshop-close:hover,
+.js-workshop-close:focus {
+    background: rgba(255,255,255,.35);
+    color: #fff;
+}
+
+.js-workshop-close svg {
+    width: 18px;
+    height: 18px;
+}
+
+.selected-workshop-wrapper .js-workshop-close {
+    display: flex !important;
+    align-items: center;
+    justify-content: center;
+}
+
+.selected-workshop-wrapper .js-workshop-close::before {
+    content: "×";
+    display: block;
+    font-size: 30px;
+    line-height: 1;
+    font-weight: 700;
+    color: rgba(0,0,0,.5);
+    margin-top: -3px;
+}
+
+.selected-workshop-wrapper .js-workshop-close svg,
+.selected-workshop-wrapper .js-workshop-close img {
+    display: none !important;
+}
+
+
+/* =============================================================================
+   Step 1 – Workshop Modal
+   ============================================================================= */
+
+.js-workshop-modal-body,
+.modal-header {
+    color: black;
+}
+
+#event_registration_workshop_modal .event-registration-modal-workshop {
+    background: #f8f9fa;
+    border: 1px solid #dee2e6;
+    border-radius: 0.75rem;
+    padding: 1rem;
+    margin-bottom: 1rem;
+    cursor: pointer;
+    transition: background-color 0.15s ease, border-color 0.15s ease, transform 0.15s ease;
+}
+
+#event_registration_workshop_modal .event-registration-modal-workshop:hover,
+#event_registration_workshop_modal .event-registration-modal-workshop:focus {
+    background: #e0b6d4;
+    border-color: #8b036b;
+    transform: translateY(-1px);
+}
+
+#event_registration_workshop_modal .event-registration-modal-workshop.is-selected,
+#event_registration_workshop_modal .event-registration-modal-workshop.workshop-select-denied {
+    background: #e9ecef;
+    border-color: #adb5bd;
+    cursor: not-allowed;
+    opacity: 0.65;
+}
+
+.btn-select-workshop {
+    background: rgba(255,255,255,.5) !important;
+    margin-left: 1rem;
+    border-radius: 1rem !important;
+    padding-left: 1rem !important;
+    padding-right: 1rem !important;
+    color: white;
+}
+
+.btn-select-workshop:hover {
+    background-color: #000000 !important;
+}
+
+
+/* =============================================================================
+   Step 2 – Pricing Table
+   ============================================================================= */
+
+input[type="radio"] {
+    transform: scale(1.5);
+    margin-right: 0.5rem;
+}
+
+label {
+    cursor: pointer;
+}
+
+.event-registration-pricing-child td {
+    border-top: 0;
+    padding-top: .25rem;
+    padding-bottom: .25rem;
+}
+
+.event-registration-pricing-total td {
+    border-top: 1px solid #dee2e6;
+    font-weight: 700;
+}
+
+.pricing-group-odd td {
+    background-color: #dedede !important;
+}
+
+tr:first-child > :is(td, th),
+tr.pricing-group-odd + tr:not(.pricing-group-odd) > :is(td, th),
+tr:not(.pricing-group-odd) + tr.pricing-group-odd > :is(td, th) {
+  border-top: 3px solid #000;
+}
+
+
+/* =============================================================================
+   Step 4 – Material Input
+   ============================================================================= */
+
+.material-input {
+    position: relative;
+    display: block;
+}
+
+.material-input .form-control {
+    width: 100%;
+    background-color: transparent;
+    box-shadow: none;
+}
+
+.material-input .form-control:focus {
+    outline: 0;
+    box-shadow: none;
+}
+
+.material-input-outline .form-control {
+    border: none;
+    border-bottom: 2px solid var(--mk-gray);
+    border-radius: 0;
+}
+
+.material-input-outline .form-control:focus {
+    border-color: var(--mk-primary);
+}
+
+.material-input-outline label {
+    position: absolute;
+    top: 50%;
+    left: 0.75rem;
+    z-index: 2;
+    margin: 0;
+    padding: 0 0.25rem;
+    color: var(--mk-muted);
+    background: var(--mk-bg);
+    pointer-events: none;
+    transform: translateY(-50%);
+    transform-origin: left top;
+    transition:
+        top 0.2s ease,
+        left 0.2s ease,
+        transform 0.2s ease,
+        color 0.2s ease;
+}
+
+.material-input-outline.is-focused label,
+.material-input-outline.is-filled label {
+    top: 0;
+    left: 0.6rem;
+    color: var(--mk-primary);
+    transform: translateY(-50%) scale(0.85);
+}
+
+.material-input-outline.is-filled:not(.is-focused) label {
+    color: var(--mk-muted);
+}
+
+
+/* =============================================================================
+   Step 4 – Registration Form
+   ============================================================================= */
+
+.registration-step-4 .form-label {
+    display: block;
+    width: 100%;
+    margin-bottom: 0.35rem;
+    font-weight: 600;
+}
+
+.registration-step-4 input,
+.registration-step-4 select,
+.registration-step-4 textarea {
+    width: 100%;
+    max-width: 100%;
+}
+
+.registration-step-4 input[type="radio"] {
+    width: auto;
+}
+
+.registration-step-4 .required-marker {
+    color: #b00020;
+    margin-left: 0.15rem;
+}
+
+.registration-step-4 .form-field {
+    margin-bottom: 1rem;
+}
+
+.registration-step-4 .radio-group label {
+    display: block;
+    margin-bottom: 0.35rem;
+    font-weight: 400;
+}
+
+.registration-step-4 .radio-group input[type="radio"] {
+    width: auto;
+    margin-right: 0.5rem;
+    transform: scale(1.5);
+}

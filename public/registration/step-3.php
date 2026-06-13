@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 
     if (!defined('ABSPATH')) {
         exit;
@@ -8,8 +8,9 @@
         ? $registration_values
         : array();
 
-    $event_uid = isset($event_uid) ? sanitize_text_field((string) $event_uid) : '';
-    $lang      = isset($lang) ? sanitize_key((string) $lang) : 'de';
+    $event_uid   = isset($event_uid) ? sanitize_text_field((string) $event_uid) : '';
+    $lang        = isset($lang) ? sanitize_key((string) $lang) : 'de';
+    $debug_step3 = isset($_GET['debug_step3']) && $_GET['debug_step3'] === '1';
 
     $selected_workshops = isset($registration_values['selected_workshops'])
         ? sanitize_text_field((string) $registration_values['selected_workshops'])
@@ -81,7 +82,33 @@
 
 <div class="container my-4 event-registration-step-3">
 
-    <h2><?php echo $wordings['ihre_gewaehlten_optionen'] ?? ''; ?></h2>
+    <?php if ($debug_step3) : ?>
+        <pre style="background:#111;color:#0f0;padding:12px;white-space:pre-wrap;overflow:auto;font-size:11px;">
+STEP 3 DEBUG
+
+event_uid: <?php echo esc_html($event_uid); ?>
+
+lang: <?php echo esc_html($lang); ?>
+
+selected_workshop_ids:
+<?php print_r($selected_workshop_ids); ?>
+
+pricing_group: <?php echo esc_html($pricing_group); ?>
+
+total_cost: <?php echo esc_html($total_cost); ?>
+
+pricing_lines:
+<?php print_r($pricing_lines); ?>
+
+selected_workshop_rows:
+<?php print_r($selected_workshop_rows); ?>
+
+registration_values:
+<?php print_r($registration_values); ?>
+        </pre>
+    <?php endif; ?>
+
+    <h2><?php echo $wordings['ihre_gewaehlten_optionen'] ?? 'ihre_gewaehlten_optionen'; ?></h2>
 
     <?php if (!empty($selected_workshop_rows)) : ?>
 
@@ -110,12 +137,12 @@
     <?php else : ?>
 
         <div class="alert alert-warning">
-            <?php echo $wordings['es_wurden_keine_workshops_ausgewaehlt'] ?? ''; ?>
+            <?php echo $wordings['es_wurden_keine_workshops_ausgewaehlt'] ?? 'es_wurden_keine_workshops_ausgewaehlt'; ?>
         </div>
 
     <?php endif; ?>
 
-    <h2><?php echo $wordings['ihre_kosten'] ?? ''; ?></h2>
+    <h2><?php echo $wordings['ihre_kosten'] ?? 'ihre_kosten'; ?></h2>
 
     <?php if (!empty($pricing_lines)) : ?>
 
@@ -124,21 +151,13 @@
                 <?php foreach ($pricing_lines as $line) : ?>
                     <?php $is_total = !empty($line['is_total']); ?>
                     <tr>
-                        <th scope="row">
-                            <?php if ($is_total) : ?>
-                                <?php echo esc_html($line['label'] ?? ''); ?>
-                            <?php else : ?>
-                                <?php echo esc_html($line['label'] ?? ''); ?>
-                            <?php endif; ?>
-                        </th>
-                        <td>
+                        <td style="text-align:left;font-weight:<?php echo $is_total ? 'bold' : 'normal'; ?>;padding:4px 8px;border-bottom:1px solid #ddd;">
+                            <?php echo esc_html($line['label'] ?? ''); ?>
                             <?php if (!empty($line['description'])) : ?>
-                                <div class="mb-1">
-                                    <?php echo wp_kses_post($line['description']); ?>
-                                </div>
+                                <br><?php echo wp_kses_post($line['description']); ?>
                             <?php endif; ?>
                         </td>
-                        <td nowrap>
+                        <td nowrap style="padding:4px 4px 4px 16px;border-bottom:1px solid #ddd;">
                             <?php if ($is_total) : ?>
                                 <strong><?php echo esc_html(event_registration_format_price($line['amount'] ?? 0)); ?> CHF</strong>
                             <?php else : ?>
@@ -150,8 +169,8 @@
 
                 <?php if (empty($selected_pricing_option['has_additional_lines'])) : ?>
                     <tr>
-                        <th scope="row"><?php echo $wordings['total'] ?? ''; ?></th>
-                        <td>
+                        <th scope="row" style="text-align:left;padding:4px 8px;border-bottom:1px solid #ddd;"><?php echo $wordings['total'] ?? 'total'; ?></th>
+                        <td style="padding:4px 4px 4px 16px;border-bottom:1px solid #ddd;">
                             <?php echo esc_html(event_registration_format_price($total_cost)); ?> CHF
                         </td>
                     </tr>
@@ -162,12 +181,12 @@
     <?php else : ?>
 
         <div class="alert alert-warning">
-            <?php echo $wordings['es_wurde_keine_preisoption_ausgewaehlt'] ?? ''; ?>
+            <?php echo $wordings['es_wurde_keine_preisoption_ausgewaehlt'] ?? 'es_wurde_keine_preisoption_ausgewaehlt'; ?>
         </div>
 
         <?php if ($total_cost !== '') : ?>
             <p>
-                <strong><?php echo $wordings['total'] ?? ''; ?></strong>
+                <strong><?php echo $wordings['total'] ?? 'total'; ?></strong>
                 <?php echo esc_html(event_registration_format_price($total_cost)); ?> CHF
             </p>
         <?php endif; ?>
@@ -195,14 +214,14 @@
                 name="registration_action"
                 value="prev"
                 class="btn btn-secondary">
-            <?php echo $wordings['zurueck'] ?? ''; ?>
+            <?php echo $wordings['zurueck'] ?? 'zurueck'; ?>
         </button>
 
         <button type="submit"
                 name="registration_action"
                 value="next"
                 class="btn btn-primary">
-            <?php echo $wordings['weiter'] ?? ''; ?>
+            <?php echo $wordings['weiter'] ?? 'weiter'; ?>
         </button>
     </div>
 

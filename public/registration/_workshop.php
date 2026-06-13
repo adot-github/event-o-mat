@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 
 if (!defined('ABSPATH')) {
     exit;
@@ -81,7 +81,7 @@ if (!function_exists('event_registration_show_svg_icon')) {
      data-workshop="<?php echo esc_attr($workshop_id); ?>"
      <?php if ($is_booked_out) : ?>data-booked-out="1"<?php endif; ?>>
 
-    <div class="icon-svg icon-dark worskhop-remove js-workshop-close" style="display:none">
+    <div class="icon-dark worskhop-remove js-workshop-close" style="display:none">
         <?php echo event_registration_show_svg_icon('close.svg'); ?>
     </div>
 
@@ -144,7 +144,7 @@ if (!function_exists('event_registration_show_svg_icon')) {
             <li>
                 
                 <?php if (!empty($room['str_room_number'])) : ?>
-                <?php echo $wordings['raum'] ?? ''; ?>
+                <?php echo $wordings['raum'] ?? 'raum'; ?>
                 <?php echo esc_html($room['str_room_number']); ?> |
                 <?php endif; ?>
                 <?php echo esc_html($room['str_room'] ?? ''); ?>
@@ -171,11 +171,11 @@ if (!function_exists('event_registration_show_svg_icon')) {
 
         <ul class="free-places-list mt-2 mb-0">
                 <li>
-                    <?php echo $wordings['anzahl_plaetze'] ?? ''; ?> <?php echo esc_html($max_registrations); ?>
+                    <?php echo $wordings['anzahl_plaetze'] ?? 'anzahl_plaetze'; ?> <?php echo esc_html($max_registrations); ?>
                     <?php if ($max_registrations > 0) : ?>
                         |
                         <span style="color:<?php echo esc_attr($tmp_color); ?>">
-                            <?php echo $wordings['freie_plaetze'] ?? ''; ?> <?php echo esc_html($free_places); ?>
+                            <?php echo $wordings['freie_plaetze'] ?? 'freie_plaetze'; ?> <?php echo esc_html($free_places); ?>
                         </span>
                     <?php endif; ?>
                 </li>
@@ -185,7 +185,7 @@ if (!function_exists('event_registration_show_svg_icon')) {
     <?php if (!empty($workshop['num_price']) && (float) $workshop['num_price'] != 0) : ?>
         <ul class="price-list mt-2 mb-0 no-border">
             <li>
-                <?php echo $wordings['preis'] ?? ''; ?> CHF <?php echo esc_html(number_format((float) $workshop['num_price'], 2, '.', "'")); ?>
+                <?php echo $wordings['preis'] ?? 'preis'; ?> CHF <?php echo esc_html(number_format((float) $workshop['num_price'], 2, '.', "'")); ?>
             </li>
         </ul>
     <?php endif; ?>

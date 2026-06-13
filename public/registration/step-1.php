@@ -1,120 +1,4 @@
-<link rel='stylesheet' id='dashicons-css' href='/wp-content/themes/picostrap5-child-base/db-custom/event-registration/public/assets/time-table.css' media='all' />
-<link rel='stylesheet' id='dashicons-css' href='/wp-content/themes/picostrap5-child-base/db-custom/event-registration/public/assets/time-table-custom-1.css' media='all' />
-<link rel='stylesheet' id='dashicons-css' href='/wp-content/themes/picostrap5-child-base/db-custom/event-registration/public/assets/workshops.css' media='all' />
-
-<style>
-    .js-workshop-item {
-        position: relative;
-        border:1.5px solid rgba(255,255,255,.5);
-        padding:.5rem;
-        border-radius:.5rem;
-    }
-
-    .js-workshop-close {
-        position: absolute;
-        top: 8px;
-        right: 10px;
-        z-index: 5;
-
-        width: 40px;
-        height: 40px;
-        border-radius: 50%;
-
-        align-items: center;
-        justify-content: center;
-
-        background: rgba(255,255,255,.5);
-        border: 2px solid rgba(0,0,0,.5);
-
-        font-size: 24px;
-        color:black !important;
-        line-height: 1;
-        font-weight: 700;
-
-        cursor: pointer;
-    }
-
-    .selected-workshop-wrapper .js-workshop-close {
-    display: flex !important;
-    align-items: center;
-    justify-content: center;
-    }
-
-    .selected-workshop-wrapper .js-workshop-close::before {
-        content: "×";
-        display: block;
-        font-size: 30px;
-        line-height: 1;
-        font-weight: 700;
-        color: rgba(0,0,0,.5);
-        margin-top:-3px;
-    }
-
-    .selected-workshop-wrapper .js-workshop-close svg,
-    .selected-workshop-wrapper .js-workshop-close img {
-        display: none !important;
-    }
-
-    .js-workshop-close:hover,
-    .js-workshop-close:focus {
-        background: rgba(255,255,255,.35);
-        color: #fff;
-    }
-
-    .js-workshop-close svg {
-        width: 18px;
-        height: 18px;
-    }
-
-
-    #event_registration_workshop_modal .event-registration-modal-workshop {
-        background: #f8f9fa;
-        border: 1px solid #dee2e6;
-        border-radius: 0.75rem;
-        padding: 1rem;
-        margin-bottom: 1rem;
-        cursor: pointer;
-        transition: background-color 0.15s ease, border-color 0.15s ease, transform 0.15s ease;
-    }
-
-    #event_registration_workshop_modal .event-registration-modal-workshop:hover,
-    #event_registration_workshop_modal .event-registration-modal-workshop:focus {
-        background: #e0b6d4;
-        border-color: #8b036b;
-        transform: translateY(-1px);
-    }
-
-    #event_registration_workshop_modal .event-registration-modal-workshop.is-selected,
-    #event_registration_workshop_modal .event-registration-modal-workshop.workshop-select-denied {
-        background: #e9ecef;
-        border-color: #adb5bd;
-        cursor: not-allowed;
-        opacity: 0.65;
-    }
-    .js-workshop-modal-body, .modal-header {color:black;}
-    .btn-select-workshop {
-        background: rgba(255,255,255,.5);
-        margin-left:1rem;
-        border-radius:1rem;
-        padding-left:1rem !important;
-        padding-right:1rem !important;
-        color:white;
-        }
-        .btn-select-workshop:hover {
-        background-color: #000000;
-    }
-</style>
-
-<style>
-    .selected-workshop-wrapper .speaker-list li::before,
-    .selected-workshop-wrapper .free-places-list li::before ,
-    .selected-workshop-wrapper .price-list li::before
-    {
-         filter: invert(1);
-    }
-</style>
-
-<?php
+﻿<?php
     if (!defined('ABSPATH')) {
         exit;
     }
@@ -661,11 +545,14 @@
     </h1>
     -->
 
-<?php
-echo '$Beginn der Anmeldung:£ ' . wp_date('l, j. F Y', strtotime($qry_events['dtm_registration_opened'])) . '<br>';
-echo '$Ende der Anmeldung:£ ' . wp_date('l, j. F Y', strtotime($qry_events['dtm_registration_closed']));
-?>
+    <?php
+    echo ($wordings['beginn_der_anmeldung'] ?? 'beginn_der_anmeldung') . ' ' .
+        wp_date('l, j. F Y', strtotime($qry_events['dtm_registration_opened'])) .
+        '<br>';
 
+    echo ($wordings['ende_der_anmeldung'] ?? 'ende_der_anmeldung') . ' ' .
+        wp_date('l, j. F Y', strtotime($qry_events['dtm_registration_closed']));
+    ?>
     <div class="event-registration-description mt-3">
         <?php echo wp_kses_post($registration->get_value($qry_events, 'mem_event_description')); ?>
     </div>
@@ -688,11 +575,11 @@ echo '$Ende der Anmeldung:£ ' . wp_date('l, j. F Y', strtotime($qry_events['dtm
         
         <div class="timetable--head" aria-hidden="true">
             <div class="timetable--inner-head">
-                <div class="stage-headline m-0 ms-4"><?php echo $wordings['programm'] ?? ''; ?></div>
+                <div class="stage-headline m-0 ms-4"><?php echo $wordings['programm'] ?? 'programm'; ?></div>
                 <!--
                 KEEP!
-                <div class="stage-headline m-0"><?php echo $wordings['programm'] ?? ''; ?></div>
-                <div class="stage-headline m-0"><?php echo $wordings['programm'] ?? ''; ?></div>
+                <div class="stage-headline m-0"><?php echo $wordings['programm'] ?? 'programm'; ?></div>
+                <div class="stage-headline m-0"><?php echo $wordings['programm'] ?? 'programm'; ?></div>
                 -->
             </div>
         </div>
@@ -701,15 +588,12 @@ echo '$Ende der Anmeldung:£ ' . wp_date('l, j. F Y', strtotime($qry_events['dtm
             
             <div class="hours" aria-hidden="true">
                 <?php foreach ($timetable_hours as $hour_label) : ?>
-                    <div><time datetime="<?php echo esc_attr($hour_label); ?>"><?php echo esc_html($hour_label); ?></time></div>
+                    <?php $hour_label_dot = str_replace(":", ".", $hour_label); ?>
+                    <div><time datetime="<?php echo esc_attr($hour_label); ?>"><?php echo esc_html($hour_label_dot); ?></time></div>
                 <?php endforeach; ?>
             </div>
 
-            <?php include('col-2.php'); ?>
-            <!--
-            <?php include('col-3.php'); ?>
-            <?php include('col-4.php'); ?>
-            -->
+            <?php include('step-1-col-2.php'); ?>
 
         </div>
     </div>
@@ -719,11 +603,11 @@ echo '$Ende der Anmeldung:£ ' . wp_date('l, j. F Y', strtotime($qry_events['dtm
     <div class="modal-dialog modal-xl modal-dialog-centered modal-dialog-scrollable">
         <div class="modal-content">
             <div class="modal-header">
-                <h2 class="modal-title h3" id="event_registration_workshop_modal_label"><?php echo $wordings['angebot_auswaehlen'] ?? ''; ?></h2>
+                <h2 class="modal-title h3" id="event_registration_workshop_modal_label"><?php echo $wordings['angebot_auswaehlen'] ?? 'angebot_auswaehlen'; ?></h2>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Schliessen"></button>
             </div>
             <div class="modal-body js-workshop-modal-body">
-                <p class="lead"><?php echo $wordings['bitte_waehlen_sie_das_gewuenschte_angebot_durch_klick_auf_das_angebot'] ?? ''; ?></p>
+                <p class="lead"><?php echo $wordings['bitte_waehlen_sie_das_gewuenschte_angebot_durch_klick_auf_das_angebot'] ?? 'bitte_waehlen_sie_das_gewuenschte_angebot_durch_klick_auf_das_angebot'; ?></p>
                 <div class="row js-workshop-modal-list ps-3 pe-3"></div>
             </div>
         </div>
@@ -748,7 +632,7 @@ echo '$Ende der Anmeldung:£ ' . wp_date('l, j. F Y', strtotime($qry_events['dtm
         name="registration_action"
         value="next"
         class="btn btn-primary btn-lg mt-3 float-right js-final-button">
-            <?php echo $wordings['weiter_in_der_anmeldung'] ?? ''; ?>
+            <?php echo $wordings['weiter_in_der_anmeldung'] ?? 'weiter_in_der_anmeldung'; ?>
         </button>
 </div>
 

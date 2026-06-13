@@ -1,0 +1,74 @@
+/* =============================================================================
+   Icons
+   ============================================================================= */
+
+.icon-svg {
+    width: 24px;
+}
+
+
+/* =============================================================================
+   Icon Lists (Speaker, Price, Free Places, Audience)
+   ============================================================================= */
+
+.speaker-list,
+.price-list,
+.free-places-list,
+.audience-list {
+    margin: 0;
+    padding: 0;
+}
+
+.speaker-list li,
+.price-list li,
+.free-places-list li,
+.audience-list li {
+    list-style: none;
+    position: relative;
+    padding-left: 1.75rem;
+}
+
+.speaker-list li::before,
+.price-list li::before,
+.free-places-list li::before,
+.audience-list li::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 1.35em;
+    height: 1.35em;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: contain;
+}
+
+.speaker-list li::before {
+    background-image: url("../img/speaker-2.png");
+}
+
+.price-list li::before {
+    background-image: url("../img/price.png");
+}
+
+.free-places-list li::before {
+    background-image: url("../img/places.png");
+}
+
+.audience-list li::before {
+    background-image: url("../img/zielgruppen.png");
+}
+
+
+/* =============================================================================
+   Workshop Select Button
+   ============================================================================= */
+
+.btn-select-workshop {
+    color: #000000 !important;
+    font-weight: bold;
+}
+
+.btn-select-workshop:hover {
+    color: #ffffff !important;
+}

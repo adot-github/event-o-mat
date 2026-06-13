@@ -118,7 +118,24 @@ $manual_links = array(
         'str_url'         => '/wp-admin/admin.php?page=diploma-send-by-email',
         'mem_description' => 'Teilnahmebestätigungen per E-Mail versenden',
     ),
+
+    array(
+        'str_group'       => 'Namensschilder und Tickets',
+        'str_title'       => 'Namensschilder PDF generieren',
+        'str_url'         => '/wp-admin/admin.php?page=etiketten-pdf-create',
+        'mem_description' => 'Namens-Etiketten und Namens-Etiketten erstellen zur BEschriftung der Teilnehmnden.',
+    ),
+    array(
+        'str_group'       => 'Namensschilder und Tickets',
+        'str_title'       => 'Ticket PDF generieren',
+        'str_url'         => '/wp-admin/admin.php?page=ticket-pdf-create',
+        'mem_description' => 'Tickets für den Check-In generieren.',
+    ),
+
+
     
+
+
     array(
         'str_group'       => 'Listen',
         'str_title'       => 'Liste der angemeldeten Personen',

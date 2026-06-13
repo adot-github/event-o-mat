@@ -242,7 +242,7 @@ class Event_Registration {
         return isset($values[$key]) ? $values[$key] : $default;
     }
 
-    public function event_registration_send_email_after_registration($registration_values, $event_uid, $customer_cookie, $lang = 'de') {
+    public function event_registration_send_email_after_registration($registration_values, $event_uid, $customer_cookie, $lang = 'de', array $attachments = []) {
         $event_uid       = sanitize_text_field((string) $event_uid);
         $customer_cookie = sanitize_text_field((string) $customer_cookie);
         $lang            = sanitize_key((string) $lang);
@@ -274,28 +274,26 @@ class Event_Registration {
             return false;
         }
 
-        if (!class_exists('Evtmgr_Wordings')) {
-            $GLOBALS['event_registration_last_email_error'] = 'Klasse Evtmgr_Wordings ist nicht geladen.';
-            return false;
-        }
-
         if (!class_exists('Evtmgr_Events')) {
             $GLOBALS['event_registration_last_email_error'] = 'Klasse Evtmgr_Events ist nicht geladen.';
             return false;
         }
 
-        /*
-        /* TODO
-        $wordings_obj = new Evtmgr_Wordings();
-        $wordings = $wordings_obj->get_wordings($lang, $event_uid);
-
-        if (!is_array($wordings)) {
-            $wordings = array();
+        $wordings_class_file = __DIR__ . '/class-evtmgr-wordings.php';
+        if (!class_exists('Evtmgr_Wordings') && file_exists($wordings_class_file)) {
+            require_once $wordings_class_file;
         }
-        */
 
         if (!isset($wordings) || !is_array($wordings)) {
-            $wordings = array();
+            if (class_exists('Evtmgr_Wordings')) {
+                $wordings_obj = new Evtmgr_Wordings();
+                $wordings     = $wordings_obj->get_wordings($lang, $event_uid);
+                if (!is_array($wordings)) {
+                    $wordings = array();
+                }
+            } else {
+                $wordings = array();
+            }
         }
 
         $event_obj = new Evtmgr_Events();
@@ -337,13 +335,13 @@ class Event_Registration {
         $css = '
             <style type="text/css">
                 body {padding:0;margin:0}
-                h1,h2,h3,h4,h5 {font-family:Arial,Helvetica;font-weight:bold;color:#000000 !important;line-height:110%;margin:0;margin-top:10px;}
-                h1 {font-size:22px}
-                h2 {font-size:19px}
-                h3 {font-size:16px}
+                h1,h2,h3,h4,h5 {font-family:Arial,Helvetica;font-weight:bold;color:#000000 !important;line-height:120%;margin:0;margin-top:12px;}
+                h1 {font-size:26px}
+                h2 {font-size:22px}
+                h3 {font-size:18px}
                 table {border-collapse:collapse;border:none}
                 table td {border:none;}
-                p, ul, ol, li, td {font-family:Helvetica;font-size:14px;line-height:110%;vertical-align:top;color:#000000 !important;}
+                p, ul, ol, li, td {font-family:Helvetica;font-size:16px;line-height:150%;vertical-align:top;color:#000000 !important;}
                 p .fhnw-footer {font-size:8pt !important}
                 #topTitle {font-size:12pt;font-weight:bold;font-family:Arial;color:#000000 !important;margin:0;padding:0}
                 #subTitle {font-size:12pt;font-weight:normal;font-family:Arial;color:#000000 !important;margin:0;padding:0}
@@ -357,9 +355,9 @@ class Event_Registration {
             </style>
         ';
 
-        $greeting_text = $wordings['guten_tag'] ?? 'Guten Tag';
-        $notice_text   = $wordings['bitte_beachten_sie_ihre_anmeldung_ist_verbindlich_abmeldungen'] ?? '';
-        $subject_text  = $wordings['ihre_anmeldung'] ?? 'Ihre Anmeldung';
+        $greeting_text = $wordings['guten_tag'] ?? 'guten_tag';
+        $notice_text   = $wordings['bitte_beachten_sie_ihre_anmeldung_ist_verbindlich_abmeldungen'] ?? 'bitte_beachten_sie_ihre_anmeldung_ist_verbindlich_abmeldungen';
+        $subject_text  = $wordings['ihre_anmeldung'] ?? 'ihre_anmeldung';
 
         $show_email_text = '
             <p>' . esc_html($greeting_text) . ' ' . esc_html(trim($first_name . ' ' . $last_name)) . '<br><br>'
@@ -377,9 +375,9 @@ class Event_Registration {
                 ' . $css . '
             </head>
             <body>
-                <table width="600" cellpadding="0" cellspacing="0">
+                <table width="600" cellpadding="0" cellspacing="0" style="max-width:600px;width:100%">
                     <tr>
-                        <td>
+                        <td style="padding:0 20px">
                             <h1>' . esc_html($event_name) . '</h1>
                             <br>
                             ' . $show_email_text . '
@@ -425,7 +423,7 @@ class Event_Registration {
 
         add_action('wp_mail_failed', $mail_failed_callback, 10, 1);
 
-        $sent = wp_mail($to_email, $subject, $message, $headers);
+        $sent = wp_mail($to_email, $subject, $message, $headers, $attachments);
 
         remove_action('wp_mail_failed', $mail_failed_callback, 10);
 

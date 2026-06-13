@@ -1,4 +1,4 @@
-            <div class="stage" style="--column: 4;">
+﻿            <div class="stage" style="--column: 4;">
                 <h2 class="stage-headline m-0">Programm</h2>
 
                 <ol class="session-list">
@@ -71,23 +71,23 @@
 
                                     <div class="mt-2">
                                         <span class="mr-1">
-                                            <?php echo $wordings['anzahl_angebote_zur_auswahl'] ?? ''; ?>
+                                            <?php echo $wordings['anzahl_angebote_zur_auswahl'] ?? 'anzahl_angebote_zur_auswahl'; ?>
                                             <?php echo esc_html((string) $session['workshop_count']); ?>
                                         </span>
 
                                         <a href="#" class="btn btn-select-workshop btn-sm js-workshop-add ps-2 pe-2">
-                                            <?php echo $wordings['angebot_auswaehlen'] ?? ''; ?>
+                                            <?php echo $wordings['angebot_auswaehlen'] ?? 'angebot_auswaehlen'; ?>
                                         </a>
                                     </div>
 
                                     <div class="row">
                                         <div class="col-md-12">
                                             <div class="js-workshops-label js-workshops-label-no mt-2">
-                                                <?php echo $wordings['sie_haben_noch_kein_angebot_gewaehlt'] ?? ''; ?>
+                                                <?php echo $wordings['sie_haben_noch_kein_angebot_gewaehlt'] ?? 'sie_haben_noch_kein_angebot_gewaehlt'; ?>
                                             </div>
 
                                             <div class="js-workshops-label js-workshops-label-yes mt-2" style="display:none">
-                                                <?php echo $wordings['sie_haben_folgendes_angebot_gewaehlt'] ?? ''; ?>
+                                                <?php echo $wordings['sie_haben_folgendes_angebot_gewaehlt'] ?? 'sie_haben_folgendes_angebot_gewaehlt'; ?>
                                             </div>
                                         </div>
                                     </div>
