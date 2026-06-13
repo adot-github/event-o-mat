@@ -52,11 +52,11 @@
     $error_messages               = array();
 
     if (empty($customer_cookie)) {
-        $error_messages[] = 'Customer cookie fehlt.';
+        $error_messages[] = 'Registrierungs-Cookie fehlt.';
     }
 
     if (empty($event_uid)) {
-        $error_messages[] = 'Event Uid fehlt.';
+        $error_messages[] = 'Event-UID fehlt.';
     }
 
     if (empty($registration_values)) {

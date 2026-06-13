@@ -219,36 +219,42 @@
                 'label' => 'ysn_show_time_in_output',
                 'acf' => [
                     'type' => 'true_false',
+                    'ui'            => 1,
                 ]
             ],
            'ysn_show_in_output' => [
                 'label' => 'ysn_show_in_output',
                 'acf' => [
                     'type' => 'true_false',
+                    'ui'            => 1,
                 ]
             ],
            'ysn_print_on_label' => [
                 'label' => 'ysn_print_on_label',
                 'acf' => [
                     'type' => 'true_false',
+                    'ui'            => 1,
                 ]
             ],
            'ysn_group_select_children' => [
                 'label' => 'ysn_group_select_children',
                 'acf' => [
                     'type' => 'true_false',
+                    'ui'            => 1,
                 ]
             ],
            'ysn_group_select_block_only' => [
                 'label' => 'ysn_group_select_block_only',
                 'acf' => [
                     'type' => 'true_false',
+                    'ui'            => 1,
                 ]
             ],
            'ysn_charge_always' => [
                 'label' => 'ysn_charge_always',
                 'acf' => [
                     'type' => 'true_false',
+                    'ui'            => 1,
                 ]
             ],
            'mem_remark_on_no_registration_{{lang}}' => [

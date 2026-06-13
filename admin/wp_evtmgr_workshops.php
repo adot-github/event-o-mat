@@ -61,11 +61,12 @@
                 fky_event_uid:col-lg-3 col-md-4
 
                 tab:Anmeldung/Kosten
-                ysn_booked_out:col-lg-3 col-md-4
+                
                 ysn_print:col-lg-3 col-md-4
                 ysn_online:col-lg-3 col-md-4
                 ysn_auto_register:col-lg-3 col-md-4
                 ysn_no_registration_possible:col-lg-3 col-md-4
+                ysn_booked_out:col-lg-3 col-md-4
                 int_number_of_registrations:col-lg-3 col-md-4
                 int_max_number_of_registrations:col-lg-3 col-md-4
                 num_price:col-lg-3 col-md-4
@@ -187,24 +188,28 @@
                 'label' => 'Erscheint in Broschüre',
                 'acf' => [
                     'type' => 'true_false',
+                    'ui'            => 1,
                 ]
             ],
            'ysn_online' => [
                 'label' => 'Erscheint Online',
                 'acf' => [
                     'type' => 'true_false',
+                    'ui'            => 1,
                 ]
             ],
            'ysn_auto_register' => [
                 'label' => 'Obligatorische&nbsp;Anmeldung',
                 'acf' => [
                     'type' => 'true_false',
+                    'ui'            => 1,
                 ]
             ],
            'ysn_no_registration_possible' => [
                 'label' => 'Keine Anmeldung',
                 'acf' => [
                     'type' => 'true_false',
+                    'ui'            => 1,
                 ]
             ],
            'int_number_of_registrations' => [

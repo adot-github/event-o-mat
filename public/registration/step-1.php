@@ -535,7 +535,7 @@
     </p>
 <?php elseif (empty($qry_events)) : ?>
     <p class="event-registration-error">
-        <?php echo esc_html(sprintf('Der Anlass mit folgender UUID wurde nicht gefunden: %s ', $event_uid)); ?>
+        <?php echo esc_html(sprintf('Der Anlass mit folgender UID wurde nicht gefunden: %s', $event_uid)); ?>
     </p>
 <?php else : ?>
     <!--

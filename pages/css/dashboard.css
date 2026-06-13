@@ -540,6 +540,32 @@ a.button {
 	border-top-right-radius: 7px;
 }
 
+.acf-switch {
+    background: #f7ffcc !important;
+	color: #000 !important;
+    border-radius:20px !important;
+    text-shadow: none !important;
+}
+
+.acf-switch-on {
+    background: #d7e58c !important;
+	color: #000 !important;
+    border-radius: 20px !important;
+    font-weight:bold !important;
+    text-shadow: none !important;
+    margin-right:5px !important;
+}
+
+.acf-switch-slider {
+    border-radius:20px !important;
+    background: #d2d8ae !important;
+    color: #000;
+}
+
+.acf-label label {
+font-weight:300 !important;
+}
+
 .adot-collapse,
 .adot-content,
 .adot-collapse summary {

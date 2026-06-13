@@ -22,7 +22,7 @@
         'menu' => [
             'page_title' => 'Event-Manager',
             'menu_title' => 'Event-Manager',
-            'icon'       => get_stylesheet_directory_uri() . '/db-custom/event-registration/admin/assets/event-icon.svg',
+            'icon'       => get_stylesheet_directory_uri() . '/db-custom/event-registration/admin/assets/event-icon.png',
             'position'   => 32
         ],
         'list'  => [

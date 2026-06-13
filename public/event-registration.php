@@ -125,7 +125,7 @@
         <input type="hidden" name="current_step" value="<?php echo esc_attr($step); ?>">
         <input type="hidden" name="str_customer_cookie" value="<?php echo esc_attr($customer_cookie); ?>">
 
-        <div class="event-registration-steps" aria-label="Registrationsschritte">
+        <div class="event-registration-steps" aria-label="Registrierungsschritte">
             <?php for ($i = 1; $i <= Event_Registration::MAX_STEP; $i++) : ?>
                 <?php if ((int) $step === Event_Registration::MAX_STEP) : ?>
                     <span class="event-registration-step <?php echo $i === (int) $step ? 'is-active' : ''; ?>">

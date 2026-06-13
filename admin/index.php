@@ -11,7 +11,7 @@
     require_once __DIR__ . '/wp_evtmgr_timezones.php';
     require_once __DIR__ . '/wp_evtmgr_pricing.php';
     require_once __DIR__ . '/wp_evtmgr_wordings.php';
-
+    require_once __DIR__ . '/wp_evtmgr_slots.php';
     require_once __DIR__ . '/diploma-send-by-email.php';
     require_once __DIR__ . '/invoice-send-by-email.php';
 

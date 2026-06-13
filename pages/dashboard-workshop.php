@@ -15,7 +15,7 @@ $manual_links = array(
     ),
     array(
         'str_group'       => 'Workshops',
-        'str_title'       => 'Workshop-Buchungslisten für Workshops',
+        'str_title'       => 'Buchungslisten für Workshops',
         'str_url'         => '/wp-admin/admin.php?page=workshop-booking-lists-pdf-create',
         'mem_description' => 'Erstellt Liste aller Teilnehmenden als PDF für jeden Workshop/Anlass',
     ),
@@ -29,7 +29,7 @@ $manual_links = array(
 
     array(
         'str_group'       => 'Präsentierende Personen',
-        'str_title'       => 'Lister der präsentierende Personen',
+        'str_title'       => 'Liste der präsentierenden Personen',
         'str_url'         => '/wp-admin/admin.php?page=report-presenters',
         'mem_description' => 'Liste aller Personen, welche in Workshops etc. präsentieren',
     ),
@@ -45,7 +45,12 @@ $manual_links = array(
         'str_url'         => '/wp-admin/admin.php?page=adot_evtmgr_pricing',
         'mem_description' => 'Die Kostenstruktur des Events erfassen oder bearbeiten',
     ),
-
+    array(
+        'str_group'       => 'Workshop-Konfigurationen',
+        'str_title'       => 'Slots bearbeiten',
+        'str_url'         => '/wp-admin/admin.php?page=adot_evtmgr_slots',
+        'mem_description' => 'Die Slots/Tracks erfassen oder bearbeiten',
+    ),
     
 );
 ?>

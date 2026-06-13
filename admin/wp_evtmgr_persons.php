@@ -53,58 +53,58 @@
             'fields_visual' => '
                 tab:Privat
                 id:col-lg-1 col-md-1
-                int_type_of_address:col-lg-2 col-md-4
-                str_salutation:col-lg-2 col-md-4
+                int_type_of_address:col-lg-4 col-md-6
+                str_language:col-lg-4 col-md-6
+                -
+                str_salutation:col-lg-3 col-md-4
                 str_academic_title:col-lg-1 col-md-2
                 -
-                str_first_name:col-lg-3 col-md-4
-                str_last_name:col-lg-3 col-md-4
+                str_first_name:col-lg-4 col-md-6
+                str_last_name:col-lg-4 col-md-6
                 -
-                str_job_title:col-lg-3 col-md-4
+                str_job_title:col-lg-4 col-md-6
                 -
-                str_email:col-lg-3 col-md-4
-                str_phone:col-lg-3 col-md-4
+                str_email:col-lg-4 col-md-6
+                str_phone:col-lg-4 col-md-6
                 -
-                str_address:col-lg-3 col-md-4
+                str_address:col-lg-4 col-md-6
                 str_zip:col-lg-1 col-md-2
                 str_city:col-lg-2 col-md-3
                 -
                 str_country:col-lg-2 col-md-3
-                str_language:col-lg-3 col-md-4
-                fky_event_uid:col-lg-3 col-md-4
+                fky_event_uid:col-lg-2 col-md-3
 
 
                 tab:Organisation/Arbeitgeber
-                str_institution:col-lg-3 col-md-4
-                str_institution_division:col-lg-3 col-md-4
+                str_institution:col-lg-4 col-md-6
+                str_institution_division:col-lg-4 col-md-6
                 -
-                str_institution_address:col-lg-3 col-md-4
+                str_institution_address:col-lg-4 col-md-6
                 -
                 str_institution_zip:col-lg-2 col-md-3
-                str_institution_city:col-lg-3 col-md-4
+                str_institution_city:col-lg-4 col-md-6
                 -
-                str_institution_name_shield_OFF:col-lg-3 col-md-4
+                str_institution_name_shield_OFF:col-lg-4 col-md-6
 
                 tab:Anmeldung
+                int_billing_status:col-lg-4 col-md-6
+                int_diploma_sent:col-lg-4 col-md-6
+                num_invoice_total:col-lg-4 col-md-6
                 mem_email_sent:col-12
                 mem_program_data:col-12
                 mem_price_data:col-12
                 mem_person_data:col-12
                 mem_cgi_variables:col-12
                 mem_form_variables:col-12
-                int_billing_status:col-lg-3 col-md-4
-                int_diploma_sent:col-lg-3 col-md-4
-                num_invoice_total:col-lg-3 col-md-4
-
 
                 tab:Systemdaten
-                str_registration_cookie:col-lg-3 col-md-4
+                str_registration_cookie:col-lg-4 col-md-6
                 -
                 str_diploma_pdf:col-12
                 str_invoice_pdf:col-12
                 str_program_pdf:col-12
-                dtm_date_created:col-lg-3 col-md-4
-                dtm_date_updated:col-lg-3 col-md-4'
+                dtm_date_created:col-lg-4 col-md-6
+                dtm_date_updated:col-lg-4 col-md-6'
 
         ],
         'fields' => [
@@ -137,7 +137,7 @@
                 ],
                 'searchable' => true,
                 'acf' => [
-                    'type' => "checkbox",
+                    'type' => "radio",
                     'layout' => 'horizontal',
                     'default_value' => 'unbestimmt',
                     'choices' => [
@@ -273,7 +273,7 @@
             ],
            
            'fky_event_uid' => [
-                'label' => 'Beziehung',
+                'label' => 'UID',
                 'acf' => [
                     'type' => 'text',
                     'readonly'=> true,

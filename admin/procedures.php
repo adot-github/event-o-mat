@@ -4,7 +4,7 @@ $editor->add_page_config([
     'menu' => [
         'menu_parent'=> $root_config_id,
         'page_title' => "Dashboard",
-        'menu_title' => "DASHBOARD",
+        'menu_title' => "– Dashboard",
         'icon'       => get_stylesheet_directory_uri() . '/db-custom/lernorte/admin/assets/fhnw-logo-weiss.svg',
         'position'   => 0
     ],
@@ -15,8 +15,8 @@ $editor->add_page_config([
     'id' => 'dashboard-event',
     'menu' => [
         'menu_parent'=> $root_config_id,
-        'page_title' => "EVENT",
-        'menu_title' => "EVENT",
+        'page_title' => "Events",
+        'menu_title' => "– Events",
         'position'   => 1
     ],
     'page' => 'dashboard-event'
@@ -26,8 +26,8 @@ $editor->add_page_config([
     'id' => 'dashboard-workshop',
     'menu' => [
         'menu_parent'=> $root_config_id,
-        'page_title' => "WORKSHOPS",
-        'menu_title' => "WORKSHOPS",
+        'page_title' => "Workshops",
+        'menu_title' => "– Workshops",
         'position'   => 2
     ],
     'page' => 'dashboard-workshop'
@@ -38,8 +38,8 @@ $editor->add_page_config([
     'id' => 'dashboard-anmeldungen',
     'menu' => [
         'menu_parent'=> $root_config_id,
-        'page_title' => "ANMELDUNGEN",
-        'menu_title' => "ANMELDUNGEN",
+        'page_title' => "Anmeldungen",
+        'menu_title' => "– Anmeldungen",
         'position'   => 2
     ],
     'page' => 'dashboard-anmeldungen'
@@ -49,8 +49,8 @@ $editor->add_page_config([
     'id' => 'dashboard-anmeldungen',
     'menu' => [
         'menu_parent'=> $root_config_id,
-        'page_title' => "TOOLS",
-        'menu_title' => "TOOLS",
+        'page_title' => "Tools",
+        'menu_title' => "– Tools",
         'position'   => 4
     ],
     'page' => 'dashboard-tools'
