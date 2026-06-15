@@ -205,7 +205,6 @@
                 'label' => 'UID',
                 'acf' => [
                     'type' => 'text',
-                    'readonly' => true,
                     'default_value'=> $event_uid,
                 ],
             ],

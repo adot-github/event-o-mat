@@ -249,7 +249,7 @@
      *
      * Workshops are only shown when they are directly linked to the timezone
      * currently rendered in the session list. Parent rows and child rows can
-     * both be visible when ysn_show_in_output = 1, but there is no fallback
+     * both be visible, but there is no fallback
      * from parent rows to child rows.
      */
     $build_workshop_data_for_timezones = function (array $timezone_sources) use (
@@ -260,10 +260,12 @@
         $selected_workshop_ids,
         $wordings
     ) {
-        $workshop_rows = array();
-        $first_slot_id = 0;
-        $color         = 'eeeeee';
-        $debug_sources = array();
+        $workshop_rows           = array();
+        $workshops_per_slot_rows = array();
+        $session_slot_ids        = array();
+        $first_slot_id           = 0;
+        $color                   = 'eeeeee';
+        $debug_sources           = array();
 
         foreach ($timezone_sources as $timezone_source) {
             $source_timezone_id = !empty($timezone_source['id'])
@@ -279,7 +281,6 @@
                 'timezone_name'     => $timezone_source['str_timezone_name'] ?? '',
                 'parent_timezone_id'=> $timezone_source['fky_parent_timezone_id'] ?? '',
                 'str_slots'         => $timezone_source['str_slots'] ?? '',
-                'show_in_output'    => $timezone_source['ysn_show_in_output'] ?? '',
                 'slots_found'       => array(),
                 'chosen_slot_id'    => 0,
                 'workshops_found'   => array(),
@@ -305,79 +306,83 @@
                 );
             }
 
-            $source_first_slot = !empty($qry_slots[0])
-                ? $qry_slots[0]
-                : null;
-
-            $source_slot_id_from_query = !empty($source_first_slot['id'])
-                ? absint($source_first_slot['id'])
-                : 0;
-
             $source_slot_id_from_timezone = event_registration_step1_get_first_slot_id_from_timezone($timezone_source);
-
-            /*
-             * Prefer the real slot record if qry_slots_by_time_zone() found it.
-             * Fallback to the timezone's str_slots/fky_slot_id value.
-             * This fixes cases where debug shows str_slots = 723 but chosen_slot_id = 0.
-             */
-            $source_slot_id = $source_slot_id_from_query > 0
-                ? $source_slot_id_from_query
-                : $source_slot_id_from_timezone;
-
-            $source_debug['chosen_slot_id'] = $source_slot_id;
-            $source_debug['slot_id_from_query'] = $source_slot_id_from_query;
             $source_debug['slot_id_from_timezone'] = $source_slot_id_from_timezone;
 
-            if ($first_slot_id <= 0 && $source_slot_id > 0) {
-                $first_slot_id = $source_slot_id;
+            // Parse slot IDs directly from str_slots — bypasses the fky_event_uid filter
+            // in get_slots_by_id(), which would otherwise drop slots that lack that field.
+            $str_slots_raw   = trim((string) ($timezone_source['str_slots'] ?? ''));
+            $direct_slot_ids = $str_slots_raw !== ''
+                ? array_values(array_filter(array_map('absint', explode(',', $str_slots_raw))))
+                : array();
+
+            if (empty($direct_slot_ids) && $source_slot_id_from_timezone > 0) {
+                $direct_slot_ids = array($source_slot_id_from_timezone);
             }
 
-            if ($color === 'eeeeee' && !empty($source_first_slot['str_color'])) {
-                $color = $source_first_slot['str_color'];
-            }
-
-            if ($source_slot_id <= 0) {
+            if (empty($direct_slot_ids)) {
                 $debug_sources[] = $source_debug;
                 continue;
             }
 
-            $source_workshops = $workshops_obj->get_workshops_by_slot(
-                $source_slot_id,
-                $source_timezone_id,
-                $event_uid,
-                $lang
-            );
-
-            if (!is_array($source_workshops)) {
-                $debug_sources[] = $source_debug;
-                continue;
+            // Build a color map from qry_slots results (where available).
+            $slot_color_map = array();
+            foreach ($qry_slots as $qs) {
+                $qs_id = absint($qs['id'] ?? 0);
+                if ($qs_id > 0 && !empty($qs['str_color'])) {
+                    $slot_color_map[$qs_id] = $qs['str_color'];
+                }
             }
 
-            foreach ($source_workshops as $debug_workshop) {
-                $source_debug['workshops_found'][] = array(
-                    'id'               => $debug_workshop['id'] ?? '',
-                    'number'           => $debug_workshop['str_workshop_number'] ?? '',
-                    'title'            => $debug_workshop['str_workshop_title'] ?? '',
-                    'fky_slot_id'      => $debug_workshop['fky_slot_id'] ?? '',
-                    'fky_timezone_id'  => $debug_workshop['fky_timezone_id'] ?? '',
-                    'ysn_online'       => $debug_workshop['ysn_online'] ?? '',
-                );
-            }
-            $source_debug['workshop_count'] = count($source_workshops);
-
-            foreach ($source_workshops as $workshop) {
-                $workshop_id = !empty($workshop['id'])
-                    ? absint($workshop['id'])
-                    : 0;
-
-                if ($workshop_id <= 0) {
+            foreach ($direct_slot_ids as $iter_slot_id) {
+                if ($iter_slot_id <= 0) {
                     continue;
                 }
 
-                /* Avoid duplicates if the same workshop is reachable through more than one source. */
-                $workshop_rows[$workshop_id] = $workshop;
+                $session_slot_ids[] = $iter_slot_id;
+
+                if ($first_slot_id <= 0) {
+                    $first_slot_id = $iter_slot_id;
+                }
+
+                if ($color === 'eeeeee' && !empty($slot_color_map[$iter_slot_id])) {
+                    $color = $slot_color_map[$iter_slot_id];
+                }
+
+                $source_workshops = $workshops_obj->get_workshops_by_slot(
+                    $iter_slot_id,
+                    $source_timezone_id,
+                    $event_uid,
+                    $lang
+                );
+
+                if (!is_array($source_workshops)) {
+                    continue;
+                }
+
+                foreach ($source_workshops as $debug_workshop) {
+                    $source_debug['workshops_found'][] = array(
+                        'id'               => $debug_workshop['id'] ?? '',
+                        'number'           => $debug_workshop['str_workshop_number'] ?? '',
+                        'title'            => $debug_workshop['str_workshop_title'] ?? '',
+                        'fky_slot_id'      => $debug_workshop['fky_slot_id'] ?? '',
+                        'fky_timezone_id'  => $debug_workshop['fky_timezone_id'] ?? '',
+                        'ysn_online'       => $debug_workshop['ysn_online'] ?? '',
+                    );
+                }
+                $source_debug['workshop_count'] += count($source_workshops);
+
+                foreach ($source_workshops as $workshop) {
+                    $workshop_id = !empty($workshop['id']) ? absint($workshop['id']) : 0;
+                    if ($workshop_id <= 0) {
+                        continue;
+                    }
+                    $workshop_rows[$workshop_id]                              = $workshop;
+                    $workshops_per_slot_rows[$iter_slot_id][$workshop_id]    = $workshop;
+                }
             }
 
+            $source_debug['chosen_slot_id'] = $first_slot_id;
             $debug_sources[] = $source_debug;
         }
 
@@ -420,25 +425,54 @@
             }
         }
 
+        $workshops_per_slot = array();
+        foreach ($workshops_per_slot_rows as $slot_id => $slot_workshop_rows) {
+            $slot_count    = count($slot_workshop_rows);
+            $slot_single   = array();
+            $slot_selected = array();
+            $slot_options  = array();
+
+            foreach ($slot_workshop_rows as $workshop_id => $workshop) {
+                $workshop_html = event_registration_step1_render_workshop_html($workshop, $color, $lang, $wordings);
+                if ($workshop_html === '') {
+                    continue;
+                }
+                $workshop_item = array('id' => $workshop_id, 'html' => $workshop_html);
+                if ($slot_count === 1) {
+                    $slot_single[] = $workshop_item;
+                }
+                if ($slot_count > 1 && in_array($workshop_id, $selected_workshop_ids, true)) {
+                    $slot_selected[] = $workshop_item;
+                }
+                if ($slot_count > 1) {
+                    $slot_options[] = $workshop_item;
+                }
+            }
+
+            $workshops_per_slot[$slot_id] = array(
+                'workshop_count'     => $slot_count,
+                'single_workshops'   => $slot_single,
+                'selected_workshops' => $slot_selected,
+                'workshop_options'   => $slot_options,
+            );
+        }
+
         return array(
             'slot_id'            => $first_slot_id,
+            'session_slot_ids'   => array_values(array_unique($session_slot_ids)),
             'color'              => $color,
             'workshop_count'     => $workshop_count,
             'single_workshops'   => $single_workshops,
             'selected_workshops' => $selected_workshops,
             'workshop_options'   => $workshop_options,
+            'workshops_per_slot' => $workshops_per_slot,
             'debug_sources'      => $debug_sources,
         );
     };
 
-    /*
-     * Build the timetable from all timezones, not only children.
-     * Parent and child rows are both eligible for output.
-     * The database field ysn_show_in_output controls whether a timezone
-     * becomes an item in the session-list.
-     */
     foreach ($qry_time_zones_all as $timezone) {
-        if (empty($timezone['ysn_show_in_output'])) {
+
+        if (empty($timezone['ysn_show_timezone_in_output'])) {
             continue;
         }
 
@@ -499,14 +533,19 @@
             'time_to'            => $time_to,
             'time_label_from'    => $time_label_from,
             'time_label_to'      => $time_label_to,
-            'show_time_in_output'=> !empty($timezone['ysn_show_time_in_output']),
+            'show_time_in_timezone_output'=> !empty($timezone['ysn_show_time_in_output']),
+            'show_text_in_timezone_output'=> !empty($timezone['ysn_show_text_in_output']),
             'timezone_name'      => $timezone['str_timezone_name'] ?? '',
+            'timezone_color'     => trim((string) ($timezone['str_color'] ?? '')),
+            'fullwidth'          => !empty($timezone['ysn_show_fullwidth']),
             'timezone_text'      => $timezone_text,
             'presenters'         => $presenters,
             'workshop_count'     => $workshop_count,
+            'session_slot_ids'   => $workshop_data['session_slot_ids'] ?? array(),
             'single_workshops'   => $workshop_data['single_workshops'] ?? array(),
             'selected_workshops' => $workshop_data['selected_workshops'] ?? array(),
             'workshop_options'   => $workshop_data['workshop_options'] ?? array(),
+            'workshops_per_slot' => $workshop_data['workshops_per_slot'] ?? array(),
             'debug'              => array(
                 'source_mode'          => $workshop_source_mode,
                 'visible_timezone_id'  => $timezone_id,
@@ -525,6 +564,40 @@
     $timetable_start_hour = (int) ($timetable_hour_data['start_hour'] ?? 9);
     $timetable_end_hour   = (int) ($timetable_hour_data['end_hour'] ?? 17);
     $timetable_hours      = $timetable_hour_data['hours'] ?? array();
+    $first_hour           = !empty($timetable_hours) ? (int) reset($timetable_hours) : $timetable_start_hour;
+    $last_hour            = !empty($timetable_hours) ? (int) end($timetable_hours)   : $timetable_end_hour;
+
+    $number_of_slots = 1;
+    $all_slot_ids    = array();
+    foreach ((array) $qry_time_zones_all as $tz) {
+        $str_slots = trim((string) ($tz['str_slots'] ?? ''));
+        if ($str_slots !== '') {
+            $ids   = array_values(array_filter(array_map('absint', explode(',', $str_slots))));
+            $count = count($ids);
+            if ($count > $number_of_slots) {
+                $number_of_slots = $count;
+            }
+            foreach ($ids as $sid) {
+                $all_slot_ids[$sid] = $sid;
+            }
+        }
+    }
+    $all_slot_ids = array_values($all_slot_ids);
+
+    $qry_slot_headers = array();
+    if (!empty($all_slot_ids)) {
+        global $wpdb;
+        $placeholders     = implode(',', array_fill(0, count($all_slot_ids), '%d'));
+        $qry_slot_headers = $wpdb->get_results(
+            $wpdb->prepare(
+                "SELECT * FROM {$wpdb->prefix}evtmgr_slots
+                  WHERE id IN ($placeholders)
+                  ORDER BY int_sort, id",
+                ...$all_slot_ids
+            ),
+            ARRAY_A
+        ) ?: array();
+    }
 
 ?>
 
@@ -566,6 +639,30 @@
     -->
 <?php endif; ?>
 
+<style>
+    .timetable {
+    /* column adjust */
+        --stages: <?php echo (int) $number_of_slots; ?> !important;
+        --start-time: <?php echo (int) $first_hour; ?> !important;
+        --end-time: <?php echo (int) $last_hour; ?>;
+        --stage-gap: 0.5rem;
+        --stage-width: min(100vw - var(--th-width) - 3rem, 12rem);
+        --time-unit-height: .5rem;
+}
+
+        .session.full-width-row {
+        grid-column: 2 / 6;
+        position: relative;
+        z-index: 1;
+        /* +2 instead of +1 to account for missing session-list grid-row: 2 offset */
+        grid-row-start: calc(
+            (var(--start-hours-to-minutes) + var(--start-minutes) - var(--minutes-to-start)) / 5 + 2
+        );
+        grid-row-end: calc(
+            (var(--end-hours-to-minutes) + var(--end-minutes) - var(--minutes-to-start)) / 5 + 2
+        );
+        }
+</style>
 <!-- TIME TABLE-->
 <div class="container-lg bg-light p-0 mt-5">
     <!--
@@ -575,12 +672,20 @@
         
         <div class="timetable--head" aria-hidden="true">
             <div class="timetable--inner-head">
-                <div class="stage-headline m-0 ms-4"><?php echo $wordings['programm'] ?? 'programm'; ?></div>
-                <!--
-                KEEP!
-                <div class="stage-headline m-0"><?php echo $wordings['programm'] ?? 'programm'; ?></div>
-                <div class="stage-headline m-0"><?php echo $wordings['programm'] ?? 'programm'; ?></div>
-                -->
+                <?php if (!empty($qry_slot_headers)) : ?>
+                    <?php foreach ($qry_slot_headers as $slot_header) : ?>
+                        <?php
+                        $slot_title      = $slot_header['str_slot_name_' . ($lang ?? 'de')]
+                            ?? $slot_header['str_slot_name_de']
+                            ?? '';
+                        $slot_color_raw  = trim((string) ($slot_header['str_color'] ?? ''));
+                        $slot_color_css  = $slot_color_raw !== '' ? 'background-color:#' . ltrim($slot_color_raw, '#') . ';' : '';
+                        ?>
+                        <div class="stage-headline m-0"<?php if ($slot_color_css !== '') : ?> style="<?php echo esc_attr($slot_color_css); ?>"<?php endif; ?>><?php echo esc_html($slot_title); ?></div>
+                    <?php endforeach; ?>
+                <?php else : ?>
+                    <div class="stage-headline m-0"><?php echo $wordings['programm'] ?? 'programm'; ?></div>
+                <?php endif; ?>
             </div>
         </div>
 
@@ -593,7 +698,131 @@
                 <?php endforeach; ?>
             </div>
 
-            <?php include('step-1-col-2.php'); ?>
+            <?php foreach ($timetable_sessions as $fw_session) : ?>
+                <?php if (empty($fw_session['fullwidth'])) : continue; endif; ?>
+                <?php
+                $fw_color_raw = trim((string) ($fw_session['timezone_color'] ?? ''));
+                $fw_bg_color  = '';
+                if ($fw_color_raw !== '') {
+                    $fw_hex = str_pad(ltrim($fw_color_raw, '#'), 6, '0');
+                    if (strlen($fw_hex) === 3) { $fw_hex = $fw_hex[0].$fw_hex[0].$fw_hex[1].$fw_hex[1].$fw_hex[2].$fw_hex[2]; }
+                    $fw_r = hexdec(substr($fw_hex,0,2)); $fw_g = hexdec(substr($fw_hex,2,2)); $fw_b = hexdec(substr($fw_hex,4,2));
+                    $fw_bg_color = sprintf('rgb(%d,%d,%d)',
+                        (int) round($fw_r + (255 - $fw_r) * 0.8),
+                        (int) round($fw_g + (255 - $fw_g) * 0.8),
+                        (int) round($fw_b + (255 - $fw_b) * 0.8)
+                    );
+                }
+                ?>
+                <div class="session full-width-row <?php echo esc_attr($fw_session['session_class']); ?>"
+                     style="--start: <?php echo esc_attr($fw_session['time_from']); ?>; --end: <?php echo esc_attr($fw_session['time_to']); ?>;<?php if ($fw_bg_color !== '') echo ' background-color:' . $fw_bg_color . ';'; ?>">
+
+                    <div data-slot="<?php echo esc_attr((string) $fw_session['slot_id']); ?>"
+                            data-timezone="<?php echo esc_attr((string) $fw_session['timezone_id']); ?>"
+                            class="js-session-container session-eno session-1 track-all">
+
+                        <?php if (!empty($fw_session['show_time_in_timezone_output'])) : ?>
+                            <span class="time">
+                                <?php echo esc_html($fw_session['time_label_from']); ?>–<?php echo esc_html($fw_session['time_label_to']); ?> Uhr
+                            </span>
+                        <?php endif; ?>
+
+                        <?php if (!empty($fw_session['show_text_in_timezone_output'])) : ?>
+                            <h3 class="session-title mb-1 mt-2">
+                                <?php echo esc_html($fw_session['timezone_name']); ?>
+                            </h3>
+
+                            <?php if (trim((string) $fw_session['timezone_text']) !== '') : ?>
+                                <?php echo wp_kses_post($fw_session['timezone_text']); ?>
+                            <?php endif; ?>
+                        <?php endif; ?>
+
+                        <?php if (!empty($fw_session['presenters'])) : ?>
+                            <ul class="speaker-list icon-inverted no-border">
+                                <?php foreach ($fw_session['presenters'] as $fw_presenter) : ?>
+                                    <li>
+                                        <?php if (!empty($fw_presenter['academic_title'])) : ?>
+                                            <?php echo esc_html($fw_presenter['academic_title']); ?>
+                                        <?php endif; ?>
+                                        <?php echo esc_html($fw_presenter['name']); ?>
+                                        <?php if (!empty($fw_presenter['details'])) : ?>
+                                            | <?php echo esc_html($fw_presenter['details']); ?><br>
+                                        <?php else : ?>
+                                            <br>
+                                        <?php endif; ?>
+                                    </li>
+                                <?php endforeach; ?>
+                            </ul>
+                        <?php endif; ?>
+
+                        <?php $fw_workshop_count = (int) ($fw_session['workshop_count'] ?? 0); ?>
+                        <?php if ($fw_workshop_count === 1) : ?>
+                            <div class="workshop mt-1">
+                                <?php foreach ($fw_session['single_workshops'] as $fw_item) : ?>
+                                    <div class="workshop-item"><?php echo $fw_item['html']; ?></div>
+                                <?php endforeach; ?>
+                            </div>
+                        <?php elseif ($fw_workshop_count > 1) : ?>
+                            <div class="mt-2">
+                                <span class="mr-1">
+                                    <?php echo $wordings['anzahl_angebote_zur_auswahl'] ?? 'anzahl_angebote_zur_auswahl'; ?>
+                                    <?php echo esc_html((string) $fw_workshop_count); ?>
+                                </span>
+                                <a href="#" class="btn btn-select-workshop btn-sm js-workshop-add ps-2 pe-2">
+                                    <?php echo $wordings['angebot_auswaehlen'] ?? 'angebot_auswaehlen'; ?>
+                                </a>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="js-workshops-label js-workshops-label-no mt-2">
+                                        <?php echo $wordings['sie_haben_noch_kein_angebot_gewaehlt'] ?? 'sie_haben_noch_kein_angebot_gewaehlt'; ?>
+                                    </div>
+                                    <div class="js-workshops-label js-workshops-label-yes mt-2" style="display:none">
+                                        <?php echo $wordings['sie_haben_folgendes_angebot_gewaehlt'] ?? 'sie_haben_folgendes_angebot_gewaehlt'; ?>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row js-wokshop-container">
+                                <?php foreach ($fw_session['selected_workshops'] as $fw_item) : ?>
+                                    <div class="col-md-12 mt-3 selected-workshop-wrapper"
+                                            data-workshop="<?php echo esc_attr((string) $fw_item['id']); ?>">
+                                        <div class="workshop">
+                                            <?php echo $fw_item['html']; ?>
+                                        </div>
+                                    </div>
+                                <?php endforeach; ?>
+                            </div>
+
+                            <div class="js-workshop-options" hidden>
+                                <?php foreach ($fw_session['workshop_options'] as $fw_item) : ?>
+                                    <template class="js-workshop-option-template"
+                                                data-workshop="<?php echo esc_attr((string) $fw_item['id']); ?>">
+                                        <div class="col-md-12 event-registration-modal-workshop js-workshop-select workshop-select"
+                                                data-workshop="<?php echo esc_attr((string) $fw_item['id']); ?>">
+                                            <div class="workshop p-1 m-1">
+                                                <?php echo $fw_item['html']; ?>
+                                            </div>
+                                        </div>
+                                    </template>
+                                <?php endforeach; ?>
+                            </div>
+                        <?php endif; ?>
+
+                    </div>
+                </div>
+            <?php endforeach; ?>
+
+            <?php if (!empty($qry_slot_headers)) : ?>
+                <?php foreach ($qry_slot_headers as $col_index => $col_slot) : ?>
+                    <?php $col_slot_id = absint($col_slot['id'] ?? 0); ?>
+                    <?php include('step-1-col-1.php'); ?>
+                <?php endforeach; ?>
+            <?php else : ?>
+                <?php $col_index = 0; $col_slot_id = 0; $col_slot = array(); ?>
+                <?php include('step-1-col-1.php'); ?>
+            <?php endif; ?>
 
         </div>
     </div>

@@ -596,6 +596,8 @@ font-weight:300 !important;
     background:#d7e58c !important;
 }
 
+.select2-results__option {color:#000000 !important;}
+
 .cke_wysiwyg_frame,
 .cke_wysiwyg_div,
 .cke_inne,

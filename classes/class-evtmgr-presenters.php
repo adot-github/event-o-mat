@@ -31,6 +31,8 @@ class Evtmgr_Presenters {
                 p.str_first_name,
                 p.str_last_name,
                 p.str_academic_title,
+                p.str_name,
+                p.str_employer,
                 p.str_job_title_{$lang} AS str_job_title,
                 p.str_institution_{$lang} AS str_institution,
                 p.str_person_image

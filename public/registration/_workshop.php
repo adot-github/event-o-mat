@@ -1,80 +1,78 @@
-﻿<?php
-
-if (!defined('ABSPATH')) {
-    exit;
-}
-
-$workshop_id = !empty($id) ? absint($id) : 0;
-$slot_color  = !empty($str_slot_color) ? sanitize_hex_color_no_hash($str_slot_color) : 'eeeeee';
-$lang        = !empty($lang) ? sanitize_key($lang) : 'de';
-
-$workshops_obj = new Evtmgr_Workshops();
-$presenters_obj   = new Evtmgr_Presenters();
-$rooms_obj     = new Evtmgr_Rooms();
-$audience_obj  = new Evtmgr_Audience();
-
-$workshop = $workshops_obj->get_workshop_by_id($workshop_id, $lang);
-
-if (empty($workshop)) {
-    return;
-}
-
-$workshop_id = !empty($workshop['id'])
-    ? absint($workshop['id'])
-    : $workshop_id;
-
-$persons = $presenters_obj->get_presenters_by_workshop_id($workshop_id, $lang);
-$rooms   = $rooms_obj->get_room_by_workshop_id($workshop_id, $lang);
-
-$audience = $audience_obj->get_target_audience_by_workshop_id($workshop_id, $lang);
-$audience = str_ireplace(array('<br>', '<br/>', '<br />'), ' | ', $audience);
-
-$max_registrations     = !empty($workshop['int_max_number_of_registrations']) ? (int) $workshop['int_max_number_of_registrations'] : 0;
-$current_registrations = isset($workshop['int_number_of_registrations']) ? (int) $workshop['int_number_of_registrations'] : 0;
-
-$is_booked_out = !empty($workshop['ysn_booked_out']);
-
-if (
-    $max_registrations > 0
-    && $current_registrations >= $max_registrations
-) {
-    $is_booked_out = true;
-}
-
-$free_places = $max_registrations - $current_registrations;
-
-if ($free_places < 0) {
-    $free_places = 0;
-}
-
-$tmp_color = '';
-
-if ($max_registrations > 0 && $current_registrations > 0) {
-    $tmp_state = $current_registrations / $max_registrations;
-
-    if ($tmp_state >= 0.8) {
-        $tmp_color = 'FireBrick';
-    } elseif ($tmp_state >= 0.5) {
-        $tmp_color = 'DarkOrange';
-    } else {
-        $tmp_color = 'ForestGreen';
+<?php
+    if (!defined('ABSPATH')) {
+        exit;
     }
-}
 
-if (!function_exists('event_registration_show_svg_icon')) {
-    function event_registration_show_svg_icon($filename) {
-        $filename = sanitize_file_name($filename);
+    $workshop_id = !empty($id) ? absint($id) : 0;
+    $slot_color  = !empty($str_slot_color) ? sanitize_hex_color_no_hash($str_slot_color) : 'eeeeee';
+    $lang        = !empty($lang) ? sanitize_key($lang) : 'de';
 
-        $path = plugin_dir_path(__FILE__) . '../icons/' . $filename;
+    $workshops_obj = new Evtmgr_Workshops();
+    $presenters_obj   = new Evtmgr_Presenters();
+    $rooms_obj     = new Evtmgr_Rooms();
+    $audience_obj  = new Evtmgr_Audience();
 
-        if (!is_readable($path)) {
-            return '';
+    $workshop = $workshops_obj->get_workshop_by_id($workshop_id, $lang);
+
+    if (empty($workshop)) {
+        return;
+    }
+
+    $workshop_id = !empty($workshop['id'])
+        ? absint($workshop['id'])
+        : $workshop_id;
+
+    $persons = $presenters_obj->get_presenters_by_workshop_id($workshop_id, $lang);
+    $rooms   = $rooms_obj->get_room_by_workshop_id($workshop_id, $lang);
+
+    $audience = $audience_obj->get_target_audience_by_workshop_id($workshop_id, $lang);
+    $audience = str_ireplace(array('<br>', '<br/>', '<br />'), ' | ', $audience);
+
+    $max_registrations     = !empty($workshop['int_max_number_of_registrations']) ? (int) $workshop['int_max_number_of_registrations'] : 0;
+    $current_registrations = isset($workshop['int_number_of_registrations']) ? (int) $workshop['int_number_of_registrations'] : 0;
+
+    $is_booked_out = !empty($workshop['ysn_booked_out']);
+
+    if (
+        $max_registrations > 0
+        && $current_registrations >= $max_registrations
+    ) {
+        $is_booked_out = true;
+    }
+
+    $free_places = $max_registrations - $current_registrations;
+
+    if ($free_places < 0) {
+        $free_places = 0;
+    }
+
+    $tmp_color = '';
+
+    if ($max_registrations > 0 && $current_registrations > 0) {
+        $tmp_state = $current_registrations / $max_registrations;
+
+        if ($tmp_state >= 0.8) {
+            $tmp_color = 'FireBrick';
+        } elseif ($tmp_state >= 0.5) {
+            $tmp_color = 'DarkOrange';
+        } else {
+            $tmp_color = 'ForestGreen';
         }
-
-        return file_get_contents($path);
     }
-}
 
+    if (!function_exists('event_registration_show_svg_icon')) {
+        function event_registration_show_svg_icon($filename) {
+            $filename = sanitize_file_name($filename);
+
+            $path = plugin_dir_path(__FILE__) . '../icons/' . $filename;
+
+            if (!is_readable($path)) {
+                return '';
+            }
+
+            return file_get_contents($path);
+        }
+    }
 ?>
 
 <div class="workshop-item js-workshop-item"

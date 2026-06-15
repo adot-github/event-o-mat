@@ -93,6 +93,33 @@ class Evtmgr_Workshops {
         );
     }
 
+    public function get_workshops_all_by_slot($slot_id, $event_uid, $lang = 'de') {
+        $slot_id   = absint($slot_id);
+        $event_uid = sanitize_text_field($event_uid);
+        $lang      = $this->sanitize_language($lang);
+
+        $sql = "
+            SELECT
+                w.id,
+                w.str_workshop_title_{$lang} AS str_workshop_title,
+                w.str_workshop_number,
+                tz.dtm_time_from,
+                tz.dtm_time_to
+            FROM {$this->table_name} w
+            INNER JOIN {$this->time_zones_table} tz
+                ON tz.id = w.fky_timezone_id
+            WHERE w.fky_slot_id = %d
+              AND w.fky_event_uid = %s
+              AND w.ysn_online = 1
+            ORDER BY tz.dtm_time_from, w.str_workshop_number
+        ";
+
+        return $this->wpdb->get_results(
+            $this->wpdb->prepare($sql, $slot_id, $event_uid),
+            ARRAY_A
+        );
+    }
+
     public function get_workshop_by_id($workshop_id, $lang = 'de') {
         $workshop_id = absint($workshop_id);
         $lang        = $this->sanitize_language($lang);

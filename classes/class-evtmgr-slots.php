@@ -129,6 +129,24 @@ class Evtmgr_Slots {
         return $this->get_slots_by_id($slot_ids, $event_uid, $lang);
     }
 
+    public function get_slots_for_output($event_uid, $lang = 'de') {
+        $event_uid = sanitize_text_field($event_uid);
+        $lang      = $this->sanitize_language($lang);
+
+        $sql = "
+            SELECT *,
+                str_slot_name_{$lang} AS str_slot_name
+            FROM {$this->slot_table}
+            WHERE fky_event_uid = %s
+            ORDER BY int_sort, str_slot_name_{$lang}
+        ";
+
+        return $this->wpdb->get_results(
+            $this->wpdb->prepare($sql, $event_uid),
+            ARRAY_A
+        );
+    }
+
     public function get_slot_by_workshop_id($workshop_id = 0, $lang = 'de') {
         $workshop_id = absint($workshop_id);
         $lang        = $this->sanitize_language($lang);

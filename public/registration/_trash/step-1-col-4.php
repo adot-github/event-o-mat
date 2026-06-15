@@ -1,4 +1,4 @@
-﻿            <div class="stage" style="--column: 3;">
+            <div class="stage" style="--column: 5;">
                 <h2 class="stage-headline m-0">Programm</h2>
 
                 <ol class="session-list">
@@ -22,7 +22,7 @@
                                     </details>
                                 <?php endif; ?>
 
-                                <?php if (!empty($session['show_time_in_output'])) : ?>
+                                <?php if (!empty($session['show_time_in_timezone_output'])) : ?>
                                     <span class="time">
                                         <?php echo esc_html($session['time_label_from']); ?>–<?php echo esc_html($session['time_label_to']); ?>
                                     </span>

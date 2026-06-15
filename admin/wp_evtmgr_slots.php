@@ -54,6 +54,7 @@
             ],
             'fields_visual' => '
                 fky_slot_parent_id:col-lg-3 col-md-4
+                fky_timezone_id:col-lg-3 col-md-4
                 str_slot_name_{{lang}}:col-md-{{lang_col_count}}
                 mem_slot_description_{{lang}}:col-md-{{lang_col_count}}
                 str_color:col-lg-3 col-md-4
@@ -89,8 +90,24 @@
                 'acf' => [
                     'type' => 'text',
                     'readonly'=> true,
+                    'value' => $event_uid,
                 ],
 
+            ],
+            'fky_timezone_id' => [
+                'label' => 'Zeitraster',
+                'acf' => [
+                    'type' => 'adot_relationship'
+                ],
+                'fky' => [
+                    'db' => [
+                        'table' => 'evtmgr_timezones',
+                        'id'    => 'id',
+                        'label' => "CONCAT(IFNULL(dtm_time_from, ''), '–' ,IFNULL(dtm_time_to, ''), ' | ',IFNULL(str_timezone_name_de, ''))",
+                        'condition'     => "fky_event_uid='$event_uid' AND fky_parent_timezone_id = 0",
+                        'order_by' => 'dtm_time_from, str_timezone_name_de'
+                    ]
+                ]
             ],
            'str_slot_name_{{lang}}' => [
                 'label' => 'str_slot_name',

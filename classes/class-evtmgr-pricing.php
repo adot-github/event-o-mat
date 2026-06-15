@@ -270,7 +270,7 @@ class Evtmgr_Pricing {
                     'type'        => 'total',
                     'id'          => 0,
                     'billing_id'  => 0,
-                    'label'       => 'Kosten total',
+                    'label'       => '$Kosten total£',
                     'description' => '',
                     'amount'      => $total,
                     'is_total'    => true,

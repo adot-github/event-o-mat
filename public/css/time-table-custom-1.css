@@ -4,14 +4,14 @@
 
 .timetable {
     /* column adjust */
-    --stages: 1;
+    --stages: 4;
     --start-time: 9;
     --end-time: 17;
     --stage-gap: 0.5rem;
+    --stage-width: min(100vw - var(--th-width) - 3rem, 12rem);
     --zebra-color-one: #efefef;
     --zebra-color-two: #dedede;
-
-    	--time-unit-height: 1rem;
+    --time-unit-height: 1rem;
 }
 
 
@@ -24,6 +24,8 @@
     color: #fff;
     background: #c06ca9;
     margin: 0;
+    font-size:1rem;
+    letter-spacing: 0;
 }
 
 

@@ -152,7 +152,7 @@ registration_values:
 
         <header class="h3 mb-3">
             <?php
-            echo $wordings['t85AuswahlFuerDiePreisberechnung'] ?? 't85AuswahlFuerDiePreisberechnung';
+            echo $wordings['auswahl_fuer_die_preisberechnung'] ?? 'auswahl_fuer_die_preisberechnung';
             ?>
         </header>
 
@@ -282,7 +282,7 @@ registration_values:
             <?php else : ?>
 
                 <div class="alert alert-warning">
-                    Es sind keine Preisoptionen verfügbar.
+                    $Es sind keine Preisoptionen verfügbar.£
                 </div>
 
             <?php endif; ?>

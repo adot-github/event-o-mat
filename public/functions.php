@@ -1,5 +1,8 @@
 <?php
 require_once get_stylesheet_directory() . '/db-custom/event-registration/public/event-registration.php';
+require_once get_stylesheet_directory() . '/db-custom/event-registration/public/keynotes-speakers-by-slot.php';
+require_once get_stylesheet_directory() . '/db-custom/event-registration/public/partner-logos_view-1.php';
+require_once get_stylesheet_directory() . '/db-custom/event-registration/public/partner-logos_view-2.php';
 
 add_action('wp_enqueue_scripts', function () {
     $base = get_stylesheet_directory_uri() . '/db-custom/event-registration/public/css/';
@@ -8,8 +11,9 @@ add_action('wp_enqueue_scripts', function () {
     $sheets = [
         'event-registration-timetable'        => 'time-table-original.css',
         'event-registration-timetable-custom' => 'time-table-custom-1.css',
-        'event-registration'          => 'event-registration.css',
+        'event-registration'                  => 'event-registration.css',
         'event-registration-workshops'        => 'workshops.css',
+        'event-registration-sponsor-wall'     => 'sponsor-wall.css',
     ];
 
     foreach ($sheets as $handle => $file) {
