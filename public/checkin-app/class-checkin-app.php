@@ -113,6 +113,28 @@ class Evtmgr_Checkin_App {
             return new WP_Error('not_found', 'Person nicht gefunden.', ['status' => 404]);
         }
 
+        $workshops = $wpdb->get_results(
+            $wpdb->prepare(
+                "SELECT
+                    w.str_workshop_number,
+                    w.str_workshop_title_de  AS title,
+                    tz.dtm_time_from,
+                    tz.dtm_time_to,
+                    s.str_color
+                 FROM {$wpdb->prefix}evtmgr_registrations_workshops rw
+                 INNER JOIN {$wpdb->prefix}evtmgr_workshops w
+                     ON w.id = rw.fky_workshop_id
+                 LEFT JOIN {$wpdb->prefix}evtmgr_timezones tz
+                     ON tz.id = w.fky_timezone_id
+                 LEFT JOIN {$wpdb->prefix}evtmgr_slots s
+                     ON s.id = w.fky_slot_id
+                 WHERE rw.str_registration_cookie = %s
+                 ORDER BY tz.dtm_time_from, w.str_workshop_number",
+                $cookie
+            ),
+            ARRAY_A
+        );
+
         return rest_ensure_response([
             'id'             => (int) $person['id'],
             'salutation'     => (string) ($person['str_salutation']   ?? ''),
@@ -122,6 +144,7 @@ class Evtmgr_Checkin_App {
             'event_uid'      => (string) ($person['fky_event_uid']    ?? ''),
             'checked_in'     => !empty($person['ysn_checked_in']),
             'date_check_in'  => $person['dtm_date_check_in'] ?? null,
+            'workshops'      => is_array($workshops) ? array_values($workshops) : [],
         ]);
     }
 

@@ -244,6 +244,7 @@
         <div class="ca-person-meta">${escHtml(person.email)}</div>
         <div class="ca-person-meta">Event: ${escHtml(person.event_uid)}</div>
         ${checkedIn && dateDisplay ? `<div class="ca-check-date">Eingecheckt: ${escHtml(dateDisplay)}</div>` : ''}
+        ${buildWorkshopsList(person.workshops)}
         ${inlineError}
     </div>
     <div class="ca-card-actions">
@@ -252,6 +253,38 @@
 </div>`;
 
         showScreen('result');
+    }
+
+    function buildWorkshopsList(workshops) {
+        if (!Array.isArray(workshops) || workshops.length === 0) return '';
+
+        const items = workshops.map(function (ws) {
+            const num   = ws.str_workshop_number ? escHtml(ws.str_workshop_number) + '&nbsp;' : '';
+            const title = escHtml(ws.title || '');
+            const dot   = ws.str_color
+                ? `<span class="ca-ws-dot" style="background:${escHtml(ws.str_color)}"></span>`
+                : '';
+            const time  = formatTimeRange(ws.dtm_time_from, ws.dtm_time_to);
+            const timeHtml = time ? `<span class="ca-ws-time">${escHtml(time)}</span>` : '';
+            return `<li class="ca-ws-item">${dot}<span>${num}${title}</span>${timeHtml}</li>`;
+        }).join('');
+
+        return `<div class="ca-workshops">
+<strong>Gebuchte Workshops</strong>
+<ul class="ca-ws-list">${items}</ul>
+</div>`;
+    }
+
+    function formatTimeRange(from, to) {
+        if (!from) return '';
+        const trim5 = function (t) {
+            if (!t) return '';
+            // handle 'HH:MM:SS' or 'YYYY-MM-DD HH:MM:SS'
+            const parts = String(t).split(' ');
+            const time  = parts.length > 1 ? parts[1] : parts[0];
+            return time.slice(0, 5);
+        };
+        return to ? trim5(from) + '–' + trim5(to) : trim5(from);
     }
 
     // ── Error screen ────────────────────────────────────────────────────────
