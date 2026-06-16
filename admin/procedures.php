@@ -188,6 +188,14 @@ $adot_evtmgr_hidden_pages = array(
     ),
 
     array(
+        'page_title'        => '> event-pdf',
+        'menu_title'        => '> event-pdf',
+        'capability'        => 'manage_options',
+        'menu_slug'         => 'event-pdf',
+        'file'              => '/db-custom/event-registration/pages/event-pdf.php',
+        'active_submenu'    => 'dashboard-event',
+    ),
+    array(
         'page_title'        => '> event duplicate',
         'menu_title'        => '> event duplicate',
         'capability'        => 'manage_options',

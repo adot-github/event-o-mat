@@ -3,6 +3,7 @@ require_once get_stylesheet_directory() . '/db-custom/event-registration/public/
 require_once get_stylesheet_directory() . '/db-custom/event-registration/public/keynotes-speakers-by-slot.php';
 require_once get_stylesheet_directory() . '/db-custom/event-registration/public/partner-logos_view-1.php';
 require_once get_stylesheet_directory() . '/db-custom/event-registration/public/partner-logos_view-2.php';
+require_once get_stylesheet_directory() . '/db-custom/event-registration/public/checkin-app/class-checkin-app.php';
 
 add_action('wp_enqueue_scripts', function () {
     $base = get_stylesheet_directory_uri() . '/db-custom/event-registration/public/css/';

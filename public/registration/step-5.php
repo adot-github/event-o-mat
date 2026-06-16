@@ -172,14 +172,17 @@
      */
     $ticket_pdf_attachments = [];
 
-    if (empty($error_messages) && $person_id > 0) {
+    $create_ticket = false;
+    if (!class_exists('Evtmgr_Options')) {
+        require_once __DIR__ . '/../../classes/class-evtmgr-options.php';
+    }
+    if (!empty($event_uid)) {
+        $create_ticket = (new Evtmgr_Options())->get_option($event_uid, 'create_ticket_on_registration_end') === '1';
+    }
+
+    if ($create_ticket && empty($error_messages) && $person_id > 0) {
         try {
             global $wpdb;
-
-            $wpdb->query(
-                "ALTER TABLE {$wpdb->prefix}evtmgr_persons
-                 ADD COLUMN IF NOT EXISTS str_ticket_pdf VARCHAR(255) NOT NULL DEFAULT ''"
-            );
 
             if (isset($persons_obj) && method_exists($persons_obj, 'person_update_ticket_pdf')) {
                 $persons_obj->person_update_ticket_pdf($event_uid ?? '');
@@ -272,6 +275,116 @@
             // PDF failure must not block the confirmation email.
         }
     }
+
+    /**
+     * 4.6 Generate invoice PDF and attach to confirmation email.
+     */
+    $invoice_pdf_attachments = [];
+
+    $create_invoice = false;
+    if (!empty($event_uid)) {
+        $create_invoice = (new Evtmgr_Options())->get_option($event_uid, 'create_invoice_on_registration_end') === '1';
+    }
+
+    if ($create_invoice && empty($error_messages) && $person_id > 0) {
+        try {
+            global $wpdb;
+
+            if (isset($persons_obj) && method_exists($persons_obj, 'person_update_invoice_pdf')) {
+                $persons_obj->person_update_invoice_pdf($event_uid ?? '');
+            }
+
+            $invoice_person = $wpdb->get_row(
+                $wpdb->prepare("SELECT * FROM {$wpdb->prefix}evtmgr_persons WHERE id = %d", $person_id),
+                ARRAY_A
+            );
+
+            if (!empty($invoice_person)) {
+                $pages_dir = get_stylesheet_directory() . '/db-custom/event-registration/pages/';
+
+                if (!class_exists('Event_Registration_Pdf_Creation')) {
+                    require_once get_stylesheet_directory() . '/db-custom/event-registration/classes/class-pdf-creation.php';
+                }
+
+                $events_class_file = get_stylesheet_directory() . '/db-custom/event-registration/classes/class-evtmgr-events.php';
+                if (!class_exists('Evtmgr_Events') && file_exists($events_class_file)) {
+                    require_once $events_class_file;
+                }
+
+                $inv_pdf_creator = new Event_Registration_Pdf_Creation($pages_dir);
+                $inv_layout      = $inv_pdf_creator->load_pdf_layout('dachverband-rechnung.php');
+
+                $invoice_event    = [];
+                $inv_event_name   = '';
+                $inv_event_date   = '';
+
+                if (class_exists('Evtmgr_Events')) {
+                    $ev_obj        = new Evtmgr_Events();
+                    $invoice_event = (array) ($ev_obj->get_events_by_event_uid($event_uid ?? '', 'de') ?? []);
+                    $inv_event_name = $invoice_event['str_event_name'] ?? $invoice_event['str_event_name_de'] ?? '';
+                    $inv_event_date = $inv_pdf_creator->format_date((string) ($invoice_event['dtm_event_date'] ?? ''));
+                }
+
+                $person_lang = strtolower(trim($inv_pdf_creator->value_ci($invoice_person, 'str_language', $current_lang)));
+                if ($person_lang === '') {
+                    $person_lang = $current_lang;
+                }
+
+                $file_name = $inv_pdf_creator->file_name_from_person_field($invoice_person, 'str_invoice_pdf');
+
+                if ($file_name !== '') {
+                    $person_event_name     = $inv_pdf_creator->event_text_by_language($invoice_event, 'str_event_name', $person_lang, $inv_event_name);
+                    $person_event_subtitle = $inv_pdf_creator->event_text_by_language($invoice_event, 'str_event_subtitle', $person_lang, '');
+
+                    $image_replacements = $inv_pdf_creator->get_image_replacements($inv_layout);
+                    $text_replacements  = $inv_pdf_creator->text_replacements($inv_layout, $person_lang);
+                    $core_replacements  = $inv_pdf_creator->person_replacements($invoice_person, [
+                        '{str_language}'          => esc_attr($person_lang),
+                        '{str_event_name}'        => esc_html($person_event_name),
+                        '{str_event_subtitle}'    => esc_html($person_event_subtitle),
+                        '{str_event_subtitle_de}' => esc_html($person_event_subtitle),
+                        '{id}'                    => esc_html($inv_pdf_creator->get_person_id($invoice_person)),
+                        '{dtm_event_date}'        => esc_html($inv_event_date),
+                    ]);
+
+                    $callback_replacements = [];
+                    if (!empty($inv_layout['per_person_callback']) && is_callable($inv_layout['per_person_callback'])) {
+                        $callback_replacements = (array) call_user_func(
+                            $inv_layout['per_person_callback'],
+                            $invoice_person,
+                            $invoice_event,
+                            $person_lang
+                        );
+                    }
+
+                    $all_replacements = array_merge($image_replacements, $text_replacements, $core_replacements, $callback_replacements);
+                    $html             = $inv_pdf_creator->render_html((string) $inv_layout['html_template'], $all_replacements);
+                    $html             = strtr($html, $all_replacements);
+
+                    $docraptor = $inv_pdf_creator->create_docraptor_client();
+
+                    $doc = new DocRaptor\Doc();
+                    $doc->setTest(true);
+                    $doc->setDocumentType('pdf');
+                    $doc->setName($file_name);
+                    $doc->setDocumentContent($html);
+
+                    $pdf_data = $docraptor->createDoc($doc);
+
+                    $pdf_path  = $inv_pdf_creator->get_pdf_path('invoices', $event_uid ?? '');
+                    $inv_pdf_creator->ensure_directory($pdf_path);
+                    $full_path = rtrim($pdf_path, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR . $file_name;
+                    file_put_contents($full_path, $pdf_data);
+
+                    $invoice_pdf_attachments = [$full_path];
+                }
+            }
+        } catch (Throwable $e) {
+            // PDF failure must not block the confirmation email.
+        }
+    }
+
+    $ticket_pdf_attachments = array_merge($ticket_pdf_attachments, $invoice_pdf_attachments);
 
     /**
      * 5. Send confirmation email.

@@ -149,25 +149,7 @@
 
     if (!function_exists('event_registration_step1_get_first_slot_id_from_timezone')) {
         function event_registration_step1_get_first_slot_id_from_timezone(array $timezone) {
-            if (!empty($timezone['fky_slot_id'])) {
-                return absint($timezone['fky_slot_id']);
-            }
-
-            $str_slots = isset($timezone['str_slots'])
-                ? trim((string) $timezone['str_slots'])
-                : '';
-
-            if ($str_slots === '') {
-                return 0;
-            }
-
-            $slot_ids = array_values(array_filter(array_map('absint', explode(',', $str_slots))));
-
-            if (empty($slot_ids)) {
-                return 0;
-            }
-
-            return (int) $slot_ids[0];
+            return !empty($timezone['fky_slot_id']) ? absint($timezone['fky_slot_id']) : 0;
         }
     }
 
@@ -266,6 +248,7 @@
         $first_slot_id           = 0;
         $color                   = 'eeeeee';
         $debug_sources           = array();
+        $is_slot_restricted      = false;
 
         foreach ($timezone_sources as $timezone_source) {
             $source_timezone_id = !empty($timezone_source['id'])
@@ -280,22 +263,26 @@
                 'timezone_id'       => $source_timezone_id,
                 'timezone_name'     => $timezone_source['str_timezone_name'] ?? '',
                 'parent_timezone_id'=> $timezone_source['fky_parent_timezone_id'] ?? '',
-                'str_slots'         => $timezone_source['str_slots'] ?? '',
                 'slots_found'       => array(),
                 'chosen_slot_id'    => 0,
                 'workshops_found'   => array(),
                 'workshop_count'    => 0,
             );
 
-            $qry_slots = $slots_obj->qry_slots_by_time_zone(
-                $source_timezone_id,
-                $event_uid,
-                $lang
-            );
+            $parent_tz_id = absint($timezone_source['fky_parent_timezone_id'] ?? 0) > 0
+                ? absint($timezone_source['fky_parent_timezone_id'])
+                : $source_timezone_id;
+
+            $qry_slots = $slots_obj->get_slots_by_timezone_id($parent_tz_id, $event_uid, $lang);
 
             if (!is_array($qry_slots)) {
                 $qry_slots = array();
             }
+
+            // Child timezones are always restricted to their parent's slot columns.
+            // Root timezones without any slot assignment are plenary (shown in all columns).
+            $is_child_tz        = absint($timezone_source['fky_parent_timezone_id'] ?? 0) > 0;
+            $is_slot_restricted = $is_slot_restricted || $is_child_tz || !empty($qry_slots);
 
             foreach ($qry_slots as $debug_slot) {
                 $source_debug['slots_found'][] = array(
@@ -309,11 +296,8 @@
             $source_slot_id_from_timezone = event_registration_step1_get_first_slot_id_from_timezone($timezone_source);
             $source_debug['slot_id_from_timezone'] = $source_slot_id_from_timezone;
 
-            // Parse slot IDs directly from str_slots — bypasses the fky_event_uid filter
-            // in get_slots_by_id(), which would otherwise drop slots that lack that field.
-            $str_slots_raw   = trim((string) ($timezone_source['str_slots'] ?? ''));
-            $direct_slot_ids = $str_slots_raw !== ''
-                ? array_values(array_filter(array_map('absint', explode(',', $str_slots_raw))))
+            $direct_slot_ids = !empty($qry_slots)
+                ? array_values(array_map('absint', array_column($qry_slots, 'id')))
                 : array();
 
             if (empty($direct_slot_ids) && $source_slot_id_from_timezone > 0) {
@@ -460,6 +444,7 @@
         return array(
             'slot_id'            => $first_slot_id,
             'session_slot_ids'   => array_values(array_unique($session_slot_ids)),
+            'is_slot_restricted' => $is_slot_restricted,
             'color'              => $color,
             'workshop_count'     => $workshop_count,
             'single_workshops'   => $single_workshops,
@@ -542,6 +527,7 @@
             'presenters'         => $presenters,
             'workshop_count'     => $workshop_count,
             'session_slot_ids'   => $workshop_data['session_slot_ids'] ?? array(),
+            'is_slot_restricted' => $workshop_data['is_slot_restricted'] ?? false,
             'single_workshops'   => $workshop_data['single_workshops'] ?? array(),
             'selected_workshops' => $workshop_data['selected_workshops'] ?? array(),
             'workshop_options'   => $workshop_data['workshop_options'] ?? array(),
@@ -551,7 +537,6 @@
                 'visible_timezone_id'  => $timezone_id,
                 'visible_timezone_name'=> $timezone['str_timezone_name'] ?? '',
                 'parent_timezone_id'   => $timezone['fky_parent_timezone_id'] ?? '',
-                'visible_str_slots'    => $timezone['str_slots'] ?? '',
                 'direct_sources'       => $direct_workshop_data['debug_sources'] ?? array(),
                 'final_sources'        => $workshop_data['debug_sources'] ?? array(),
                 'final_workshop_count' => $workshop_count,
@@ -567,37 +552,9 @@
     $first_hour           = !empty($timetable_hours) ? (int) reset($timetable_hours) : $timetable_start_hour;
     $last_hour            = !empty($timetable_hours) ? (int) end($timetable_hours)   : $timetable_end_hour;
 
-    $number_of_slots = 1;
-    $all_slot_ids    = array();
-    foreach ((array) $qry_time_zones_all as $tz) {
-        $str_slots = trim((string) ($tz['str_slots'] ?? ''));
-        if ($str_slots !== '') {
-            $ids   = array_values(array_filter(array_map('absint', explode(',', $str_slots))));
-            $count = count($ids);
-            if ($count > $number_of_slots) {
-                $number_of_slots = $count;
-            }
-            foreach ($ids as $sid) {
-                $all_slot_ids[$sid] = $sid;
-            }
-        }
-    }
-    $all_slot_ids = array_values($all_slot_ids);
-
-    $qry_slot_headers = array();
-    if (!empty($all_slot_ids)) {
-        global $wpdb;
-        $placeholders     = implode(',', array_fill(0, count($all_slot_ids), '%d'));
-        $qry_slot_headers = $wpdb->get_results(
-            $wpdb->prepare(
-                "SELECT * FROM {$wpdb->prefix}evtmgr_slots
-                  WHERE id IN ($placeholders)
-                  ORDER BY int_sort, id",
-                ...$all_slot_ids
-            ),
-            ARRAY_A
-        ) ?: array();
-    }
+    $qry_slot_headers = $slots_obj->get_slots_with_timezone($event_uid, $lang);
+    $all_slot_ids     = array_values(array_map('absint', array_column($qry_slot_headers, 'id')));
+    $number_of_slots  = max(1, count($all_slot_ids));
 
 ?>
 

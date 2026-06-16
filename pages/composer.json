@@ -1,0 +1,6 @@
+{
+    "require": {
+        "chillerlan/php-qrcode": "^6.0",
+        "docraptor/docraptor": "^4.2"
+    }
+}

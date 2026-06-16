@@ -88,45 +88,65 @@ class Evtmgr_Slots {
         );
     }
 
-    public function qry_slots_by_time_zone($timezone_id = 0, $event_uid = '', $lang = 'de') {
-        $timezone_ids = $this->sanitize_ids($timezone_id);
-        $event_uid     = sanitize_text_field($event_uid);
+    public function qry_slots_by_time_zone($parent_timezone_id = 0, $event_uid = '', $lang = 'de') {
+        $parent_timezone_id = absint($parent_timezone_id);
+        $event_uid          = sanitize_text_field($event_uid);
 
-        if ($event_uid === '') {
+        if ($parent_timezone_id <= 0 || $event_uid === '') {
             return array();
         }
 
-        if (empty($timezone_ids)) {
+        return $this->get_slots_by_timezone_id($parent_timezone_id, $event_uid, $lang);
+    }
+
+    public function get_slots_by_timezone_id($timezone_id, $event_uid = '', $lang = 'de') {
+        $timezone_id = absint($timezone_id);
+        $event_uid   = sanitize_text_field($event_uid);
+        $lang        = $this->sanitize_language($lang);
+
+        if ($timezone_id <= 0) {
             return array();
         }
 
-        $placeholders = implode(',', array_fill(0, count($timezone_ids), '%d'));
+        $where  = 'WHERE fky_timezone_id = %d';
+        $params = array($timezone_id);
+
+        if ($event_uid !== '') {
+            $where   .= ' AND fky_event_uid = %s';
+            $params[] = $event_uid;
+        }
 
         $sql = "
-            SELECT str_slots
-            FROM {$this->timezones_table}
-            WHERE id IN ($placeholders)
-              AND fky_event_uid = %s
+            SELECT *,
+                str_slot_name_{$lang} AS str_slot_name
+            FROM {$this->slot_table}
+            {$where}
+            ORDER BY int_sort, id
         ";
 
-        $rows = $this->wpdb->get_results(
-            $this->wpdb->prepare($sql, array_merge($timezone_ids, array($event_uid))),
+        return $this->wpdb->get_results(
+            $this->wpdb->prepare($sql, $params),
             ARRAY_A
         );
+    }
 
-        if (empty($rows)) {
-            return array();
-        }
+    public function get_slots_with_timezone($event_uid, $lang = 'de') {
+        $event_uid = sanitize_text_field($event_uid);
+        $lang      = $this->sanitize_language($lang);
 
-        $slot_ids = array();
+        $sql = "
+            SELECT *,
+                str_slot_name_{$lang} AS str_slot_name
+            FROM {$this->slot_table}
+            WHERE fky_event_uid = %s
+              AND fky_timezone_id > 0
+            ORDER BY int_sort, id
+        ";
 
-        foreach ($rows as $row) {
-            if (!empty($row['str_slots'])) {
-                $slot_ids = array_merge($slot_ids, $this->sanitize_ids($row['str_slots']));
-            }
-        }
-
-        return $this->get_slots_by_id($slot_ids, $event_uid, $lang);
+        return $this->wpdb->get_results(
+            $this->wpdb->prepare($sql, $event_uid),
+            ARRAY_A
+        );
     }
 
     public function get_slots_for_output($event_uid, $lang = 'de') {

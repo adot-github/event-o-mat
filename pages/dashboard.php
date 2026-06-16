@@ -1,5 +1,4 @@
 ﻿<?php
-
 $wp_load = dirname(__FILE__, 7) . '/wp-load.php';
 
 if (!file_exists($wp_load)) {
@@ -13,6 +12,8 @@ if (!defined('ABSPATH')) {
 }
 
 require_once dirname(__DIR__) . '/classes/class-evtmgr-events.php';
+require_once dirname(__DIR__) . '/classes/class-evtmgr-options.php';
+require_once dirname(__DIR__) . '/classes/class-evtmgr-wordings.php';
 
 $cookie_event_uid       = 'current_event_uid';
 $cookie_event_languages = 'current_event_languages';
@@ -21,6 +22,11 @@ $current_event_uid = '';
 
 if (!empty($_COOKIE[$cookie_event_uid])) {
     $current_event_uid = sanitize_text_field(wp_unslash($_COOKIE[$cookie_event_uid]));
+}
+
+if ($current_event_uid !== '') {
+    (new Evtmgr_Options())->sync_default_options($current_event_uid);
+    (new Evtmgr_Wordings())->sync_default_wordings($current_event_uid);
 }
 
 $current_event_languages = '';

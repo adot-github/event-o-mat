@@ -23,7 +23,10 @@
     $col_sessions = array_values(array_filter(
         $timetable_sessions,
         static fn($s) => empty($s['fullwidth'])
-            && (empty($s['session_slot_ids']) || in_array($col_slot_id, $s['session_slot_ids'], true))
+            && (
+                !($s['is_slot_restricted'] ?? false)
+                || in_array($col_slot_id, $s['session_slot_ids'], true)
+            )
     ));
 ?>
 <div class="stage" style="--column: <?php echo $col_index + 2; ?>;">
