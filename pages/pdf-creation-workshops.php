@@ -40,6 +40,7 @@ $required_files = array(
     dirname(__DIR__) . '/classes/class-evtmgr-events.php',
     dirname(__DIR__) . '/classes/class-evtmgr-workshops.php',
     dirname(__DIR__) . '/classes/class-pdf-creation.php',
+    dirname(__DIR__) . '/classes/class-evtmgr-options.php',
 );
 
 foreach ($required_files as $required_file) {
@@ -194,7 +195,7 @@ try {
         $html = strtr($html, $all_replacements);
 
         $doc = new DocRaptor\Doc();
-        $doc->setTest(true);
+        $doc->setTest(Evtmgr_Options::is_pdf_test_mode($event_uid));
         $doc->setDocumentType('pdf');
         $doc->setName($file_name);
         $doc->setDocumentContent($html);

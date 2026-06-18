@@ -26,6 +26,14 @@ $manual_links = array(
         'str_url'         => '/wp-admin/admin.php?page=wordings-scan',
         'mem_description' => 'Anzahl Verwendungen in der Datenbank aktualisieren.',
     ),    
+    array(
+        'str_group'       => 'Datenbank',
+        'str_title'       => 'Felder extrahieren',
+        'str_url'         => '/wp-admin/admin.php?page=database-fields-extract',
+        'mem_description' => 'Anzahl Verwendungen in der Datenbank aktualisieren.',
+    ),    
+
+    
 );
 
 ?>

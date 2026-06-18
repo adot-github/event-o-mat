@@ -236,6 +236,14 @@ $adot_evtmgr_hidden_pages = array(
         'active_submenu'    => 'dashboard-event',
     ),
     array(
+        'page_title'        => '> database fields extract',
+        'menu_title'        => '> database fields extract',
+        'capability'        => 'manage_options',
+        'menu_slug'         => 'database-fields-extract',
+        'file'              => '/db-custom/event-registration/pages/database-fields-extract.php',
+        'active_submenu'    => 'dashboard-tools',
+    ),
+    array(
         'page_title'        => '> filestorage clean',
         'menu_title'        => '> filestorage clean',
         'capability'        => 'edit_posts',

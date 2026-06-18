@@ -282,7 +282,7 @@ registration_values:
             <?php else : ?>
 
                 <div class="alert alert-warning">
-                    $Es sind keine Preisoptionen verfügbar.£
+                    <?php echo $wordings['es_sind_keine_preisoptionen_verfuegbar'] ?? 'es_sind_keine_preisoptionen_verfuegbar'; ?>
                 </div>
 
             <?php endif; ?>

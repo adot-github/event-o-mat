@@ -276,7 +276,7 @@ try {
 <?php
         ?>
         <h1 class="h3 mb-3">Umbuchungen vornehmen</h1>
-        <p class="text-muted mb-4">Wählen Sie zuerst eine teilnehmende Person aus.</p>
+        <p class=" mb-4">Wählen Sie zuerst eine teilnehmende Person aus.</p>
 
         <form method="get" action="<?php echo esc_url(evtmgr_workshop_bookings_base_admin_url()); ?>" class="row gy-3">
                     <input type="hidden" name="page" value="<?php echo esc_attr(EVTMGR_WORKSHOP_BOOKINGS_PAGE_SLUG); ?>">
@@ -331,7 +331,7 @@ try {
         <h1 class="h3 mb-3">Umbuchungen vornehmen</h1>
         <section class="mb-4">
             <h2 class="h5 mb-1"><?php echo esc_html(evtmgr_workshop_bookings_person_label($person)); ?></h2>
-            <div class="text-muted">Event Uid: <?php echo esc_html($event_uid); ?></div>
+            <div class="">Event Uid: <?php echo esc_html($event_uid); ?></div>
         </section>
 
         <form method="post" action="<?php echo evtmgr_workshop_bookings_admin_url(); ?>" class="mb-4">
@@ -342,7 +342,7 @@ try {
             <section class="mb-4">
                 <h2 class="h5 mb-3">Vorhandene Anmeldungen</h2>
                     <?php if (empty($current_bookings)) : ?>
-                        <p class="text-muted mb-0">Keine bestehenden Workshop-Anmeldungen gefunden.</p>
+                        <p class=" mb-0">Keine bestehenden Workshop-Anmeldungen gefunden.</p>
                     <?php else : ?>
                         <?php foreach ($current_bookings as $booking) : ?>
                             <div class="form-check mb-2">
@@ -358,7 +358,7 @@ try {
             <section class="mb-4">
                 <h2 class="h5 mb-3">Neue Anmeldungen</h2>
                     <?php if (empty($available_workshops)) : ?>
-                        <p class="text-muted mb-0">Keine weiteren Workshops verfügbar.</p>
+                        <p class=" mb-0">Keine weiteren Workshops verfügbar.</p>
                     <?php else : ?>
                         <?php $current_group = null; ?>
                         <?php foreach ($available_workshops as $workshop) : ?>
@@ -390,7 +390,7 @@ try {
             </section>
 
             <button type="submit" class="btn btn-primary rounded-pill">Umbuchung prüfen</button>
-            <a href="<?php echo evtmgr_workshop_bookings_current_url(array('action' => 'select')); ?>" class="btn btn-outline-secondary rounded-pill">Andere Person wählen</a>
+            <a href="<?php echo evtmgr_workshop_bookings_current_url(array('action' => 'select')); ?>" class="btn btn-outline-primary rounded-pill ms-4">Andere Person wählen</a>
         </form>
         <?php
         ?>
@@ -495,7 +495,7 @@ try {
         <h1 class="h3 mb-3">Umbuchung prüfen</h1>
         <section class="mb-4">
             <h2 class="h5 mb-1"><?php echo esc_html(evtmgr_workshop_bookings_person_label($person)); ?></h2>
-            <div class="text-muted">Event Uid: <?php echo esc_html($event_uid); ?></div>
+            <div class="">Event Uid: <?php echo esc_html($event_uid); ?></div>
         </section>
 
         <form method="post" action="<?php echo evtmgr_workshop_bookings_admin_url(); ?>">
@@ -512,7 +512,7 @@ try {
             <section class="mb-4">
                 <h2 class="h5 mb-3">Folgende Anmeldungen werden gelöscht</h2>
                     <?php if (empty($delete_rows)) : ?>
-                        <p class="text-muted mb-0">Keine Löschungen.</p>
+                        <p class=" mb-0">Keine Löschungen.</p>
                     <?php else : ?>
                         <ul class="mb-0">
                             <?php foreach ($delete_rows as $row) : ?>
@@ -525,7 +525,7 @@ try {
             <section class="mb-4">
                 <h2 class="h5 mb-3">Folgende Anmeldungen werden neu gebucht</h2>
                     <?php if (empty($add_rows)) : ?>
-                        <p class="text-muted mb-0">Keine neuen Buchungen.</p>
+                        <p class=" mb-0">Keine neuen Buchungen.</p>
                     <?php else : ?>
                         <ul class="mb-0">
                             <?php foreach ($add_rows as $row) : ?>
@@ -536,7 +536,7 @@ try {
             </section>
 
             <button type="submit" class="btn btn-primary rounded-pill">Umbuchung vornehmen</button>
-            <a href="<?php echo evtmgr_workshop_bookings_current_url(array('action' => 'edit', 'person_id' => $person_id)); ?>" class="btn btn-outline-secondary rounded-pill">Zurück bearbeiten</a>
+            <a href="<?php echo evtmgr_workshop_bookings_current_url(array('action' => 'edit', 'person_id' => $person_id)); ?>" class="btn btn-outline-primary rounded-pill ms-4">Zurück</a>
         </form>
         <?php
         ?>
@@ -699,7 +699,7 @@ try {
         <?php endif; ?>
 
         <a href="<?php echo evtmgr_workshop_bookings_current_url(array('action' => 'edit', 'person_id' => $person_id)); ?>" class="btn btn-primary rounded-pill">Aktuelle Buchungen anzeigen</a>
-        <a href="<?php echo evtmgr_workshop_bookings_current_url(array('action' => 'select')); ?>" class="btn btn-outline-secondary rounded-pill">Andere Person wählen</a>
+        <a href="<?php echo evtmgr_workshop_bookings_current_url(array('action' => 'select')); ?>" class="btn btn-outline-primary rounded-pill ms-4">Andere Person wählen</a>
         <?php
         ?>
         </div>

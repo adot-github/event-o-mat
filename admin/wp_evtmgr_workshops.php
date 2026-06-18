@@ -358,7 +358,7 @@
                         'tbx_id_main'          => 'fky_workshop_id',
                         'tbx_id_linked'        => 'fky_person_id',
                         'linked_table'         => 'evtmgr_presenters',
-                        'linked_label_sql'       => "CONCAT(IFNULL(str_last_name, ''), '–' ,IFNULL(str_first_name, ''))",
+                        'linked_label_sql'       => "CONCAT(IFNULL(str_last_name, ''), ' ' ,IFNULL(str_first_name, ''))",
                         'linked_label'         => 'str_last_name',
                         'linked_condition'     => "$additional_sql_condition_for_tbx",
                         'linked_pid'           => '0'

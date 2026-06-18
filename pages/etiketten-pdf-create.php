@@ -24,6 +24,7 @@ require_once dirname(__DIR__) . '/classes/class-event-registration.php';
 require_once dirname(__DIR__) . '/classes/class-evtmgr-persons.php';
 require_once dirname(__DIR__) . '/classes/class-evtmgr-events.php';
 require_once dirname(__DIR__) . '/classes/class-pdf-creation.php';
+require_once dirname(__DIR__) . '/classes/class-evtmgr-options.php';
 
 $type_of_pdf      = 'Namensetiketten';
 $type_of_pdf_sing = 'Namensetikette';
@@ -369,7 +370,7 @@ try {
     $file_name = 'etiketten_' . sanitize_file_name($event_uid) . '.pdf';
 
     $doc = new DocRaptor\Doc();
-    $doc->setTest(true);
+    $doc->setTest(Evtmgr_Options::is_pdf_test_mode($event_uid));
     $doc->setDocumentType('pdf');
     $doc->setName($file_name);
     $doc->setDocumentContent($html);

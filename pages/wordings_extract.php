@@ -66,7 +66,7 @@ if (!function_exists('wex_db_lookup')) {
         global $wpdb;
         $row = $wpdb->get_row(
             $wpdb->prepare(
-                'SELECT id, str_var_name FROM wp_evtmgr_wordings WHERE str_var_string = %s LIMIT 1',
+                'SELECT id, str_var_name FROM wp_evtmgr_wordings_default WHERE str_var_string = %s LIMIT 1',
                 $str_var_string
             ),
             ARRAY_A
@@ -80,7 +80,7 @@ if (!function_exists('wex_db_insert')) {
     {
         global $wpdb;
         $wpdb->insert(
-            'wp_evtmgr_wordings',
+            'wp_evtmgr_wordings_default',
             [
                 'str_backup'           => $fields['str_backup'],
                 'str_var_name'         => $fields['str_var_name'],
@@ -200,15 +200,15 @@ $wex_current_url = admin_url('admin.php?page=wordings-extract');
     <div class="d-flex align-items-center gap-3 mb-4">
         <h1 class="mb-0 h3">Extract Wordings</h1>
         <a href="<?php echo esc_url($wex_current_url); ?>"
-           class="btn btn-sm btn-outline-secondary <?php echo !$wex_apply ? 'active' : ''; ?>">Dry Run</a>
+           class="btn btn-sm btn-outline-primary rounded-pill <?php echo !$wex_apply ? 'active' : ''; ?>">Dry Run</a>
         <form method="post" class="d-inline" onsubmit="return confirm('Apply all changes to the database and source files?')">
             <?php wp_nonce_field('wex_apply', 'wex_nonce'); ?>
             <input type="hidden" name="wex_apply_action" value="1">
             <button type="submit"
-                    class="btn btn-sm btn-danger <?php echo $wex_apply ? 'active' : ''; ?>">Apply</button>
+                    class="btn btn-sm btn-danger rounded-pill <?php echo $wex_apply ? 'active' : ''; ?>">Apply</button>
         </form>
         <a href="<?php echo esc_url($wex_current_url . ($wex_apply ? '&rescan=1' : '')); ?>"
-           class="btn btn-sm btn-outline-primary ms-auto">&#8635; Rescan</a>
+           class="btn btn-sm btn-outline-primary rounded-pill ms-auto">&#8635; Rescan</a>
     </div>
 
     <?php if ($wex_apply) : ?>
@@ -277,7 +277,7 @@ foreach ($wex_iterator as $fileinfo) {
         $var_name = wex_resolve_wording($inner_text, $wex_stats, $wex_apply);
         if ($var_name === null) continue;
 
-        $replacement  = "\$wordings['{$var_name}'] ?? ''";
+        $replacement  = "\$wordings['{$var_name}'] ?? '{$var_name}'";
         $new_content  = str_replace($full_match, $replacement, $new_content);
         $file_changed = true;
         $wex_stats['replaced']++;
@@ -293,7 +293,7 @@ foreach ($wex_iterator as $fileinfo) {
         $var_name = wex_resolve_wording($inner_text, $wex_stats, $wex_apply);
         if ($var_name === null) continue;
 
-        $replacement  = "<?php echo \$wordings['{$var_name}'] ?? ''; ?>";
+        $replacement  = "<?php echo \$wordings['{$var_name}'] ?? '{$var_name}'; ?>";
         $new_content  = str_replace($full_match, $replacement, $new_content);
         $file_changed = true;
         $wex_stats['replaced']++;
@@ -306,27 +306,27 @@ foreach ($wex_iterator as $fileinfo) {
         $wex_stats['files']++;
     }
 
-    $card_border = '';
-    $footer      = '';
+    $row_border = '';
+    $footer     = '';
     if ($file_changed) {
         if ($wex_apply) {
-            $card_border = 'border-primary';
-            $footer      = '<div class="card-footer text-primary small fw-semibold">&#10003; File written.</div>';
+            $row_border = 'border-primary';
+            $footer     = '<div class="px-3 py-2 border-top text-primary small fw-semibold">&#10003; File written.</div>';
         } else {
-            $card_border = 'border-info';
-            $footer      = '<div class="card-footer text-info small">File would be updated (dry run).</div>';
+            $row_border = 'border-info';
+            $footer     = '<div class="px-3 py-2 border-top text-info small">File would be updated (dry run).</div>';
         }
     }
 
     ?>
-    <div class="card mb-3 <?php echo esc_attr($card_border); ?>">
-        <div class="card-header">
+    <div class="col-12 mb-3 border rounded <?php echo esc_attr($row_border); ?>">
+        <div class="px-3 py-2 border-bottom">
             <span class="font-monospace" style="font-size:.9em"><?php echo esc_html($rel); ?></span>
         </div>
         <?php if ($rows_html) : ?>
         <div class="p-0">
             <table class="table table-sm table-hover mb-0">
-                <thead class="table-light">
+                <thead>
                     <tr>
                         <th class="ps-3" style="width:90px">Type</th>
                         <th style="width:80px">Detail</th>

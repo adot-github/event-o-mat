@@ -146,6 +146,17 @@ class Evtmgr_Options {
         return $result;
     }
 
+    /**
+     * Returns true when DocRaptor should run in test mode (no credits consumed).
+     * Defaults to test mode unless pdf_creation_mode = 'live'.
+     */
+    public static function is_pdf_test_mode(string $event_uid): bool {
+        if ($event_uid === '') {
+            return true;
+        }
+        return (new self())->get_option($event_uid, 'pdf_creation_mode') !== 'live';
+    }
+
     public function set_option(string $event_uid, string $name, string $value): bool {
         $event_uid = sanitize_text_field($event_uid);
         $name      = sanitize_text_field($name);

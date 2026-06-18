@@ -256,7 +256,7 @@
                     $docraptor = $pdf_creator->create_docraptor_client();
 
                     $doc = new DocRaptor\Doc();
-                    $doc->setTest(true);
+                    $doc->setTest(Evtmgr_Options::is_pdf_test_mode($event_uid ?? ''));
                     $doc->setDocumentType('pdf');
                     $doc->setName($file_name);
                     $doc->setDocumentContent($html);
@@ -364,7 +364,7 @@
                     $docraptor = $inv_pdf_creator->create_docraptor_client();
 
                     $doc = new DocRaptor\Doc();
-                    $doc->setTest(true);
+                    $doc->setTest(Evtmgr_Options::is_pdf_test_mode($event_uid ?? ''));
                     $doc->setDocumentType('pdf');
                     $doc->setName($file_name);
                     $doc->setDocumentContent($html);

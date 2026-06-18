@@ -452,7 +452,7 @@ class Event_Registration_Pdf_Creation {
         }
 
         return sprintf(
-            '<div class="mb-3"><a class="btn btn-outline-primary" href="%s" download="%s">%s</a></div>',
+            '<div class="mb-3"><a class="btn btn-outline-primary rounded-pill" href="%s" download="%s">%s</a></div>',
             esc_url($zip_download_data['url']),
             esc_attr($zip_download_data['name']),
             esc_html(sprintf('Alle bestehenden %s als ZIP herunterladen', $type_of_pdf))
@@ -481,7 +481,9 @@ class Event_Registration_Pdf_Creation {
                                 <?php foreach ($existing_pdf_files as $file) : ?>
                                     <a class="list-group-item list-group-item-action" href="<?php echo esc_url($file['file_url']); ?>" target="_blank" rel="noopener">
                                         <div class="d-flex w-100 justify-content-between gap-3">
+                                            
                                             <span class="text-break"><?php echo esc_html($file['file_name']); ?></span>
+
                                             <?php if (isset($file['size'])) : ?>
                                                 <small class="text-muted text-nowrap"><?php echo esc_html(size_format((int) $file['size'])); ?></small>
                                             <?php endif; ?>

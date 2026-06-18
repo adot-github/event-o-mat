@@ -5,7 +5,7 @@ if (!defined('ABSPATH')) {
 }
 
 global $wpdb;
-$table_name = 'wp_evtmgr_wordings';
+$table_name = 'wp_evtmgr_wordings_default';
 $public_dir = get_stylesheet_directory() . '/db-custom/event-registration/public';
 
 $result = null;
@@ -44,11 +44,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['wordings_scan_action'
 
         foreach ($wordings as $wording) {
             $id         = (int) $wording['id'];
-            $search_str = $wording['str_var_string'];
+            $var_string = $wording['str_var_string'];
 
-            if ($search_str === null || $search_str === '') {
+            if ($var_string === null || $var_string === '') {
                 continue;
             }
+
+            $search_str = "['" . $var_string . "']";
 
             $total_count = 0;
             $found_in    = array();
@@ -76,7 +78,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['wordings_scan_action'
 
             $details[] = array(
                 'id'             => $id,
-                'str_var_string' => $search_str,
+                'str_var_string' => $var_string,
+                'search_str'     => $search_str,
                 'count'          => $total_count,
                 'templates'      => $templates_str,
             );
@@ -129,7 +132,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['wordings_scan_action'
                     <?php foreach ($result['details'] as $row) : ?>
                         <tr>
                             <td><?php echo (int) $row['id']; ?></td>
-                            <td><code><?php echo esc_html($row['str_var_string']); ?></code></td>
+                            <td><code><?php echo esc_html($row['str_var_string']); ?></code><br><small class="text-muted"><?php echo esc_html($row['search_str']); ?></small></td>
                             <td class="text-center">
                                 <?php if ($row['count'] > 0) : ?>
                                     <span class="badge bg-success"><?php echo (int) $row['count']; ?></span>

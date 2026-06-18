@@ -1,4 +1,3 @@
-﻿st
 <?php
 
 $wp_load = dirname(__FILE__, 7) . '/wp-load.php';
@@ -224,7 +223,7 @@ try {
             generated.forEach(function (f) {
                 var li = document.createElement('li');
                 li.className = 'list-group-item';
-                li.innerHTML = esc(f.person) + ' — <a href="' + esc(f.file_url) + '" target="_blank" rel="noopener">' + esc(f.file_name) + '</a>';
+                li.innerHTML = esc(f.person) + ' — <span class="text-break"><a href="' + esc(f.file_url) + '" target="_blank" rel="noopener">' + esc(f.file_name) + '</a></span>';
                 filesEl.appendChild(li);
             });
             doneEl.classList.remove('d-none');

@@ -508,10 +508,23 @@ textarea {
 	box-shadow: 0 0 0 transparent;
 	border-radius: 2px;
 	border: 1px solid #949494;
-	background-color: rgba(255, 255, 255, 0.75) !important;
-	color: #000000;
-	font-weight: 600 !important;
+	background-color: rgba(255, 255, 255, 0.5) !important;
+	color: #fff;
+	font-weight: 400 !important;
 }
+
+input[readonly],
+textarea[readonly] {
+  background-color: rgba(255,255,255,.25) !important;
+  color: rgba(255,255,255,.75);
+  cursor: not-allowed;
+  font-weight:300 !important;
+}
+
+.acf-label .description {
+    color: rgba(255,255,255,.5) !important;
+}
+
 
 /* WP Core Buttons */
 .wp-core-ui .button,.wp-core-ui .button-primary,.wp-core-ui .button-secondary {

@@ -262,7 +262,7 @@ try {
             </section>
 
             <button type="submit" class="btn btn-primary rounded-pill">Kosten aktualisieren</button>
-            <a href="<?php echo evtmgr_person_billing_admin_url(array('action' => 'select')); ?>" class="btn btn-outline-secondary rounded-pill">Andere Person wählen</a>
+            <a href="<?php echo evtmgr_person_billing_admin_url(array('action' => 'select')); ?>" class="btn btn-outline-primary rounded-pill ms-4">Andere Person wählen</a>
         </form>
         <?php
     } elseif ($action === 'save') {
@@ -381,7 +381,7 @@ try {
         </div>
 
         <a href="<?php echo evtmgr_person_billing_admin_url(array('action' => 'edit', 'person_id' => $person_id)); ?>" class="btn btn-primary rounded-pill">Kosten erneut bearbeiten</a>
-        <a href="<?php echo evtmgr_person_billing_admin_url(array('action' => 'select')); ?>" class="btn btn-outline-secondary rounded-pill">Andere Person wählen</a>
+        <a href="<?php echo evtmgr_person_billing_admin_url(array('action' => 'select')); ?>" class="btn btn-outline-primary rounded-pill">Andere Person wählen</a>
         <?php
     } else {
         throw new RuntimeException('Unbekannte Aktion.');

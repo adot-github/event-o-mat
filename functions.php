@@ -94,6 +94,9 @@ add_action('wp_ajax_evtmgr_pdf_generate_person', function () {
 
     $pages_dir = get_stylesheet_directory() . '/db-custom/event-registration/pages/';
     require_once get_stylesheet_directory() . '/db-custom/event-registration/classes/class-pdf-creation.php';
+    if (!class_exists('Evtmgr_Options')) {
+        require_once get_stylesheet_directory() . '/db-custom/event-registration/classes/class-evtmgr-options.php';
+    }
 
     try {
         $pdf_creator = new Event_Registration_Pdf_Creation($pages_dir);
@@ -141,7 +144,7 @@ add_action('wp_ajax_evtmgr_pdf_generate_person', function () {
         $docraptor = $pdf_creator->create_docraptor_client();
 
         $doc = new DocRaptor\Doc();
-        $doc->setTest(true);
+        $doc->setTest(Evtmgr_Options::is_pdf_test_mode($event_uid));
         $doc->setDocumentType('pdf');
         $doc->setName($file_name_from_person);
         $doc->setDocumentContent($html);
