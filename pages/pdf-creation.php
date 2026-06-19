@@ -96,26 +96,163 @@ try {
         <h3 class="mb-1"><strong>Kongress:</strong> <?php echo esc_html($str_event_name_); ?></h3>
         <p><strong>Event Uid:</strong> <?php echo esc_html($event_uid); ?></p>
 
-        <form method="post" action="" class="mb-4">
-            <div class="pdf-person-select-wrap">
-                <label for="selected_person_ids" class="form-label fw-semibold h4">Teilnehmende auswählen</label>
-                <p class="form-text">Mehrfachauswahl mit Ctrl/Cmd oder Shift. Alle auswählen mit Ctrl+A.<br>
-                Es werden nur für die ausgewählten Teilnehmenden PDF erstellt.</p>
+        <style>
+            .dlb-wrap { display:flex; gap:1rem; align-items:flex-start; }
+            .dlb-col { flex:1; min-width:0; }
+            .dlb-col label { display:block; font-weight:600; margin-bottom:.35rem; }
+            .dlb-filter { width:100%; margin-bottom:.4rem; }
+            .dlb-list { height:320px; overflow-y:auto; border:1px solid #dee2e6; border-radius:.375rem; padding:.25rem; }
+            .dlb-list .list-group-item { cursor:pointer; border:none; }
+            .dlb-list .list-group-item:hover { background:rgba(255,255,255,.25); }
+            .dlb-list .list-group-item { padding:.35rem .75rem; font-size:.9rem; user-select:none; border-radius:.375rem !important; }
+            .dlb-list .list-group-item.d-none { display:none !important; }
+            .dlb-actions { display:flex; flex-direction:column; gap:.5rem; justify-content:center; padding-top:2rem; }
+        </style>
 
-                <select id="selected_person_ids" name="selected_person_ids[]" class="form-select pdf-person-select" multiple required>
-                    <?php foreach ($persons as $person) : ?>
-                        <?php $person_id = $pdf_creator->get_person_id($person); ?>
-                        <?php if ($person_id !== '') : ?>
-                            <option value="<?php echo esc_attr($person_id); ?>">
-                                <?php echo esc_html($pdf_creator->person_label($person)); ?>
-                            </option>
-                        <?php endif; ?>
-                    <?php endforeach; ?>
-                </select>
+        <form method="post" action="" class="mb-4" id="pdf-person-form">
+            <div class="mb-3">
+                <p class="form-label fw-semibold h4 mb-0">Teilnehmende auswählen</p>
+                <p class="form-text">Klick auf einen Eintrag verschiebt ihn. PDF wird nur für ausgewählte Teilnehmende erstellt.</p>
             </div>
 
-            <button type="submit" class="btn btn-primary mt-3 rounded-pill"><?php echo esc_html($type_of_pdf); ?> erstellen</button>
+            <div class="dlb-wrap">
+                <div class="dlb-col">
+                    <label>Verfügbar (<span id="dlb-avail-count">0</span>)</label>
+                    <input type="text" class="form-control form-control-sm dlb-filter" id="dlb-filter-avail" placeholder="Filtern…">
+                    <ul class="list-group dlb-list" id="dlb-avail"></ul>
+                    <button type="button" class="btn btn-sm btn-outline-secondary mt-2 rounded-pill" id="dlb-add-all">Alle hinzufügen</button>
+                </div>
+
+                <div class="dlb-actions">
+                    <span class="text-muted">→</span>
+                    <span class="text-muted">←</span>
+                </div>
+
+                <div class="dlb-col">
+                    <label>Ausgewählt (<span id="dlb-sel-count">0</span>)</label>
+                    <input type="text" class="form-control form-control-sm dlb-filter" id="dlb-filter-sel" placeholder="Filtern…">
+                    <ul class="list-group dlb-list" id="dlb-sel"></ul>
+                    <button type="button" class="btn btn-sm btn-outline-secondary mt-2 rounded-pill" id="dlb-remove-all">Alle entfernen</button>
+                </div>
+            </div>
+
+            <!-- hidden select synced before submit -->
+            <select name="selected_person_ids[]" id="dlb-hidden-select" multiple style="display:none">
+                <?php foreach ($persons as $person) : ?>
+                    <?php $person_id = $pdf_creator->get_person_id($person); ?>
+                    <?php if ($person_id !== '') : ?>
+                        <option value="<?php echo esc_attr($person_id); ?>">
+                            <?php echo esc_html($pdf_creator->person_label($person)); ?>
+                        </option>
+                    <?php endif; ?>
+                <?php endforeach; ?>
+            </select>
+
+            <button type="submit" class="btn btn-primary mt-3 rounded-pill" id="dlb-submit"><?php echo esc_html($type_of_pdf); ?> erstellen</button>
         </form>
+
+        <script>
+        (function () {
+            var persons = <?php
+                $dlb_persons = [];
+                foreach ($persons as $person) {
+                    $pid = $pdf_creator->get_person_id($person);
+                    if ($pid !== '') {
+                        $dlb_persons[] = ['id' => $pid, 'label' => $pdf_creator->person_label($person)];
+                    }
+                }
+                echo wp_json_encode($dlb_persons);
+            ?>;
+
+            var availList  = document.getElementById('dlb-avail');
+            var selList    = document.getElementById('dlb-sel');
+            var availCount = document.getElementById('dlb-avail-count');
+            var selCount   = document.getElementById('dlb-sel-count');
+            var filterAvail = document.getElementById('dlb-filter-avail');
+            var filterSel   = document.getElementById('dlb-filter-sel');
+            var hiddenSel   = document.getElementById('dlb-hidden-select');
+            var submitBtn   = document.getElementById('dlb-submit');
+            var form        = document.getElementById('pdf-person-form');
+
+            function esc(s) {
+                return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+            }
+
+            function makeItem(p, side) {
+                var li = document.createElement('li');
+                li.className = 'list-group-item';
+                li.dataset.id = p.id;
+                li.dataset.label = p.label.toLowerCase();
+                li.textContent = p.label;
+                li.addEventListener('click', function () { move(li, side); });
+                return li;
+            }
+
+            function move(li, fromSide) {
+                if (fromSide === 'avail') {
+                    selList.appendChild(li);
+                    li.removeEventListener('click', li._clickHandler);
+                    li.addEventListener('click', function () { move(li, 'sel'); });
+                } else {
+                    availList.appendChild(li);
+                    li.removeEventListener('click', li._clickHandler);
+                    li.addEventListener('click', function () { move(li, 'avail'); });
+                }
+                applyFilter(filterAvail, availList);
+                applyFilter(filterSel, selList);
+                updateCounts();
+            }
+
+            function applyFilter(input, list) {
+                var q = input.value.toLowerCase();
+                list.querySelectorAll('.list-group-item').forEach(function (li) {
+                    li.classList.toggle('d-none', q !== '' && li.dataset.label.indexOf(q) === -1);
+                });
+            }
+
+            function updateCounts() {
+                availCount.textContent = availList.querySelectorAll('.list-group-item').length;
+                selCount.textContent   = selList.querySelectorAll('.list-group-item').length;
+                submitBtn.disabled     = selList.querySelectorAll('.list-group-item').length === 0;
+            }
+
+            // Populate available list
+            persons.forEach(function (p) {
+                availList.appendChild(makeItem(p, 'avail'));
+            });
+            updateCounts();
+
+            filterAvail.addEventListener('input', function () { applyFilter(filterAvail, availList); });
+            filterSel.addEventListener('input',   function () { applyFilter(filterSel,   selList);   });
+
+            document.getElementById('dlb-add-all').addEventListener('click', function () {
+                availList.querySelectorAll('.list-group-item:not(.d-none)').forEach(function (li) {
+                    selList.appendChild(li);
+                    li.onclick = function () { move(li, 'sel'); };
+                });
+                applyFilter(filterSel, selList);
+                updateCounts();
+            });
+
+            document.getElementById('dlb-remove-all').addEventListener('click', function () {
+                selList.querySelectorAll('.list-group-item:not(.d-none)').forEach(function (li) {
+                    availList.appendChild(li);
+                    li.onclick = function () { move(li, 'avail'); };
+                });
+                applyFilter(filterAvail, availList);
+                updateCounts();
+            });
+
+            form.addEventListener('submit', function () {
+                // Sync hidden select
+                Array.from(hiddenSel.options).forEach(function (o) { o.selected = false; });
+                selList.querySelectorAll('.list-group-item').forEach(function (li) {
+                    var opt = hiddenSel.querySelector('option[value="' + li.dataset.id + '"]');
+                    if (opt) opt.selected = true;
+                });
+            });
+        }());
+        </script>
 
         <?php
         $pdf_creator->render_status_accordion(

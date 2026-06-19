@@ -146,13 +146,15 @@
            'dtm_time_from' => [
                 'label' => 'dtm_time_from',
                 'acf' => [
-                    'type' => 'time_picker'
+                    'type' => 'time_picker',
+                    'required'=> true
                 ]
             ],
            'dtm_time_to' => [
                 'label' => 'dtm_time_to',
                 'acf' => [
-                    'type' => 'time_picker'
+                    'type' => 'time_picker',
+                    'required'=> true
                 ]
             ],
            'str_timezone_code' => [

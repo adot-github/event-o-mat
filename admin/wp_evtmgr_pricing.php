@@ -14,6 +14,74 @@
 
 <?php
     $lang = 'de';
+    add_action('db_editor/after_save', function (string $table_name, int $record_id, array $data, array $table_config) {
+        global $wpdb;
+
+        $pricing_table = $wpdb->prefix . 'evtmgr_pricing';
+
+        if ($table_name !== $pricing_table) {
+            return;
+        }
+
+        $event_uid = $data['fky_event_uid'] ?? $wpdb->get_var(
+            $wpdb->prepare("SELECT fky_event_uid FROM {$pricing_table} WHERE id = %d", $record_id)
+        );
+
+        if (!$event_uid) {
+            return;
+        }
+
+        $rows = $wpdb->get_results(
+            $wpdb->prepare(
+                "SELECT id, fky_pricing_parent_id FROM {$pricing_table}
+                 WHERE fky_event_uid = %s
+                 ORDER BY int_sort_order, id",
+                $event_uid
+            ),
+            ARRAY_A
+        );
+
+        // Group children by parent id
+        $parents  = [];
+        $children = [];
+        foreach ($rows as $row) {
+            $pid = (int) $row['fky_pricing_parent_id'];
+            if ($pid === 0) {
+                $parents[] = (int) $row['id'];
+            } else {
+                $children[$pid][] = (int) $row['id'];
+            }
+        }
+
+        // Flatten: parent, then its children, then next parent, ...
+        $ordered = [];
+        foreach ($parents as $parent_id) {
+            $ordered[] = $parent_id;
+            foreach ($children[$parent_id] ?? [] as $child_id) {
+                $ordered[] = $child_id;
+            }
+        }
+
+        // Orphaned children (parent not in this event) appended at the end
+        foreach ($children as $parent_id => $child_ids) {
+            if (!in_array($parent_id, $parents, true)) {
+                foreach ($child_ids as $child_id) {
+                    $ordered[] = $child_id;
+                }
+            }
+        }
+
+        foreach ($ordered as $i => $id) {
+            $wpdb->update(
+                $pricing_table,
+                ['int_sort_order' => ($i + 1) * 10],
+                ['id' => $id],
+                ['%d'],
+                ['%d']
+            );
+        }
+    }, 10, 4);
+
     $editor->add_table_config([
         'table' => 'evtmgr_pricing',
         'skin' => 'iframe',
@@ -25,6 +93,7 @@
             'position'   => 40
         ],
         'list'  => [
+            'drag_sort' => 'int_sort_order',
             'fields' => ["str_pricing_name_{$lang}"],
             'fields_iframe' => ["str_pricing_name_{$lang}", "num_price", "int_sort_order"],
             'orderby_default' => "int_sort_order,str_pricing_name_{$lang}",

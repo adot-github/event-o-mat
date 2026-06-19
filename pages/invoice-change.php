@@ -244,26 +244,36 @@ try {
                                     </td>
                                 </tr>
                             <?php endforeach; ?>
-                            <tr>
-                                <td>
-                                    <input type="text" name="str_billing_text_0" value="" class="form-control" placeholder="Neue Kostenposition">
-                                </td>
-                                <td>
-                                    <div class="input-group input-group-sm">
-                                        <span class="input-group-text">CHF</span>
-                                        <input type="text" name="int_price_0" value="" class="form-control" style="max-width:120px;">
-                                    </div>
-                                </td>
-                                <td><span class="badge text-bg-secondary">NEU</span></td>
-                            </tr>
                         </tbody>
+                        <tbody id="ic-new-rows"></tbody>
                     </table>
                 </div>
+
+                <button type="button" id="ic-add-position" class="btn btn-outline-secondary btn-sm rounded-pill mb-3">+ Weitere Position hinzufügen</button>
             </section>
 
             <button type="submit" class="btn btn-primary rounded-pill">Kosten aktualisieren</button>
             <a href="<?php echo evtmgr_person_billing_admin_url(array('action' => 'select')); ?>" class="btn btn-outline-primary rounded-pill ms-4">Andere Person wählen</a>
         </form>
+
+        <script>
+        (function () {
+            var btn  = document.getElementById('ic-add-position');
+            var tbody = document.getElementById('ic-new-rows');
+
+            btn.addEventListener('click', function () {
+                var tr = document.createElement('tr');
+                tr.innerHTML =
+                    '<td><input type="text" name="new_billing_text[]" class="form-control" placeholder="Neue Kostenposition"></td>' +
+                    '<td><div class="input-group input-group-sm"><span class="input-group-text">CHF</span>' +
+                    '<input type="text" name="new_price[]" class="form-control" style="max-width:120px;"></div></td>' +
+                    '<td><button type="button" class="btn btn-outline-danger btn-sm rounded-pill ic-remove-row">entfernen</button></td>';
+                tr.querySelector('.ic-remove-row').addEventListener('click', function () { tr.remove(); });
+                tbody.appendChild(tr);
+                tr.querySelector('input[name="new_billing_text[]"]').focus();
+            });
+        }());
+        </script>
         <?php
     } elseif ($action === 'save') {
         if (!isset($_POST['evtmgr_person_billing_nonce']) || !wp_verify_nonce(sanitize_text_field(wp_unslash($_POST['evtmgr_person_billing_nonce'])), 'evtmgr_person_billing_save')) {
@@ -341,10 +351,17 @@ try {
                 $updated_count += (int) $updated;
             }
 
-            $new_text = isset($_POST['str_billing_text_0']) ? sanitize_text_field(wp_unslash($_POST['str_billing_text_0'])) : '';
-            $new_price = isset($_POST['int_price_0']) ? evtmgr_person_billing_parse_price(wp_unslash($_POST['int_price_0'])) : null;
+            $new_texts  = isset($_POST['new_billing_text']) && is_array($_POST['new_billing_text']) ? wp_unslash($_POST['new_billing_text']) : array();
+            $new_prices = isset($_POST['new_price'])        && is_array($_POST['new_price'])        ? wp_unslash($_POST['new_price'])        : array();
 
-            if (trim($new_text) !== '' && $new_price !== null) {
+            foreach ($new_texts as $idx => $new_text) {
+                $new_text  = sanitize_text_field($new_text);
+                $new_price = evtmgr_person_billing_parse_price($new_prices[$idx] ?? '');
+
+                if (trim($new_text) === '' || $new_price === null) {
+                    continue;
+                }
+
                 if ($event_id <= 0) {
                     throw new RuntimeException('Kein Kongress für Event Uid gefunden: ' . $event_uid);
                 }
@@ -353,10 +370,10 @@ try {
                     $tables['registrations_billing'],
                     array(
                         'str_billing_text' => $new_text,
-                        'int_price'       => $new_price,
+                        'int_price'        => $new_price,
                         'fky_person_id'    => $person_id,
-                        'fky_event_id'  => $event_id,
-                        'fky_event_uid'     => $event_uid,
+                        'fky_event_id'     => $event_id,
+                        'fky_event_uid'    => $event_uid,
                     ),
                     array('%s', '%d', '%d', '%d', '%s')
                 );
@@ -365,7 +382,7 @@ try {
                     throw new RuntimeException('Neue Kostenposition konnte nicht gespeichert werden: ' . $wpdb->last_error);
                 }
 
-                $inserted_count = 1;
+                $inserted_count++;
             }
         }
 
