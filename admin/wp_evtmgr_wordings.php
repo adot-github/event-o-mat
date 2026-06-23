@@ -24,6 +24,7 @@
             'fields_iframe' => ["str_text_for_tree"],
             'orderby_default' => "str_text_for_tree",
             'order_default' => 'asc',
+            'condition' => "$additional_sql_condition",
             'labels' => [
                 'title'     => 'evtmgr_wordings bearbeiten',
                 'button_add'   => 'Neuen Datensatz hinzufügen',

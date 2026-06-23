@@ -132,19 +132,13 @@ return array(
 
         .content-text {
             position: static;
-            font-size: 10pt;
-            line-height: 1.2;
-            text-align: left;
-
-
-
-
-
-        .content-text {
-            position: static;
             font-size: 9pt;
             line-height: 1.12;
             text-align: left;
+        }
+
+        .workshop-participants {
+            margin-bottom: 6mm;
         }
 
         .workshop-person-name {
@@ -159,8 +153,8 @@ return array(
         }
 
         .workshop-title {
-            margin: 0 0 1.2mm;
-            font-size: 11pt;
+            margin: 0 0 1mm;
+            font-size: 10pt;
             font-weight: 700;
             line-height: 1.1;
             text-transform: uppercase;
@@ -172,11 +166,25 @@ return array(
             width: 100%;
             border-collapse: collapse;
             table-layout: fixed;
-            font-size: 8.6pt;
+            font-size: 8.2pt;
+            margin-top: 1mm;
         }
 
         .participants-table thead {
             display: table-header-group;
+        }
+
+        .participants-table thead tr {
+            background: #0f4f79;
+            color: #ffffff;
+        }
+
+        .participants-table thead th {
+            padding: 1.2mm 1.5mm 1mm 1.5mm;
+            font-weight: 700;
+            text-align: left;
+            border: none;
+            overflow-wrap: anywhere;
         }
 
         .participants-table tr {
@@ -184,30 +192,26 @@ return array(
             page-break-inside: avoid;
         }
 
-        .participants-table th,
-        .participants-table td {
-            padding: 0.55mm 1mm 0.5mm 0;
-            border-top: 1px solid #000 !important;
+        .participants-table tbody td {
+            padding: 0.7mm 1.5mm 0.6mm 1.5mm;
+            border-bottom: 0.25mm solid #c8d8e6;
             vertical-align: top;
             overflow-wrap: anywhere;
             word-wrap: break-word;
         }
 
-        .participants-table th {
-            font-weight: 400;
-            text-align: left;
+        .participants-table tbody .row-even {
+            background: #eef3f8;
         }
 
-        .col-num { width: 7mm; }
-        .col-last { width: 17mm; }
-        .col-first { width: 17mm; }
-        .col-email { width: 43mm; }
-        .col-job { width: 53mm; }
-        .col-institution { width: auto; }
+        .participants-table tbody .row-odd {
+            background: #ffffff;
+        }
 
         .empty-row {
             color: #666;
             font-style: italic;
+            padding: 1.5mm;
         }
     </style>
 </head>

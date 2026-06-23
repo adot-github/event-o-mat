@@ -167,3 +167,107 @@ add_action('wp_ajax_evtmgr_pdf_generate_person', function () {
         wp_send_json_error(['message' => $e->getMessage()]);
     }
 });
+
+/**
+ * AJAX handler — generates one workshop PDF per call, driven by the
+ * progress-bar JS in pdf-creation-workshops.php.
+ */
+add_action('wp_ajax_evtmgr_pdf_generate_workshop', function () {
+    if (!check_ajax_referer('evtmgr_pdf_generate', 'nonce', false)) {
+        wp_send_json_error(['message' => 'Ungültige Sicherheitsprüfung.'], 403);
+    }
+    if (!current_user_can('manage_options')) {
+        wp_send_json_error(['message' => 'Keine Berechtigung.'], 403);
+    }
+
+    $job_id       = sanitize_key(wp_unslash($_POST['job_id'] ?? ''));
+    $workshop_idx = absint($_POST['workshop_idx'] ?? 0);
+
+    if ($job_id === '') {
+        wp_send_json_error(['message' => 'Kein job_id angegeben.']);
+    }
+
+    $job = get_transient('evtmgr_pdf_ws_job_' . $job_id);
+    if (empty($job) || !is_array($job)) {
+        wp_send_json_error(['message' => 'Job nicht gefunden oder abgelaufen. Bitte neu starten.']);
+    }
+
+    $workshops = $job['workshops'] ?? [];
+    if (!isset($workshops[$workshop_idx])) {
+        wp_send_json_error(['message' => 'Workshop-Index ' . $workshop_idx . ' nicht vorhanden.']);
+    }
+
+    $workshop           = $workshops[$workshop_idx];
+    $pdf_layout         = $job['pdf_layout']         ?? '';
+    $subfolder          = $job['subfolder']          ?? 'workshop-booking-lists';
+    $event_uid          = $job['event_uid']          ?? '';
+    $event              = $job['event']              ?? [];
+    $str_event_name_    = $job['str_event_name_']    ?? '';
+    $str_event_subtitle = $job['str_event_subtitle'] ?? '';
+    $dtm_event_date     = $job['dtm_event_date']     ?? '';
+
+    if ($pdf_layout === '') {
+        wp_send_json_error(['message' => 'Kein PDF-Layout im Job.']);
+    }
+
+    $pages_dir = get_stylesheet_directory() . '/db-custom/event-registration/pages/';
+    require_once get_stylesheet_directory() . '/db-custom/event-registration/classes/class-pdf-creation.php';
+    require_once get_stylesheet_directory() . '/db-custom/event-registration/classes/class-evtmgr-workshops.php';
+    if (!class_exists('Evtmgr_Options')) {
+        require_once get_stylesheet_directory() . '/db-custom/event-registration/classes/class-evtmgr-options.php';
+    }
+
+    try {
+        $pdf_creator   = new Event_Registration_Pdf_Creation($pages_dir);
+        $workshops_obj = new Evtmgr_Workshops();
+        $layout        = $pdf_creator->load_pdf_layout($pdf_layout);
+
+        $workshop_id      = absint($workshop['id'] ?? 0);
+        $workshop_label   = $workshops_obj->workshop_pdf_label($workshop);
+        $file_name        = $workshops_obj->workshop_pdf_file_name($workshop);
+        $participants     = $workshops_obj->get_workshop_registered_persons($workshop_id, $event_uid);
+        $presenters_text  = $workshops_obj->get_workshop_presenters_text($workshop_id);
+        $workshop_label_cb = [$workshops_obj, 'workshop_pdf_label'];
+
+        $image_replacements = $pdf_creator->get_image_replacements($layout);
+        $text_replacements  = $pdf_creator->text_replacements($layout, 'de');
+        $core_replacements  = [
+            '{str_language}'           => 'de',
+            '{str_event_name}'         => esc_html($str_event_name_),
+            '{str_event_subtitle}'     => esc_html($str_event_subtitle),
+            '{str_event_subtitle_de}'  => esc_html($str_event_subtitle),
+            '{dtm_event_date}'         => esc_html($dtm_event_date),
+            '{id}'                     => esc_html((string) $workshop_id),
+            '{str_workshop_number}'    => esc_html($workshops_obj->workshop_value_ci($workshop, 'str_workshop_number')),
+            '{str_workshop_title_de}'  => esc_html($workshops_obj->workshop_value_ci($workshop, 'str_workshop_title_de')),
+            '{invoice_text}'           => $pdf_creator->render_workshop_participants_html($workshop, $participants, $presenters_text, $workshop_label_cb),
+        ];
+
+        $all_replacements = array_merge($image_replacements, $text_replacements, $core_replacements);
+        $html = $pdf_creator->render_html((string) $layout['html_template'], $all_replacements);
+        $html = strtr($html, $all_replacements);
+
+        $docraptor = $pdf_creator->create_docraptor_client();
+        $doc = new DocRaptor\Doc();
+        $doc->setTest(Evtmgr_Options::is_pdf_test_mode($event_uid));
+        $doc->setDocumentType('pdf');
+        $doc->setName($file_name);
+        $doc->setDocumentContent($html);
+
+        $pdf      = $docraptor->createDoc($doc);
+        $pdf_path = $pdf_creator->get_pdf_path($subfolder, $event_uid);
+        $pdf_creator->ensure_directory($pdf_path);
+        file_put_contents(rtrim($pdf_path, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR . $file_name, $pdf);
+
+        $file_url = $pdf_creator->get_pdf_url($subfolder, $event_uid, $file_name);
+
+        wp_send_json_success([
+            'workshop'  => $workshop_label,
+            'file_name' => $file_name,
+            'file_url'  => $file_url,
+        ]);
+
+    } catch (Throwable $e) {
+        wp_send_json_error(['message' => $e->getMessage()]);
+    }
+});

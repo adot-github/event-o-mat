@@ -540,14 +540,22 @@ class Event_Registration_Pdf_Creation {
             <?php endif; ?>
 
             <table class="participants-table">
+                <colgroup>
+                    <col style="width:7mm">
+                    <col style="width:26mm">
+                    <col style="width:22mm">
+                    <col style="width:42mm">
+                    <col style="width:38mm">
+                    <col>
+                </colgroup>
                 <thead>
                     <tr>
-                        <th class="col-num">#</th>
-                        <th class="col-last">Name</th>
-                        <th class="col-first">Vorname</th>
-                        <th class="col-email">E-Mail</th>
-                        <th class="col-job">Funktion</th>
-                        <th class="col-institution">Institution</th>
+                        <th>#</th>
+                        <th>Name</th>
+                        <th>Vorname</th>
+                        <th>E-Mail</th>
+                        <th>Funktion</th>
+                        <th>Institution</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -555,8 +563,8 @@ class Event_Registration_Pdf_Creation {
                         <tr><td colspan="6" class="empty-row">Keine Anmeldungen gefunden.</td></tr>
                     <?php else : ?>
                         <?php foreach ($persons as $index => $person) : ?>
-                            <tr>
-                                <td class="col-num"><?php echo esc_html((string) ($index + 1)); ?></td>
+                            <tr class="<?php echo ($index % 2 === 0) ? 'row-even' : 'row-odd'; ?>">
+                                <td><?php echo esc_html((string) ($index + 1)); ?></td>
                                 <td><?php echo esc_html($this->value_ci($person, 'str_last_name')); ?></td>
                                 <td><?php echo esc_html($this->value_ci($person, 'str_first_name')); ?></td>
                                 <td><?php echo esc_html($this->value_ci($person, 'str_email')); ?></td>
