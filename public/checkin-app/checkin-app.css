@@ -24,10 +24,11 @@
 }
 
 .ca-idle h1 {
-    font-size: 1.4rem;
-    font-weight: 700;
+    font-size: 2rem;
+    font-weight: 300;
+    margin-top:0;
     margin-bottom: 1.5rem;
-    color: #1a3a6e;
+    color: #ffffff;
 }
 
 /* ── Scanner ──────────────────────────────────────────────────────────── */
@@ -64,7 +65,7 @@
     width: 2.5rem;
     height: 2.5rem;
     border: 4px solid #dee2e6;
-    border-top-color: #1a3a6e;
+    border-top-color: #ff8138;
     border-radius: 50%;
     animation: ca-spin .8s linear infinite;
     margin-bottom: 1rem;
@@ -199,12 +200,12 @@
 .ca-btn {
     display: inline-flex;
     align-items: center;
-    gap: .4rem;
-    padding: .55rem 1.2rem;
+    gap: .5rem;
+    padding: .85rem 2rem;
     border-radius: 2rem;
     border: none;
     cursor: pointer;
-    font-size: .9rem;
+    font-size: 1.1rem;
     font-weight: 600;
     transition: opacity .15s;
     text-decoration: none;
@@ -214,7 +215,7 @@
     cursor: not-allowed;
 }
 .ca-btn-primary {
-    background: #1a3a6e;
+    background: #ff8138;
     color: #fff;
 }
 .ca-btn-success {
@@ -223,8 +224,8 @@
 }
 .ca-btn-outline {
     background: transparent;
-    color: #1a3a6e;
-    border: 2px solid #1a3a6e;
+    color: #ff8138;
+    border: 2px solid #ff8138;
 }
 
 /* ── Status icon ─────────────────────────────────────────────────────── */

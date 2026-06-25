@@ -45,6 +45,18 @@ if (!is_array($events)) {
 ?>
 <div class="container py-4 py-lg-5 event-dashboard-page">
 
+    <?php
+    $evtmgr_notice = isset($_GET['evtmgr_notice'])
+        ? sanitize_text_field(wp_unslash($_GET['evtmgr_notice']))
+        : '';
+    ?>
+
+    <?php if ($evtmgr_notice === 'no_event') : ?>
+        <div class="alert alert-warning" role="alert">
+            Sie müssen zuerst einen Event aktivieren, damit Sie dessen Daten bearbeiten können.
+        </div>
+    <?php endif; ?>
+
 <?php if (empty($events)) : ?>
 
         <div class="alert alert-warning" role="alert">

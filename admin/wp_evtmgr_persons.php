@@ -87,9 +87,10 @@
                 str_institution_name_shield_OFF:col-lg-4 col-md-6
 
                 tab:Anmeldung
-                int_billing_status:col-lg-4 col-md-6
-                int_diploma_sent:col-lg-4 col-md-6
                 num_invoice_total:col-lg-4 col-md-6
+                int_billing_status:col-lg-4 col-md-6
+                -
+                int_diploma_sent:col-lg-4 col-md-6
                 mem_email_sent:col-12
                 mem_program_data:col-12
                 mem_price_data:col-12
@@ -385,9 +386,17 @@
                 ]
             ],
            'int_billing_status' => [
-                'label' => 'int_billing_status',
+                'label' => $labels['int_billing_status'] ?? 'Rechnungsstatus',
                 'acf' => [
-                    'type' => 'text',
+                    'type'    => 'radio',
+                    'choices' => [
+                        '0'   => 'Rechnung noch nicht erhalten',
+                        '1'   => 'Rechnung erhalten, aber noch nicht bezahlt',
+                        '11'  => 'Erste Mahnung erhalten, aber noch nicht bezahlt',
+                        '12'  => 'Zweite Mahnung erhalten, aber noch nicht bezahlt',
+                        '13'  => 'Dritte Mahnung erhalten, aber noch nicht bezahlt',
+                        '100' => 'Rechnung bezahlt',
+                    ],
                 ]
             ],
            'int_diploma_sent' => [

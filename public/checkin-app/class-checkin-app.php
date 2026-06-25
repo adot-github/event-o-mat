@@ -1,7 +1,7 @@
 <?php
 /**
  * Event Check-in PWA
- * Shortcode: [evtmgr_checkin]
+ * Shortcode: [evtmgr_checkin_app]
  * REST API:
  *   GET  /wp-json/evtmgr/v1/checkin?cookie=VALUE  — person lookup
  *   POST /wp-json/evtmgr/v1/checkin               — perform check-in
@@ -26,7 +26,7 @@ class Evtmgr_Checkin_App {
     // ── Shortcode ─────────────────────────────────────────────────────────────
 
     public static function register_shortcode(): void {
-        add_shortcode('evtmgr_checkin', [self::class, 'render_shortcode']);
+        add_shortcode('evtmgr_checkin_app', [self::class, 'render_shortcode']);
     }
 
     public static function render_shortcode(): string {

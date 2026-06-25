@@ -37,13 +37,13 @@
 <div id="ca-screen-idle" class="ca-screen ca-idle">
     <h1>Event Check-in</h1>
     <button class="ca-btn ca-btn-primary" id="ca-btn-scan">
-        <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"
+        <svg width="32" height="32" fill="none" stroke="currentColor" stroke-width="1.25"
              viewBox="0 0 24 24" aria-hidden="true">
             <path d="M3 7V5a2 2 0 012-2h2M17 3h2a2 2 0 012 2v2M21 17v2a2 2 0 01-2 2h-2M7 21H5a2 2 0 01-2-2v-2"/>
-            <rect x="7" y="7" width="4" height="4" rx="1"/>
-            <rect x="13" y="7" width="4" height="4" rx="1"/>
-            <rect x="7" y="13" width="4" height="4" rx="1"/>
-            <rect x="13" y="13" width="4" height="4" rx="1"/>
+            <rect x="6" y="6" width="5" height="5" rx="1"/>
+            <rect x="13" y="6" width="5" height="5" rx="1"/>
+            <rect x="6" y="13" width="5" height="5" rx="1"/>
+            <rect x="13" y="13" width="5" height="5" rx="1"/>
         </svg>
         QR-Code scannen
     </button>

@@ -71,7 +71,7 @@
                     ],
                 'searchable' => true,
                 'acf' => [
-                    'type' => 'textarea',
+                    'type' => 'text',
                     'message' => '{{str_option_description}}',
                     'readonly'=> true,
                 ]
@@ -87,9 +87,21 @@
            'str_option_value' => [
                 'label' => $labels['str_option_value'] ?? 'str_option_value',
                 'acf' => [
-                    'type' => 'text',
-                    'instructions'=> '{{str_info_text_de}}',
-                ]
+                    'type'         => '{{str_option_type}}',
+                    'ui'           => 1,
+                    'instructions' => '{{str_info_text_de}}',
+                    'layout' => '{{str_option_layout}}',
+                ],
+                'before_render' => function($field_config, $record) {
+                    $raw = $record['str_option_choices'] ?? '';
+                    if ($raw !== '') {
+                        $choices = json_decode($raw, true);
+                        if (is_array($choices)) {
+                            $field_config['acf']['choices'] = $choices;
+                        }
+                    }
+                    return $field_config;
+                },
             ],
            'str_option_type' => [
                 'label' => $labels['str_option_type'] ?? 'str_option_type',
