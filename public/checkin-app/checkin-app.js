@@ -226,6 +226,12 @@
         const dotCls      = checkedIn ? 'ca-green' : 'ca-yellow';
         const statusLabel = checkedIn ? 'Bereits eingecheckt' : 'Noch nicht eingecheckt';
 
+        const billingStatus = person.billing_status ?? 0;
+        const billingLabel  = person.billing_status_label || '';
+        const billingCls    = billingStatus === 100 ? 'ca-billing-paid'
+                            : billingStatus >= 11   ? 'ca-billing-overdue'
+                            : 'ca-billing-pending';
+
         const checkinBtn = checkedIn ? '' : `
 <button class="ca-btn ca-btn-success" id="ca-btn-checkin" data-cookie="${escHtml(cookie)}">
     Einchecken
@@ -243,6 +249,7 @@
         <div class="ca-person-name">${escHtml(fullName)}</div>
         <div class="ca-person-meta">${escHtml(person.email)}</div>
         <div class="ca-person-meta">Event: ${escHtml(person.event_uid)}</div>
+        ${billingLabel ? `<div class="ca-billing-status ${escHtml(billingCls)}">${escHtml(billingLabel)}</div>` : ''}
         ${checkedIn && dateDisplay ? `<div class="ca-check-date">Eingecheckt: ${escHtml(dateDisplay)}</div>` : ''}
         ${buildWorkshopsList(person.workshops)}
         ${inlineError}

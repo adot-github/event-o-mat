@@ -100,7 +100,7 @@ class Evtmgr_Checkin_App {
         $person = $wpdb->get_row(
             $wpdb->prepare(
                 "SELECT id, str_salutation, str_first_name, str_last_name, str_email,
-                        fky_event_uid, ysn_checked_in, dtm_date_check_in
+                        fky_event_uid, ysn_checked_in, dtm_date_check_in, int_billing_status
                  FROM {$wpdb->prefix}evtmgr_persons
                  WHERE str_registration_cookie = %s
                  LIMIT 1",
@@ -108,6 +108,15 @@ class Evtmgr_Checkin_App {
             ),
             ARRAY_A
         );
+
+        $billing_labels = [
+            '0'   => 'Rechnung noch nicht erhalten',
+            '1'   => 'Rechnung erhalten, aber noch nicht bezahlt',
+            '11'  => 'Erste Mahnung erhalten, aber noch nicht bezahlt',
+            '12'  => 'Zweite Mahnung erhalten, aber noch nicht bezahlt',
+            '13'  => 'Dritte Mahnung erhalten, aber noch nicht bezahlt',
+            '100' => 'Rechnung bezahlt',
+        ];
 
         if (empty($person)) {
             return new WP_Error('not_found', 'Person nicht gefunden.', ['status' => 404]);
@@ -135,16 +144,20 @@ class Evtmgr_Checkin_App {
             ARRAY_A
         );
 
+        $billing_status = (string) ($person['int_billing_status'] ?? '0');
+
         return rest_ensure_response([
-            'id'             => (int) $person['id'],
-            'salutation'     => (string) ($person['str_salutation']   ?? ''),
-            'first_name'     => (string) ($person['str_first_name']   ?? ''),
-            'last_name'      => (string) ($person['str_last_name']    ?? ''),
-            'email'          => (string) ($person['str_email']        ?? ''),
-            'event_uid'      => (string) ($person['fky_event_uid']    ?? ''),
-            'checked_in'     => !empty($person['ysn_checked_in']),
-            'date_check_in'  => $person['dtm_date_check_in'] ?? null,
-            'workshops'      => is_array($workshops) ? array_values($workshops) : [],
+            'id'                   => (int) $person['id'],
+            'salutation'           => (string) ($person['str_salutation']   ?? ''),
+            'first_name'           => (string) ($person['str_first_name']   ?? ''),
+            'last_name'            => (string) ($person['str_last_name']    ?? ''),
+            'email'                => (string) ($person['str_email']        ?? ''),
+            'event_uid'            => (string) ($person['fky_event_uid']    ?? ''),
+            'checked_in'           => !empty($person['ysn_checked_in']),
+            'date_check_in'        => $person['dtm_date_check_in'] ?? null,
+            'billing_status'       => (int) $billing_status,
+            'billing_status_label' => $billing_labels[$billing_status] ?? '',
+            'workshops'            => is_array($workshops) ? array_values($workshops) : [],
         ]);
     }
 

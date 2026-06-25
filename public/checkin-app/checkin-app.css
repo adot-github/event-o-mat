@@ -119,6 +119,18 @@
     margin-bottom: .25rem;
 }
 
+.ca-billing-status {
+    display: inline-block;
+    margin-top: .4rem;
+    font-size: .75em;
+    font-weight: 600;
+    padding: .2em .55em;
+    border-radius: .35em;
+}
+.ca-billing-paid    { background: #d1e7dd; color: #0a3622; }
+.ca-billing-overdue { background: #f8d7da; color: #842029; }
+.ca-billing-pending { background: #fff3cd; color: #664d03; }
+
 .ca-check-date {
     font-size: .75em;
     color: #6c757d;
