@@ -63,8 +63,14 @@ class Evtmgr_Checkin_App {
             'manifestUrl' => $base_url . 'manifest.json',
         ]);
 
-        return '<div id="checkin-app" aria-live="polite"></div>'
-            . '<link rel="manifest" href="' . esc_url($base_url . 'manifest.json') . '">';
+        $manifest_url = $base_url . 'manifest.json';
+        $icon_url     = get_stylesheet_directory_uri() . '/db-custom/event-registration/assets/evtmgr-appicon.svg';
+        add_action('wp_head', static function () use ($manifest_url, $icon_url) {
+            echo '<link rel="manifest" href="' . esc_url($manifest_url) . '">' . "\n";
+            echo '<link rel="apple-touch-icon" href="' . esc_url($icon_url) . '">' . "\n";
+        }, 1);
+
+        return '<div id="checkin-app" aria-live="polite"></div>';
     }
 
     // ── REST API ──────────────────────────────────────────────────────────────
