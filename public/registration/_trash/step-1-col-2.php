@@ -1,4 +1,4 @@
-﻿            <div class="stage" style="--column: 3;">
+            <div class="stage" style="--column: 3;">
                 <h2 class="stage-headline m-0">Programm</h2>
 
                 <ol class="session-list">

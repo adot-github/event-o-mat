@@ -1,4 +1,4 @@
-﻿
+
 <?php
 
 $wp_load = dirname(__FILE__, 7) . '/wp-load.php';

@@ -1,4 +1,4 @@
-﻿
+
 <div class="container py-4">
     <?php
     $current_group = '';

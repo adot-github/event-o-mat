@@ -1,4 +1,4 @@
-﻿
+
 <style>
 .event-report-table-scroll {
     width: 100%;

@@ -1,4 +1,4 @@
-﻿
+
 <?php
 $manual_links = array(
     array(

@@ -1,4 +1,4 @@
-﻿<?php
+<?php
     $col_slot_id   = isset($col_slot_id) ? (int) $col_slot_id : 0;
     $col_index     = isset($col_index)   ? (int) $col_index   : 0;
     $col_slot      = isset($col_slot)    ? (array) $col_slot  : array();

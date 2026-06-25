@@ -1,4 +1,4 @@
-﻿
+
 <?php
 
 $report_title = 'Teilnehmende mit Workshops';
