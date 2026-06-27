@@ -5,7 +5,6 @@ $editor->add_page_config([
         'menu_parent'=> $root_config_id,
         'page_title' => "Dashboard",
         'menu_title' => "– Dashboard",
-        'icon'       => get_stylesheet_directory_uri() . '/db-custom/lernorte/admin/assets/fhnw-logo-weiss.svg',
         'position'   => 0
     ],
     'page' => 'dashboard'
@@ -70,7 +69,7 @@ $adot_evtmgr_hidden_pages = array(
         'menu_title'        => '> dashboard-event',
         'capability'        => 'manage_options',
         'menu_slug'         => 'report-income',
-        'file'              => '/db-custom/event-registration/pages/report-income.php',
+        'file'              => '/db-custom/event-registration/admin/reports/report-income.php',
         'active_submenu'    => 'dashboard-event',
     ),
 
@@ -80,7 +79,7 @@ $adot_evtmgr_hidden_pages = array(
         'menu_title'        => '> report-participant-workshops',
         'capability'        => 'manage_options',
         'menu_slug'         => 'report-participant-workshops',
-        'file'              => '/db-custom/event-registration/pages/report-participant-workshops.php',
+        'file'              => '/db-custom/event-registration/admin/reports/report-participant-workshops.php',
         'active_submenu'    => 'dashboard-event',
     ),
     array(
@@ -88,7 +87,7 @@ $adot_evtmgr_hidden_pages = array(
         'menu_title'        => '> workshop-booking-lists-pdf-create',
         'capability'        => 'manage_options',
         'menu_slug'         => 'workshop-booking-lists-pdf-create',
-        'file'              => '/db-custom/event-registration/pages/workshop-booking-lists-pdf-create.php',
+        'file'              => '/db-custom/event-registration/admin/pages/workshop-booking-lists-pdf-create.php',
         'active_submenu'    => 'dashboard-workshop',
         ),
     array(
@@ -96,7 +95,7 @@ $adot_evtmgr_hidden_pages = array(
         'menu_title'        => '> report-presenters',
         'capability'        => 'manage_options',
         'menu_slug'         => 'report-presenters',
-        'file'              => '/db-custom/event-registration/pages/report-presenters.php',
+        'file'              => '/db-custom/event-registration/admin/reports/report-presenters.php',
         'active_submenu'    => 'dashboard-workshop',
         ),
 
@@ -105,7 +104,7 @@ $adot_evtmgr_hidden_pages = array(
         'menu_title'        => '> workshop-booking-changes',
         'capability'        => 'manage_options',
         'menu_slug'         => 'workshop-booking-changes',
-        'file'              => '/db-custom/event-registration/pages/workshop-booking-changes.php',
+        'file'              => '/db-custom/event-registration/admin/pages/workshop-booking-changes.php',
         'active_submenu'    => 'dashboard-anmeldungen',
     ),
 
@@ -114,7 +113,7 @@ $adot_evtmgr_hidden_pages = array(
         'menu_title'        => '> invoice-change',
         'capability'        => 'manage_options',
         'menu_slug'         => 'invoice-change',
-        'file'              => '/db-custom/event-registration/pages/invoice-change.php',
+        'file'              => '/db-custom/event-registration/admin/pages/invoice-change.php',
         'active_submenu'    => 'dashboard-anmeldungen',
     ),
     array(
@@ -122,7 +121,7 @@ $adot_evtmgr_hidden_pages = array(
         'menu_title'        => '> invoice-pdf-create',
         'capability'        => 'manage_options',
         'menu_slug'         => 'invoice-pdf-create',
-        'file'              => '/db-custom/event-registration/pages/invoice-pdf-create.php',
+        'file'              => '/db-custom/event-registration/admin/pages/invoice-pdf-create.php',
         'active_submenu'    => 'dashboard-anmeldungen',
     ),
     array(
@@ -130,7 +129,7 @@ $adot_evtmgr_hidden_pages = array(
         'menu_title'        => '> ticket-pdf-create',
         'capability'        => 'manage_options',
         'menu_slug'         => 'ticket-pdf-create',
-        'file'              => '/db-custom/event-registration/pages/ticket-pdf-create.php',
+        'file'              => '/db-custom/event-registration/admin/pages/ticket-pdf-create.php',
         'active_submenu'    => 'dashboard-anmeldungen',
     ),
     array(
@@ -138,7 +137,7 @@ $adot_evtmgr_hidden_pages = array(
         'menu_title'        => '> etiketten-pdf-create',
         'capability'        => 'manage_options',
         'menu_slug'         => 'etiketten-pdf-create',
-        'file'              => '/db-custom/event-registration/pages/etiketten-pdf-create.php',
+        'file'              => '/db-custom/event-registration/admin/pages/etiketten-pdf-create.php',
         'active_submenu'    => 'dashboard-anmeldungen',
     ),
     /*
@@ -147,7 +146,7 @@ $adot_evtmgr_hidden_pages = array(
         'menu_title'        => '> invoice-send-by-email',
         'capability'        => 'manage_options',
         'menu_slug'         => 'invoice-send-by-email',
-        'file'              => '/db-custom/event-registration/pages/invoice-send-by-email.php',
+        'file'              => '/db-custom/event-registration/admin/pages/invoice-send-by-email.php',
         'active_submenu'    => 'dashboard-anmeldungen',
     ),
     */
@@ -156,7 +155,7 @@ $adot_evtmgr_hidden_pages = array(
         'menu_title'        => '> report-persons',
         'capability'        => 'manage_options',
         'menu_slug'         => 'report-persons',
-        'file'              => '/db-custom/event-registration/pages/report-persons.php',
+        'file'              => '/db-custom/event-registration/admin/reports/report-persons.php',
         'active_submenu'    => 'dashboard-anmeldungen',
     ),
 
@@ -165,7 +164,7 @@ $adot_evtmgr_hidden_pages = array(
         'menu_title'        => '> diploma-pdf-create',
         'capability'        => 'manage_options',
         'menu_slug'         => 'diploma-pdf-create',
-        'file'              => '/db-custom/event-registration/pages/diploma-pdf-create.php',
+        'file'              => '/db-custom/event-registration/admin/pages/diploma-pdf-create.php',
         'active_submenu'    => 'dashboard-anmeldungen',
     ),
     /*
@@ -174,7 +173,7 @@ $adot_evtmgr_hidden_pages = array(
         'menu_title'        => '> diploma-send-by-email',
         'capability'        => 'manage_options',
         'menu_slug'         => 'diploma-send-by-email',
-        'file'              => '/db-custom/event-registration/pages/diploma-send-by-email.php',
+        'file'              => '/db-custom/event-registration/admin/pages/diploma-send-by-email.php',
         'active_submenu'    => 'dashboard-anmeldungen',
     ),
     */
@@ -183,7 +182,7 @@ $adot_evtmgr_hidden_pages = array(
         'menu_title'        => '> person-program-pdf-create',
         'capability'        => 'manage_options',
         'menu_slug'         => 'person-program-pdf-create',
-        'file'              => '/db-custom/event-registration/pages/person-program-pdf-create.php',
+        'file'              => '/db-custom/event-registration/admin/pages/person-program-pdf-create.php',
         'active_submenu'    => 'dashboard-anmeldungen',
     ),
 
@@ -192,7 +191,7 @@ $adot_evtmgr_hidden_pages = array(
         'menu_title'        => '> event-pdf',
         'capability'        => 'manage_options',
         'menu_slug'         => 'event-pdf',
-        'file'              => '/db-custom/event-registration/pages/event-pdf.php',
+        'file'              => '/db-custom/event-registration/admin/pages/event-pdf.php',
         'active_submenu'    => 'dashboard-event',
     ),
     array(
@@ -200,7 +199,7 @@ $adot_evtmgr_hidden_pages = array(
         'menu_title'        => '> event duplicate',
         'capability'        => 'manage_options',
         'menu_slug'         => 'event-duplicate',
-        'file'              => '/db-custom/event-registration/pages/event-duplicate.php',
+        'file'              => '/db-custom/event-registration/admin/pages/event-duplicate.php',
         'active_submenu'    => 'dashboard-event',
     ),
     array(
@@ -208,7 +207,7 @@ $adot_evtmgr_hidden_pages = array(
         'menu_title'        => '> event delete',
         'capability'        => 'manage_options',
         'menu_slug'         => 'event-delete',
-        'file'              => '/db-custom/event-registration/pages/event-delete.php',
+        'file'              => '/db-custom/event-registration/admin/pages/event-delete.php',
         'active_submenu'    => 'dashboard-event',
     ),
     array(
@@ -216,7 +215,7 @@ $adot_evtmgr_hidden_pages = array(
         'menu_title'        => '> registration delete',
         'capability'        => 'manage_options',
         'menu_slug'         => 'registration-delete',
-        'file'              => '/db-custom/event-registration/pages/registration-delete.php',
+        'file'              => '/db-custom/event-registration/admin/pages/registration-delete.php',
         'active_submenu'    => 'dashboard-anmeldungen',
     ),
     array(
@@ -224,7 +223,7 @@ $adot_evtmgr_hidden_pages = array(
         'menu_title'        => '> wordings scan',
         'capability'        => 'manage_options',
         'menu_slug'         => 'wordings-scan',
-        'file'              => '/db-custom/event-registration/pages/wordings-scan.php',
+        'file'              => '/db-custom/event-registration/admin/pages/wordings-scan.php',
         'active_submenu'    => 'dashboard-event',
     ),
     array(
@@ -232,7 +231,7 @@ $adot_evtmgr_hidden_pages = array(
         'menu_title'        => '> wordings extract',
         'capability'        => 'manage_options',
         'menu_slug'         => 'wordings-extract',
-        'file'              => '/db-custom/event-registration/pages/wordings_extract.php',
+        'file'              => '/db-custom/event-registration/admin/pages/wordings_extract.php',
         'active_submenu'    => 'dashboard-event',
     ),
     array(
@@ -240,7 +239,7 @@ $adot_evtmgr_hidden_pages = array(
         'menu_title'        => '> database fields extract',
         'capability'        => 'manage_options',
         'menu_slug'         => 'database-fields-extract',
-        'file'              => '/db-custom/event-registration/pages/database-fields-extract.php',
+        'file'              => '/db-custom/event-registration/admin/pages/database-fields-extract.php',
         'active_submenu'    => 'dashboard-tools',
     ),
     array(
@@ -248,7 +247,7 @@ $adot_evtmgr_hidden_pages = array(
         'menu_title'        => '> filestorage clean',
         'capability'        => 'edit_posts',
         'menu_slug'         => 'filestorage-clean',
-        'file'              => '/db-custom/event-registration/pages/filestorage-cean.php',
+        'file'              => '/db-custom/event-registration/admin/pages/filestorage-cean.php',
         'active_submenu'    => 'dashboard-tools',
     ),
 

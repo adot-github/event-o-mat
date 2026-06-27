@@ -16,16 +16,38 @@
 body {
 	margin: 0;
 	background: #1d0b2b !important;
+    background: #3e2150 !important;
+    font-size:1rem !important;
+    font-weight:400 !important;
 	color: #f7ffcc !important;
-    color: rgba(255,255,255,.5) !important;
+    color: rgba(255,255,255,.75) !important;
 	-webkit-font-smoothing: antialiased;
 }
 
+p,ul,ol {
+    font-size:1rem !important;
+}
 h1, h2, h3, h4, h5 {
     color: #f7ffcc !important;
     color: rgba(255,255,255,.75) !important;
-    font-weight:300 !important;
+    font-weight:500 !important;
 }
+
+h1 {
+    font-size:2rem;
+    }
+
+h1::before {
+  content: "";
+  display: block;
+  width: 1cm;
+  height: 2px;
+  background: currentColor; /* übernimmt die Textfarbe des H1 */
+  position: relative;
+  top: -3px;
+  left: 0;
+}
+
 h2 {
     font-size:1.5rem;
     }
@@ -41,6 +63,14 @@ h2 {
 }
 .ev-scroll::-webkit-scrollbar-track {
 	background: transparent;
+}
+
+#wpbody-content {
+  border-left-off: 3px groove rgba(255, 255, 255, 0.5);
+}
+
+#wpcontent,#wpfooter {
+    margin-left: 140px
 }
 
 /* ---- animations & hovers ---- */
@@ -327,13 +357,6 @@ h2 {
 	--bs-table-active-color: #f7ffcc;
 }
 
-/* ============================================================
-   Moon&Stars · Admin — Variante 2 (nur Cards)
-   Standard-Bootstrap-5-Markup. Eigene Klassen (Prefix "evtmgr")
-   nur fuer das, was Bootstrap nicht abbildet: die Palette.
-   Palette: #1d0b2b  #f7ffcc  #ff99b3  #ffbe5c  #fa7e5f
-   ============================================================ */
-
 /* App-Hintergrund (Palette -> nicht in Bootstrap vorhanden) */
 .evtmgr-app {
 	background: #1d0b2b;
@@ -361,8 +384,8 @@ h2 {
 }
 
 .evtmgr-card-active {
-	background-color: #221038 !important;
-	border: 2px solid rgba(247, 255, 204, 0.55) !important;
+	background: #221038 !important;
+	border: 4px solid rgba(255, 255, 255, 0.55) !important;
 }
 
 /* gedaempfte Textfarben aus der Palette */
@@ -392,6 +415,9 @@ h2 {
 	background: #f7ffcc;
 }
 
+.evtmgr-tier-text { color: rgba(255,255,255,.75); }
+.evtmgr-badge-active { background: #fa7e5f; color: #fff; }
+
 /* Delta-Badges (Palette statt Theme-Farben) */
 .evtmgr-badge-up {
 	color: #f7ffcc;
@@ -411,6 +437,13 @@ h2 {
 .evtmgr-tier:hover {
 	transform: translateY(-4px) rotate(-0.4deg);
 }
+
+.evtmgr-tier-default {
+	--bs-card-bg: rgba(0,0,0,.2) !important;
+	background-color: rgba(0,0,0,.2) !important;
+    border-color: rgba(255,255,255,.25) !important;
+}
+
 .evtmgr-tier-standard {
 	--bs-card-bg: #ff99b3 !important;
 	background-color: #ff99b3 !important;
@@ -438,6 +471,7 @@ h2 {
     background: rgba(0,0,0,.25) !important;
     color: rgba(255,255,255,.75) !important;
     transition: transform 0.18s ease, box-shadow 0.18s ease, background 0.18s ease;
+    border-color:rgba(255,255,255,.75);
 }
 .evtmgr-tier-btn:hover {
     background: rgba(0,0,0,.45) !important;
@@ -449,6 +483,7 @@ h2 {
 .card-body {
 	padding: 1rem;
 	padding-bottom: 0 !important;
+    color: rgba(255,255,255,.75) !important;
 }
 
 .form-text,
@@ -655,4 +690,9 @@ a {
 a:hover,
 a:focus {
 	color: #f985a3;
+}
+
+#adot-left-iframe,
+#adot-right-iframe {
+    background: #3e2150;
 }

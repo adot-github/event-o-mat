@@ -33,9 +33,9 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
-require_once dirname(__DIR__) . '/classes/class-reports.php';
-require_once dirname(__DIR__) . '/classes/class-event-registration.php';
-require_once dirname(__DIR__) . '/classes/class-evtmgr-events.php';
+require_once dirname(__DIR__) . '/../classes/class-reports.php';
+require_once dirname(__DIR__) . '/../classes/class-event-registration.php';
+require_once dirname(__DIR__) . '/../classes/class-evtmgr-events.php';
 
 $report_title = isset($report_title) && trim((string) $report_title) !== ''
     ? (string) $report_title

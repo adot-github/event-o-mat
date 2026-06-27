@@ -23,7 +23,7 @@ add_action('admin_enqueue_scripts', function ($hook_suffix) {
 
     wp_enqueue_style(
         'event-registration-dashboard',
-        get_stylesheet_directory_uri() . '/db-custom/event-registration/pages/css/dashboard.css',
+        get_stylesheet_directory_uri() . '/db-custom/event-registration/admin/css/dashboard.css',
         array('bootstrap-5'),
         '1.0.0'
     );
@@ -37,6 +37,24 @@ add_action('admin_enqueue_scripts', function ($hook_suffix) {
     );
 });
 
+(function () {
+    $action = isset($_GET['action']) ? sanitize_text_field(wp_unslash($_GET['action'])) : '';
+    if (!in_array($action, ['adot_iframe_left', 'adot_iframe_right'], true)) {
+        return;
+    }
+    $page = isset($_GET['page']) ? sanitize_text_field(wp_unslash($_GET['page'])) : '';
+    if ($page === '' || strpos($page, 'evtmgr') === false) {
+        return;
+    }
+    ob_start(function ($html) {
+        return str_replace(
+            '<head>',
+            '<head><style>html,body{background:#3e2150!important}</style>',
+            $html
+        );
+    });
+})();
+
 add_action('wp_footer', function () {
     if (!defined('IFRAME_REQUEST') || !IFRAME_REQUEST) {
         return;
@@ -45,7 +63,7 @@ add_action('wp_footer', function () {
     if (strpos($page, 'evtmgr') === false) {
         return;
     }
-    echo '<link rel="stylesheet" href="' . esc_url(get_stylesheet_directory_uri() . '/db-custom/event-registration/pages/css/dashboard.css') . '" media="all" />' . "\n";
+    echo '<link rel="stylesheet" href="' . esc_url(get_stylesheet_directory_uri() . '/db-custom/event-registration/admin/css/dashboard.css') . '" media="all" />' . "\n";
 });
 
 require_once get_stylesheet_directory() . '/db-custom/event-registration/public/functions.php';

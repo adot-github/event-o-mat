@@ -3,7 +3,7 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
-$_pdf_classes_dir = dirname(__DIR__) . '/classes/';
+$_pdf_classes_dir = dirname(__DIR__) . '/../classes/';
 require_once $_pdf_classes_dir . 'class-helpers.php';
 require_once $_pdf_classes_dir . 'class-evtmgr-events.php';
 require_once $_pdf_classes_dir . 'class-evtmgr-slots.php';

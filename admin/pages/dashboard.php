@@ -1,5 +1,5 @@
-<?php
-$wp_load = dirname(__FILE__, 7) . '/wp-load.php';
+﻿<?php
+$wp_load = dirname(__FILE__, 8) . '/wp-load.php';
 
 if (!file_exists($wp_load)) {
     die('wp-load.php not found: ' . htmlspecialchars($wp_load, ENT_QUOTES, 'UTF-8'));
@@ -11,9 +11,9 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
-require_once dirname(__DIR__) . '/classes/class-evtmgr-events.php';
-require_once dirname(__DIR__) . '/classes/class-evtmgr-options.php';
-require_once dirname(__DIR__) . '/classes/class-evtmgr-wordings.php';
+require_once dirname(__DIR__) . '/../classes/class-evtmgr-events.php';
+require_once dirname(__DIR__) . '/../classes/class-evtmgr-options.php';
+require_once dirname(__DIR__) . '/../classes/class-evtmgr-wordings.php';
 
 $cookie_event_uid       = 'current_event_uid';
 $cookie_event_languages = 'current_event_languages';
@@ -85,7 +85,7 @@ if (!is_array($events)) {
                     ? (string) $event['str_event_subtitle']
                     : '';
 
-                $card_classes = 'card h-100 shadow-sm';
+                $card_classes = 'card evtmgr-tier evtmgr-tier-default h-100';
 
                 if ($is_active) {
                     $card_classes .= ' evtmgr-card-active';
@@ -97,46 +97,46 @@ if (!is_array($events)) {
                         <div class="card-body d-flex flex-column">
 
                             <?php if ($is_active) : ?>
-                                <div class="mb-3">
-                                    <span class="badge rounded-pill text-bg-primary">
+                                <div class="mb-2">
+                                    <span class="badge rounded-pill evtmgr-badge-active p-2 ps-3 pe-3">
                                         Aktuell ausgewählt
                                     </span>
                                 </div>
                             <?php endif; ?>
 
-                            <h2 class="h5 card-title fw-bold mb-3">
+                            <h2 class="mb-2 evtmgr-tier-text">
                                 <?php echo esc_html($title); ?>
                             </h2>
 
                             <?php if (!empty($subtitle)) : ?>
-                                <p class="card-subtitle mb-3">
+                                <p class="mb-2">
                                     <?php echo esc_html($subtitle); ?>
                                 </p>
                             <?php endif; ?>
 
-                            <dl class="row small mb-0">
-                                <dt class="col-5">Event UID</dt>
+                            <dl class="row mb-0 evtmgr-tier-text">
+                                <dt class="col-5 fw-normal opacity-75">Event UID</dt>
                                 <dd class="col-7 mb-1"><?php echo esc_html($event_uid); ?></dd>
 
                                 <?php if (!empty($event_id)) : ?>
-                                    <dt class="col-5">Event ID</dt>
+                                    <dt class="col-5 fw-normal opacity-75">Event ID</dt>
                                     <dd class="col-7 mb-1"><?php echo esc_html($event_id); ?></dd>
                                 <?php endif; ?>
 
                                 <?php if (!empty($event_languages)) : ?>
-                                    <dt class="col-5">Sprachen</dt>
+                                    <dt class="col-5 fw-normal opacity-75">Sprachen</dt>
                                     <dd class="col-7 mb-1"><?php echo esc_html($event_languages); ?></dd>
                                 <?php endif; ?>
 
                                 <?php if (!empty($email_from)) : ?>
-                                    <dt class="col-5">Absender-E-Mail</dt>
+                                    <dt class="col-5 fw-normal opacity-75">Absender-E-Mail</dt>
                                     <dd class="col-7 mb-1 text-break"><?php echo esc_html($email_from); ?></dd>
                                 <?php endif; ?>
                             </dl>
 
-                            <div class="mt-auto">
+                            <div class="mt-auto pt-3">
                                 <button type="button"
-                                        class="btn btn-primary js-open-event rounded-pill"
+                                        class="btn evtmgr-tier-btn w-100 rounded-pill fw-semibold js-open-event"
                                         data-event-uid="<?php echo esc_attr($event_uid); ?>"
                                         data-event-languages="<?php echo esc_attr($event_languages); ?>">
                                     Event aktivieren

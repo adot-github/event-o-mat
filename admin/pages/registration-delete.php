@@ -5,10 +5,10 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
-require_once dirname(__DIR__) . '/classes/class-event-registration.php';
-require_once dirname(__DIR__) . '/classes/class-evtmgr-persons.php';
-require_once dirname(__DIR__) . '/classes/class-evtmgr-global.php';
-require_once dirname(__DIR__) . '/classes/class-evtmgr-workshops.php';
+require_once dirname(__DIR__) . '/../classes/class-event-registration.php';
+require_once dirname(__DIR__) . '/../classes/class-evtmgr-persons.php';
+require_once dirname(__DIR__) . '/../classes/class-evtmgr-global.php';
+require_once dirname(__DIR__) . '/../classes/class-evtmgr-workshops.php';
 
 if (!defined('EVTMGR_REGISTRATION_DELETE_PAGE_SLUG')) {
     define('EVTMGR_REGISTRATION_DELETE_PAGE_SLUG', 'registration-delete');

@@ -1,6 +1,6 @@
 <?php
 
-$wp_load = dirname(__FILE__, 7) . '/wp-load.php';
+$wp_load = dirname(__FILE__, 8) . '/wp-load.php';
 
 if (!file_exists($wp_load)) {
     die('wp-load.php not found: ' . htmlspecialchars($wp_load, ENT_QUOTES, 'UTF-8'));
@@ -16,8 +16,8 @@ if (!current_user_can('edit_posts')) {
     wp_die('Keine Berechtigung.');
 }
 
-require_once dirname(__DIR__) . '/classes/class-event-registration.php';
-require_once dirname(__DIR__) . '/classes/class-pdf-creation.php';
+require_once dirname(__DIR__) . '/../classes/class-event-registration.php';
+require_once dirname(__DIR__) . '/../classes/class-pdf-creation.php';
 
 $pdf_creator        = new Event_Registration_Pdf_Creation(__DIR__);
 $event_registration = new Event_Registration_Context();

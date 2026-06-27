@@ -5,7 +5,7 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
-require_once dirname(__DIR__) . '/classes/class-evtmgr-global.php';
+require_once dirname(__DIR__) . '/../classes/class-evtmgr-global.php';
 
 $global_obj = new Evtmgr_Global();
 $events     = $global_obj->get_events_for_duplicate_dropdown();

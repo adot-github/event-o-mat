@@ -362,7 +362,7 @@ $wex_summary = [
         <div class="col-auto">
             <div class="card text-center border-<?php echo esc_attr($color); ?>" style="min-width:130px">
                 <div class="card-body py-2 px-3">
-                    <div class="h2 fw-bold text-<?php echo esc_attr($color); ?> mb-0"><?php echo (int) $value; ?></div>
+                    <div class="h2 text-<?php echo esc_attr($color); ?> mb-0"><?php echo (int) $value; ?></div>
                     <div class="text-muted small"><?php echo esc_html($label); ?></div>
                 </div>
             </div>

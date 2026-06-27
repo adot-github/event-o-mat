@@ -15,6 +15,10 @@ class Event_Registration_Context {
         self::$registered_page_slugs = array_merge(self::$registered_page_slugs, $slugs);
     }
 
+    public static function get_registered_pages(): array {
+        return self::$registered_page_slugs;
+    }
+
     private function is_evtmgr_page(string $page): bool {
         if (empty(self::$registered_page_slugs)) {
             return true; // No registration done: fall back to original behaviour (no restriction).

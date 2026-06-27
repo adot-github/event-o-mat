@@ -582,7 +582,7 @@ class Event_Registration_Pdf_Creation {
 
     public function show_page_header(string $title = 'PDF-Erstellung'): void {
         $css_file = $this->base_dir . DIRECTORY_SEPARATOR . 'css' . DIRECTORY_SEPARATOR . 'pdf-creation.css';
-        $css_url  = get_stylesheet_directory_uri() . '/db-custom/event-registration/pages/css/pdf-creation.css';
+        $css_url  = get_stylesheet_directory_uri() . '/db-custom/event-registration/admin/css/pdf-creation.css';
         ?>
         <?php if (file_exists($css_file)) : ?>
             <link rel="stylesheet" href="<?php echo esc_url($css_url); ?>">

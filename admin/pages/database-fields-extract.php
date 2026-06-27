@@ -4,7 +4,7 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
-require_once dirname(__DIR__) . '/classes/class_database_fields.php';
+require_once dirname(__DIR__) . '/../classes/class_database_fields.php';
 
 $result = null;
 $errors = [];

@@ -1,7 +1,7 @@
 
 <?php
 
-$wp_load = dirname(__FILE__, 7) . '/wp-load.php';
+$wp_load = dirname(__FILE__, 8) . '/wp-load.php';
 
 if (!file_exists($wp_load)) {
     die('wp-load.php not found: ' . htmlspecialchars($wp_load, ENT_QUOTES, 'UTF-8'));
@@ -13,9 +13,9 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
-require_once dirname(__DIR__) . '/classes/class-event-registration.php';
-require_once dirname(__DIR__) . '/classes/class-evtmgr-persons.php';
-require_once dirname(__DIR__) . '/classes/class-evtmgr-workshops.php';
+require_once dirname(__DIR__) . '/../classes/class-event-registration.php';
+require_once dirname(__DIR__) . '/../classes/class-evtmgr-persons.php';
+require_once dirname(__DIR__) . '/../classes/class-evtmgr-workshops.php';
 
 global $wpdb;
 

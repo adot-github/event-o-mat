@@ -20,17 +20,17 @@
             ?>
 
             <div class="d-flex justify-content-between align-items-baseline mt-5 mb-3">
-                <h2 class="h4 fw-bold m-0"><?php echo esc_html($current_group); ?></h2>
+                <h1 class="m-0 mt-3 mb-1"><?php echo esc_html($current_group); ?></h1>
             </div>
 
             <div class="row g-4">
         <?php endif; ?>
 
-        <div class="col-12 col-lg-4">
+        <div class="col-12 col-lg-4 mt-0">
             <div class="card evtmgr-tier <?php echo $current_tier; ?> h-100">
                 <div class="card-body">
 
-                    <h2 class="m-0 fw-bold">
+                    <h2 class="m-0">
                         <?php echo esc_html($item['str_title']); ?>
                     </h2>
 
