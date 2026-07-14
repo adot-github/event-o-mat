@@ -62,7 +62,6 @@
                 -
                 str_timezone_name_{{lang}}:col-md-{{lang_col_count}}
                 mem_timezone_text_{{lang}}:col-md-{{lang_col_count}}
-                mem_remark_on_no_registration_{{lang}}:col-md-{{lang_col_count}}
                 -
                 fky_event_uid:col-lg-3 col-md-4
                 
@@ -79,13 +78,11 @@
                 str_css_class:col-lg-3 col-md-4
                 int_price:col-lg-3 col-md-4
                 -
-                
+                ysn_show_timezone_in_output:col-lg-3 col-md-4
                 ysn_show_text_in_output:col-lg-3 col-md-4
                 ysn_show_time_in_output:col-lg-3 col-md-4
-                ysn_print_on_label:col-lg-3 col-md-4
-                ysn_group_select_children:col-lg-3 col-md-4
-                ysn_group_select_block_only:col-lg-3 col-md-4
-                ysn_charge_always:col-lg-3 col-md-4
+                ysn_selection_required
+                mem_remark_on_no_selection_{{lang}}:col-md-{{lang_col_count}}
                 -
                 dtm_date_created:col-lg-3 col-md-4
                 dtm_date_updated:col-lg-3 col-md-4'
@@ -217,6 +214,15 @@
                     'type' => 'text',
                 ]
             ],
+           
+           'ysn_show_timezone_in_output' => [
+                'label' => 'ysn_show_timezone_in_output',
+                'acf' => [
+                    'type' => 'true_false',
+                    'ui'            => 1,
+                ]
+            ],
+           
            'ysn_show_time_in_output' => [
                 'label' => 'ysn_show_time_in_output',
                 'acf' => [
@@ -230,6 +236,14 @@
                     'type' => 'true_false',
                     'ui'            => 1,
                 ]
+            ]
+            ,
+           'ysn_selection_required' => [
+                'label' => 'ysn_selection_required',
+                'acf' => [
+                    'type' => 'true_false',
+                    'ui'            => 1,
+                ]
             ],
            'ysn_print_on_label' => [
                 'label' => 'ysn_print_on_label',
@@ -238,33 +252,12 @@
                     'ui'            => 1,
                 ]
             ],
-           'ysn_group_select_children' => [
-                'label' => 'ysn_group_select_children',
-                'acf' => [
-                    'type' => 'true_false',
-                    'ui'            => 1,
-                ]
-            ],
-           'ysn_group_select_block_only' => [
-                'label' => 'ysn_group_select_block_only',
-                'acf' => [
-                    'type' => 'true_false',
-                    'ui'            => 1,
-                ]
-            ],
-           'ysn_charge_always' => [
-                'label' => 'ysn_charge_always',
-                'acf' => [
-                    'type' => 'true_false',
-                    'ui'            => 1,
-                ]
-            ],
-           'mem_remark_on_no_registration_{{lang}}' => [
-                'label' => 'mem_remark_on_no_registration',
+           'mem_remark_on_no_selection_{{lang}}' => [
+                'label' => 'mem_remark_on_no_selection',
                 'langs' => [
-                    'de' => ['label' => 'mem_remark_on_no_registration (deutsch)'],
-                    'fr' => ['label' => 'mem_remark_on_no_registration (französisch)'],
-                    'it' => ['label' => 'mem_remark_on_no_registration (italienisch)'],
+                    'de' => ['label' => 'mem_remark_on_no_selection (deutsch)'],
+                    'fr' => ['label' => 'mem_remark_on_no_selection (französisch)'],
+                    'it' => ['label' => 'mem_remark_on_no_selection (italienisch)'],
                 ],
                 'searchable' => true,
                 'acf' => [

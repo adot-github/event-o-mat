@@ -58,7 +58,7 @@
         if ($page === '' || strpos($page, 'evtmgr') === false) {
             return;
         }
-        echo '<style>html,body{background:#3e2150 !important}</style>' . "\n";
+        echo '<style>html,body{background:#0c0c0c !important}</style>' . "\n";
     }, 1);
 
     $editor = Adot_DB_Editor();

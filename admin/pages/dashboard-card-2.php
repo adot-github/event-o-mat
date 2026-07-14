@@ -2,7 +2,7 @@
 <div class="container py-4">
     <?php
     $current_group = '';
-    $tier_classes  = ['evtmgr-tier-standard', 'evtmgr-tier-golden', 'evtmgr-tier-vip'];
+    $tier_classes  = ['bg-secondary', 'bg-danger', 'bg-success'];
     $tier_index    = 0;
 
     foreach ($manual_links as $item) :
