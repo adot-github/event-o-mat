@@ -35,7 +35,7 @@
             'order_default' => 'asc',
             'condition' => "$additional_sql_condition",
             'labels' => [
-                'title'     => 'evtmgr_persons bearbeiten',
+                'title'     => 'Personen bearbeiten',
                 'button_add'   => 'Neuen Datensatz hinzufügen',
             ],
 

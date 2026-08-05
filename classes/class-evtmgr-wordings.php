@@ -10,12 +10,14 @@ class Evtmgr_Wordings {
 
     protected $wpdb;
     protected $table_name;
+    protected $table_events;
 
     public function __construct() {
         global $wpdb;
 
-        $this->wpdb       = $wpdb;
-        $this->table_name = 'wp_evtmgr_wordings';
+        $this->wpdb         = $wpdb;
+        $this->table_name   = 'wp_evtmgr_wordings';
+        $this->table_events = 'wp_evtmgr_events';
     }
 
     /**
@@ -72,20 +74,15 @@ class Evtmgr_Wordings {
 
     /**
      * Copies all records from wp_evtmgr_wordings_default into wp_evtmgr_wordings
-     * for the given event_uid, skipping any that already exist (matched by str_var_name).
+     * for every existing event, skipping any that already exist (matched by str_var_name).
      * All column values are always copied (except id, fky_event_uid, dtm_date_*).
      *
-     * @return int  Number of newly inserted rows, or -1 if a required table is missing.
+     * @return int  Number of newly inserted rows (across all events), or -1 if a required table is missing.
      */
-    public function sync_default_wordings(string $event_uid): int {
-        $event_uid     = sanitize_text_field($event_uid);
+    public function sync_default_wordings(): int {
         $table_default = 'wp_evtmgr_wordings_default';
 
-        if ($event_uid === '') {
-            return 0;
-        }
-
-        if (!$this->table_exists($table_default) || !$this->table_exists($this->table_name)) {
+        if (!$this->table_exists($table_default) || !$this->table_exists($this->table_name) || !$this->table_exists($this->table_events)) {
             return -1;
         }
 
@@ -98,6 +95,31 @@ class Evtmgr_Wordings {
             return 0;
         }
 
+        $event_uids = $this->wpdb->get_col("SELECT event_uid FROM {$this->table_events}");
+
+        if (!is_array($event_uids) || empty($event_uids)) {
+            return 0;
+        }
+
+        $inserted = 0;
+
+        foreach ($event_uids as $event_uid) {
+            $event_uid = sanitize_text_field((string) $event_uid);
+
+            if ($event_uid === '') {
+                continue;
+            }
+
+            $inserted += $this->sync_default_wordings_for_event($event_uid, $defaults);
+        }
+
+        return $inserted;
+    }
+
+    /**
+     * Copies missing default wordings into wp_evtmgr_wordings for a single event.
+     */
+    protected function sync_default_wordings_for_event(string $event_uid, array $defaults): int {
         $existing_names = $this->wpdb->get_col(
             $this->wpdb->prepare(
                 "SELECT str_var_name FROM {$this->table_name} WHERE fky_event_uid = %s",

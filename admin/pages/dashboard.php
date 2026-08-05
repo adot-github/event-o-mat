@@ -24,10 +24,8 @@ if (!empty($_COOKIE[$cookie_event_uid])) {
     $current_event_uid = sanitize_text_field(wp_unslash($_COOKIE[$cookie_event_uid]));
 }
 
-if ($current_event_uid !== '') {
-    (new Evtmgr_Options())->sync_default_options($current_event_uid);
-    (new Evtmgr_Wordings())->sync_default_wordings($current_event_uid);
-}
+(new Evtmgr_Options())->sync_default_options();
+(new Evtmgr_Wordings())->sync_default_wordings();
 
 $current_event_languages = '';
 

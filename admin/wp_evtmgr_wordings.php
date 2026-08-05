@@ -26,7 +26,7 @@
             'order_default' => 'asc',
             'condition' => "$additional_sql_condition",
             'labels' => [
-                'title'     => 'evtmgr_wordings bearbeiten',
+                'title'     => 'Wordings bearbeiten',
                 'button_add'   => 'Neuen Datensatz hinzufügen',
             ],
             

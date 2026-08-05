@@ -31,7 +31,7 @@
             'order_default' => 'asc',
             'condition' => "$additional_sql_condition",
             'labels' => [
-                'title'     => 'evtmgr_workshops bearbeiten',
+                'title'     => 'Workshops bearbeiten',
                 'button_add'   => 'Neuen Datensatz hinzufügen',
             ],
 

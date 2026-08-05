@@ -9,6 +9,7 @@ class Evtmgr_Options {
     protected $wpdb;
     protected $table;
     protected $table_default;
+    protected $table_events;
 
     public function __construct() {
         global $wpdb;
@@ -16,23 +17,18 @@ class Evtmgr_Options {
         $this->wpdb          = $wpdb;
         $this->table         = 'wp_evtmgr_options';
         $this->table_default = 'wp_evtmgr_options_default';
+        $this->table_events  = 'wp_evtmgr_events';
     }
 
     /**
      * Copies all records from wp_evtmgr_options_default into wp_evtmgr_options
-     * for the given event_uid, skipping any that already exist (matched by str_option_name).
+     * for every existing event, skipping any that already exist (matched by str_option_name).
      * If ysn_clone_value_on_copy is set, str_option_value is copied too; otherwise it is left empty.
      *
-     * @return int  Number of newly inserted rows, or -1 if a required table is missing.
+     * @return int  Number of newly inserted rows (across all events), or -1 if a required table is missing.
      */
-    public function sync_default_options(string $event_uid): int {
-        $event_uid = sanitize_text_field($event_uid);
-
-        if ($event_uid === '') {
-            return 0;
-        }
-
-        if (!$this->table_exists($this->table_default) || !$this->table_exists($this->table)) {
+    public function sync_default_options(): int {
+        if (!$this->table_exists($this->table_default) || !$this->table_exists($this->table) || !$this->table_exists($this->table_events)) {
             return -1;
         }
 
@@ -45,6 +41,31 @@ class Evtmgr_Options {
             return 0;
         }
 
+        $event_uids = $this->wpdb->get_col("SELECT event_uid FROM {$this->table_events}");
+
+        if (!is_array($event_uids) || empty($event_uids)) {
+            return 0;
+        }
+
+        $inserted = 0;
+
+        foreach ($event_uids as $event_uid) {
+            $event_uid = sanitize_text_field((string) $event_uid);
+
+            if ($event_uid === '') {
+                continue;
+            }
+
+            $inserted += $this->sync_default_options_for_event($event_uid, $defaults);
+        }
+
+        return $inserted;
+    }
+
+    /**
+     * Copies missing default options into wp_evtmgr_options for a single event.
+     */
+    protected function sync_default_options_for_event(string $event_uid, array $defaults): int {
         $existing_names = $this->wpdb->get_col(
             $this->wpdb->prepare(
                 "SELECT str_option_name FROM {$this->table} WHERE fky_event_uid = %s",

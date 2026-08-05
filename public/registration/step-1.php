@@ -25,6 +25,11 @@
     $presenters_obj  = new Evtmgr_Presenters();
     $likes_obj      = new Evtmgr_Workshop_Likes();
 
+    if (!class_exists('Evtmgr_Options')) {
+        require_once __DIR__ . '/../../classes/class-evtmgr-options.php';
+    }
+    $step1_use_wishlist = !empty($event_uid) && (new Evtmgr_Options())->get_option($event_uid, 'use_wishlist') === '1';
+
     $step1_visitor_cookie     = $likes_obj->get_or_create_visitor_cookie();
     $step1_liked_workshop_ids = $likes_obj->get_liked_workshop_ids($event_uid, $step1_visitor_cookie);
 
@@ -826,15 +831,17 @@
             <div class="modal-body js-workshop-modal-body">
                 <p class="lead"><?php echo $wordings['bitte_waehlen_sie_das_gewuenschte_angebot_durch_klick_auf_das_angebot'] ?? 'bitte_waehlen_sie_das_gewuenschte_angebot_durch_klick_auf_das_angebot'; ?></p>
 
-                <div class="js-workshop-modal-filter d-flex align-items-center flex-wrap gap-2 mb-3">
-                    <div class="form-check mb-0">
-                        <input class="form-check-input" type="checkbox" id="js_modal_liked_only_checkbox">
-                        <label class="form-check-label" for="js_modal_liked_only_checkbox">
-                            Nur Angebote aus meiner Merkliste
-                        </label>
+                <?php if ($step1_use_wishlist) : ?>
+                    <div class="js-workshop-modal-filter d-flex align-items-center flex-wrap gap-2 mb-3">
+                        <div class="form-check mb-0">
+                            <input class="form-check-input" type="checkbox" id="js_modal_liked_only_checkbox">
+                            <label class="form-check-label" for="js_modal_liked_only_checkbox">
+                                Nur Angebote aus meiner Merkliste
+                            </label>
+                        </div>
+                        <button type="button" class="btn btn-outline-secondary btn-sm js-modal-liked-filter-apply">Filtern</button>
                     </div>
-                    <button type="button" class="btn btn-outline-secondary btn-sm js-modal-liked-filter-apply">Filtern</button>
-                </div>
+                <?php endif; ?>
 
                 <div class="row js-workshop-modal-list ps-3 pe-3"></div>
             </div>

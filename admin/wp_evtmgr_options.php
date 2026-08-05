@@ -32,7 +32,7 @@
             'order_default' => 'asc',
             'condition' => "$additional_sql_condition",
             'labels' => [
-                'title'     => 'evtmgr_options bearbeiten',
+                'title'     => 'Optionen bearbeiten',
                 'button_add'   => 'Neuen Datensatz hinzufügen',
             ],
             
@@ -45,7 +45,7 @@
                 'title_add'     => 'Neuen Datensatz hinzufügen',
                 'title_edit'    => 'Datensatz bearbeiten',
                 'button_add'   => 'Datensatz speichern',
-                'button_edit'   => 'Datensatz bearbeiten',
+                'button_edit'   => 'Datensatz speichern',
             ],
             'fields_visual' => '
                 str_option_description_{{lang}}:col-md-{{lang_col_count}}

@@ -100,7 +100,7 @@
             'condition' => "$additional_sql_condition",
             'order_default' => 'asc',
             'labels' => [
-                'title'     => 'evtmgr_pricing bearbeiten',
+                'title'     => 'Preise bearbeiten',
                 'button_add'   => 'Neuen Datensatz hinzufügen',
             ],
             'tree' => [
