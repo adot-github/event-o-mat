@@ -35,6 +35,11 @@
         ? sanitize_text_field((string) $registration_values['total_cost'])
         : '';
 
+    // Per-timezone validation: collect required timezones with no selection.
+    $tz_obj               = new Evtmgr_Time_Zones();
+    $missing_timezones    = $tz_obj->get_uncovered_required_timezones($event_uid, $selected_workshop_ids, $lang);
+    $has_missing_selection = !empty($missing_timezones);
+
     $pricing_obj = new Evtmgr_Pricing();
     $qry_billings = $pricing_obj->build_registration_pricing_options($event_uid, $lang, $selected_workshop_ids);
     $pricing_group_saved_normalized = $pricing_obj->normalize_pricing_group($pricing_group_saved);
@@ -140,13 +145,22 @@ registration_values:
 
     <!--<h2>Schritt 2</h2>-->
 
-    <?php if (empty($selected_workshop_ids)) : ?>
+    <?php if ($has_missing_selection) : ?>
 
+        <?php foreach ($missing_timezones as $missing_tz) :
+            $tz_name  = trim((string) ($missing_tz['str_timezone_name']       ?? ''));
+            $tz_remark = trim((string) ($missing_tz['mem_remark_on_no_selection'] ?? ''));
+        ?>
         <div class="alert alert-warning">
-            <?php
-                echo $wordings['sie_haben_keine_workshops_ausgewaehlt_bitte_gehen_sie_einen_schritt_zurueck_und_waehlen_sie_die_gewuenschten_workshops'] ?? 'sie_haben_keine_workshops_ausgewaehlt_bitte_gehen_sie_einen_schritt_zurueck_und_waehlen_sie_die_gewuenschten_workshops';
-            ?>
+            <?php if ($tz_remark !== '') : ?>
+                <?php echo wp_kses_post($tz_remark); ?>
+            <?php elseif ($tz_name !== '') : ?>
+                <?php echo esc_html($tz_name); ?>: <?php echo $wordings['sie_haben_keine_workshops_ausgewaehlt_bitte_gehen_sie_einen_schritt_zurueck_und_waehlen_sie_die_gewuenschten_workshops'] ?? 'sie_haben_keine_workshops_ausgewaehlt_bitte_gehen_sie_einen_schritt_zurueck_und_waehlen_sie_die_gewuenschten_workshops'; ?>
+            <?php else : ?>
+                <?php echo $wordings['sie_haben_keine_workshops_ausgewaehlt_bitte_gehen_sie_einen_schritt_zurueck_und_waehlen_sie_die_gewuenschten_workshops'] ?? 'sie_haben_keine_workshops_ausgewaehlt_bitte_gehen_sie_einen_schritt_zurueck_und_waehlen_sie_die_gewuenschten_workshops'; ?>
+            <?php endif; ?>
         </div>
+        <?php endforeach; ?>
 
     <?php else : ?>
 
@@ -302,7 +316,7 @@ registration_values:
             <?php echo $wordings['zurueck'] ?? 'zurueck'; ?>
         </button>
 
-        <?php if (!empty($selected_workshop_ids)) : ?>
+        <?php if (!$has_missing_selection) : ?>
             <button type="submit"
                     name="registration_action"
                     value="next"

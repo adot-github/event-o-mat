@@ -49,6 +49,22 @@
         }
     }
 
+    usort($selected_workshop_rows, function ($a, $b) {
+        $type_compare = strcasecmp(
+            (string) ($a['str_workshop_type_name'] ?? ''),
+            (string) ($b['str_workshop_type_name'] ?? '')
+        );
+
+        if ($type_compare !== 0) {
+            return $type_compare;
+        }
+
+        return strcasecmp(
+            (string) ($a['str_workshop_title'] ?? ''),
+            (string) ($b['str_workshop_title'] ?? '')
+        );
+    });
+
     $selected_pricing_option = $pricing_obj->find_registration_pricing_option(
         $event_uid,
         $lang,
@@ -62,6 +78,13 @@
         if ($total_cost === '') {
             $total_cost = (string) ($selected_pricing_option['total_cost'] ?? '');
         }
+    } else {
+        /*
+         * No pricing option currently exists for this event/selection. A total_cost
+         * saved from an earlier session (e.g. before pricing options were removed)
+         * must not be trusted, otherwise a stale amount keeps reappearing.
+         */
+        $total_cost = '';
     }
 
     if (!function_exists('event_registration_format_price')) {
@@ -114,11 +137,6 @@ registration_values:
 
         <ul class="list-group mb-4">
             <?php foreach ($selected_workshop_rows as $workshop) : ?>
-                <?php
-                $workshop_id = !empty($workshop['id'])
-                    ? absint($workshop['id'])
-                    : 0;
-                ?>
                 <li class="list-group-item">
                     <?php if (!empty($workshop['str_workshop_number'])) : ?>
                         <strong><?php echo esc_html($workshop['str_workshop_number']); ?></strong>
@@ -127,8 +145,8 @@ registration_values:
 
                     <?php echo esc_html($workshop['str_workshop_title'] ?? ''); ?>
 
-                    <?php if ($workshop_id > 0) : ?>
-                        <span class="text-muted">#<?php echo esc_html($workshop_id); ?></span>
+                    <?php if (!empty($workshop['str_workshop_type_name'])) : ?>
+                        (<?php echo esc_html($workshop['str_workshop_type_name']); ?>)
                     <?php endif; ?>
                 </li>
             <?php endforeach; ?>
@@ -170,7 +188,7 @@ registration_values:
                 <?php if (empty($selected_pricing_option['has_additional_lines'])) : ?>
                     <tr>
                         <th scope="row" style="text-align:left;padding:4px 8px;border-bottom:1px solid #ddd;"><?php echo $wordings['total'] ?? 'total'; ?></th>
-                        <td style="padding:4px 4px 4px 16px;border-bottom:1px solid #ddd;">
+                        <td class="text-right" style="padding:4px 4px 4px 16px;border-bottom:1px solid #ddd;">
                             <?php echo esc_html(event_registration_format_price($total_cost)); ?> CHF
                         </td>
                     </tr>
@@ -220,7 +238,8 @@ registration_values:
         <button type="submit"
                 name="registration_action"
                 value="next"
-                class="btn btn-primary">
+                class="btn btn-primary"
+                <?php echo empty($pricing_lines) ? 'disabled' : ''; ?>>
             <?php echo $wordings['weiter'] ?? 'weiter'; ?>
         </button>
     </div>

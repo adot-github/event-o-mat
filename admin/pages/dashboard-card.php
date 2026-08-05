@@ -32,7 +32,7 @@
                 <div class="card-body pb-0 d-flex flex-column">
                     
                     <h2 class="h5 card-title">
-                        <img src="/wp-content/themes/picostrap5-child-base/db-custom/event-registration/pages/img/event.png" class="card-icon">
+                        <img src="/wp-content/themes/picostrap5-child-base/db-custom/event-registration/admin/pages/img/event.png" class="card-icon">
                         <?php echo esc_html($item['str_title']); ?>
                     </h2>
 

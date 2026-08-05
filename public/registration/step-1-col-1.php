@@ -10,14 +10,15 @@
     $col_slot_color       = $col_slot_color_raw !== '' ? '#' . ltrim($col_slot_color_raw, '#') : '';
     $col_slot_color_light = '';
     if ($col_slot_color_raw !== '') {
-        $hex = str_pad(ltrim($col_slot_color_raw, '#'), 6, '0');
+        $hex = ltrim($col_slot_color_raw, '#');
         if (strlen($hex) === 3) { $hex = $hex[0].$hex[0].$hex[1].$hex[1].$hex[2].$hex[2]; }
+        $hex = str_pad($hex, 6, '0');
         $r = hexdec(substr($hex, 0, 2)); $g = hexdec(substr($hex, 2, 2)); $b = hexdec(substr($hex, 4, 2));
         $col_slot_color_light = sprintf(
             'rgb(%d,%d,%d)',
-            (int) round($r + (255 - $r) * 0.75),
-            (int) round($g + (255 - $g) * 0.75),
-            (int) round($b + (255 - $b) * 0.75)
+            (int) round($r + (255 - $r) * 0.5),
+            (int) round($g + (255 - $g) * 0.5),
+            (int) round($b + (255 - $b) * 0.5)
         );
     }
     $col_sessions = array_values(array_filter(
@@ -35,18 +36,34 @@
         <ol class="session-list">
             <?php foreach ($col_sessions as $session) : ?>
                 <?php
-                    $li_color_raw = trim((string) ($session['timezone_color'] ?? ''));
-                    if ($li_color_raw === '') { $li_color_raw = $col_slot_color_raw; }
-                    $li_bg_color = '';
-                    if ($li_color_raw !== '') {
-                        $li_hex = str_pad(ltrim($li_color_raw, '#'), 6, '0');
-                        if (strlen($li_hex) === 3) { $li_hex = $li_hex[0].$li_hex[0].$li_hex[1].$li_hex[1].$li_hex[2].$li_hex[2]; }
-                        $li_r = hexdec(substr($li_hex,0,2)); $li_g = hexdec(substr($li_hex,2,2)); $li_b = hexdec(substr($li_hex,4,2));
-                        $li_bg_color = sprintf('rgb(%d,%d,%d)',
-                            (int) round($li_r + (255 - $li_r) * 0.8),
-                            (int) round($li_g + (255 - $li_g) * 0.8),
-                            (int) round($li_b + (255 - $li_b) * 0.8)
-                        );
+                    /*
+                     * Backup: previous logic lightened the timezone/slot color by 80%
+                     * towards white instead of using it directly.
+                     *
+                     * $li_color_raw = trim((string) ($session['timezone_color'] ?? ''));
+                     * if ($li_color_raw === '') { $li_color_raw = $col_slot_color_raw; }
+                     * $li_bg_color = '';
+                     * if ($li_color_raw !== '') {
+                     *     $li_hex = ltrim($li_color_raw, '#');
+                     *     if (strlen($li_hex) === 3) { $li_hex = $li_hex[0].$li_hex[0].$li_hex[1].$li_hex[1].$li_hex[2].$li_hex[2]; }
+                     *     $li_hex = str_pad($li_hex, 6, '0');
+                     *     $li_r = hexdec(substr($li_hex,0,2)); $li_g = hexdec(substr($li_hex,2,2)); $li_b = hexdec(substr($li_hex,4,2));
+                     *     $li_bg_color = sprintf('rgb(%d,%d,%d)',
+                     *         (int) round($li_r + (255 - $li_r) * 0.8),
+                     *         (int) round($li_g + (255 - $li_g) * 0.8),
+                     *         (int) round($li_b + (255 - $li_b) * 0.8)
+                     *     );
+                     * }
+                     */
+
+                    $li_timezone_color_raw = trim((string) ($session['timezone_color'] ?? ''));
+
+                    if ($li_timezone_color_raw !== '') {
+                        // Timezone color is used exactly as assigned, without lightening.
+                        $li_bg_color = '#' . ltrim($li_timezone_color_raw, '#');
+                    } else {
+                        // No timezone color: fall back to the slot's lightened color.
+                        $li_bg_color = $col_slot_color_light;
                     }
                 ?>
                 <li class="session <?php echo esc_attr($session['session_class']); ?>"
@@ -133,9 +150,16 @@
                                         <?php echo esc_html((string) $col_workshop_count); ?>
                                     </span>
 
-                                    <a href="#" class="btn btn-select-workshop btn-sm js-workshop-add ps-2 pe-2">
-                                        <?php echo $wordings['angebot_auswaehlen'] ?? 'angebot_auswaehlen'; ?>
-                                    </a>
+                                        <?php $has_selected_col = !empty($col_slot_workshops['selected_workshops']); ?>
+                                        <a href="#" class="btn btn-select-workshop btn-sm js-workshop-add ps-2 pe-2"<?php if ($has_selected_col) : ?> style="display:none"<?php endif; ?>>
+                                            <?php echo $wordings['angebot_auswaehlen'] ?? 'angebot_auswaehlen'; ?>
+                                        </a>
+                                        <?php if ($has_selected_col) : ?>
+                                            <a href="#" class="btn btn-select-workshop btn-sm js-workshop-close-replacement ps-2 pe-2" role="button" aria-label="Angebot abwählen" title="Angebot abwählen">
+                                                <?php echo $wordings['angebot_abwaehlen'] ?? 'Angebot abwählen'; ?>
+                                                <span style="margin-left:.5rem;">✕</span>
+                                            </a>
+                                        <?php endif; ?>
                                 </div>
 
                                 <div class="row">
@@ -152,10 +176,14 @@
 
                                 <div class="row js-wokshop-container">
                                     <?php foreach ($col_slot_workshops['selected_workshops'] as $workshop_item) : ?>
-                                        <div class="col-md-12 mt-3 selected-workshop-wrapper"
+                                        <div class="col-md-12 mt-1 selected-workshop-wrapper"
                                                 data-workshop="<?php echo esc_attr((string) $workshop_item['id']); ?>">
                                             <div class="workshop">
-                                                <?php echo $workshop_item['html']; ?>
+                                                <?php
+                                                    $item_html = (string) ($workshop_item['html'] ?? '');
+                                                    $item_html = preg_replace('/<div[^>]*class=["\']([^"\']*\bjs-workshop-close\b[^"\']*)["\'][^>]*>.*?<\/div>/is', '', $item_html);
+                                                    echo $item_html;
+                                                ?>
                                             </div>
                                         </div>
                                     <?php endforeach; ?>
@@ -167,7 +195,7 @@
                                                     data-workshop="<?php echo esc_attr((string) $workshop_item['id']); ?>">
                                             <div class="col-md-12 event-registration-modal-workshop js-workshop-select workshop-select"
                                                     data-workshop="<?php echo esc_attr((string) $workshop_item['id']); ?>">
-                                                <div class="workshop p-1 m-1">
+                                                <div class="workshop p-0 m-0">
                                                     <?php echo $workshop_item['html']; ?>
                                                 </div>
                                             </div>

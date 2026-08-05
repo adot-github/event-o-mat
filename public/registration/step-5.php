@@ -194,7 +194,7 @@
             );
 
             if (!empty($ticket_person)) {
-                $pages_dir = get_stylesheet_directory() . '/db-custom/event-registration/pages/';
+                $pages_dir = get_stylesheet_directory() . '/db-custom/event-registration/admin/pages/';
 
                 require_once get_stylesheet_directory() . '/db-custom/event-registration/classes/class-pdf-creation.php';
 
@@ -300,7 +300,7 @@
             );
 
             if (!empty($invoice_person)) {
-                $pages_dir = get_stylesheet_directory() . '/db-custom/event-registration/pages/';
+                $pages_dir = get_stylesheet_directory() . '/db-custom/event-registration/admin/pages/';
 
                 if (!class_exists('Event_Registration_Pdf_Creation')) {
                     require_once get_stylesheet_directory() . '/db-custom/event-registration/classes/class-pdf-creation.php';

@@ -11,6 +11,7 @@ class Evtmgr_Presenters {
     protected $wpdb;
     protected $table_name;
     protected $workshops_presenters_table;
+    protected $timezones_presenters_table;
 
     public function __construct() {
         global $wpdb;
@@ -28,14 +29,15 @@ class Evtmgr_Presenters {
 
         $sql = "
             SELECT
+                p.id,
                 p.str_first_name,
                 p.str_last_name,
                 p.str_academic_title,
-                p.str_name,
                 p.str_employer,
                 p.str_job_title_{$lang} AS str_job_title,
                 p.str_institution_{$lang} AS str_institution,
-                p.str_person_image
+                p.str_person_image,
+                p.mem_presenter_text_{$lang} AS mem_presenter_text
             FROM {$this->workshops_presenters_table} wp
             INNER JOIN {$this->table_name} p
                 ON wp.fky_person_id = p.id
@@ -70,6 +72,30 @@ class Evtmgr_Presenters {
 
         return $this->wpdb->get_results(
             $this->wpdb->prepare($sql, $workshop_id),
+            ARRAY_A
+        );
+    }
+
+    public function get_presenters_for_event($event_uid) {
+        $event_uid = sanitize_text_field($event_uid);
+
+        $sql = "
+            SELECT DISTINCT
+                p.id,
+                p.str_first_name,
+                p.str_last_name
+            FROM {$this->table_name} p
+            INNER JOIN {$this->workshops_presenters_table} wp
+                ON wp.fky_person_id = p.id
+            INNER JOIN {$this->wpdb->prefix}evtmgr_workshops w
+                ON w.id = wp.fky_workshop_id
+            WHERE w.fky_event_uid = %s
+              AND w.ysn_online = 1
+            ORDER BY p.str_last_name, p.str_first_name
+        ";
+
+        return $this->wpdb->get_results(
+            $this->wpdb->prepare($sql, $event_uid),
             ARRAY_A
         );
     }

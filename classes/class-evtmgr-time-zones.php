@@ -186,6 +186,68 @@ class Evtmgr_Time_Zones {
         );
     }
 
+    /**
+     * Returns timezones that have ysn_selection_required = 1 but are not
+     * covered by any of the given selected workshop IDs.
+     *
+     * Used in step-2 to show per-timezone validation messages.
+     *
+     * @param string $event_uid
+     * @param int[]  $workshop_ids  Already-sanitized list of selected workshop IDs.
+     * @param string $lang
+     * @return array
+     */
+    public function get_uncovered_required_timezones($event_uid, array $workshop_ids, $lang = 'de') {
+        $event_uid = sanitize_text_field($event_uid);
+        $lang      = $this->sanitize_language($lang);
+
+        // No selected workshops → every required timezone is uncovered.
+        if (empty($workshop_ids)) {
+            $sql = "
+                SELECT
+                    id,
+                    str_timezone_name_{$lang}             AS str_timezone_name,
+                    mem_remark_on_no_selection_{$lang}    AS mem_remark_on_no_selection
+                FROM {$this->timezone_table}
+                WHERE fky_event_uid = %s
+                  AND ysn_selection_required = 1
+                ORDER BY int_sort_order
+            ";
+
+            return $this->wpdb->get_results(
+                $this->wpdb->prepare($sql, $event_uid),
+                ARRAY_A
+            );
+        }
+
+        $ids          = array_values(array_map('absint', $workshop_ids));
+        $placeholders = implode(',', array_fill(0, count($ids), '%d'));
+
+        $sql = "
+            SELECT
+                tz.id,
+                tz.str_timezone_name_{$lang}             AS str_timezone_name,
+                tz.mem_remark_on_no_selection_{$lang}    AS mem_remark_on_no_selection
+            FROM {$this->timezone_table} tz
+            WHERE tz.fky_event_uid = %s
+              AND tz.ysn_selection_required = 1
+              AND NOT EXISTS (
+                  SELECT 1
+                  FROM {$this->workshops_table} w
+                  WHERE w.fky_timezone_id = tz.id
+                    AND w.id IN ({$placeholders})
+              )
+            ORDER BY tz.int_sort_order
+        ";
+
+        $params = array_merge(array($event_uid), $ids);
+
+        return $this->wpdb->get_results(
+            $this->wpdb->prepare($sql, $params),
+            ARRAY_A
+        );
+    }
+
     protected function sanitize_language($lang) {
         return Event_Registration_Helpers::sanitize_language($lang);
     }

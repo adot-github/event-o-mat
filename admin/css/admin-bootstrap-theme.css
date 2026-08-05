@@ -4,7 +4,7 @@
 
 /* --- 1. Custom properties ---------------------------------- */
 :root {
-    --evtmgr-bg:      #0c0c0c;
+    --evtmgr-bg-off:      #59524c;
     --evtmgr-color-1: #5f0f40;
     --evtmgr-color-2: #9a031e;
     --evtmgr-color-3: #0f4c5c;
@@ -486,14 +486,14 @@ select option   { background: rgba(0,0,0,0); }
 .acf-label .description   { color: rgba(255,255,255,.5) !important; }
 
 .acf-tab-group li a {
-    background: rgba(255,255,255,.75) !important;
+    background: rgba(255,255,255,.66) !important;
     color: #000;
     border-top-left-radius: 7px;
     border-top-right-radius: 7px;
 }
 .acf-tab-group li.active a {
-    background: rgba(255,255,255,.5) !important;
-    color: #000;
+    background: rgba(255,255,255,.25) !important;
+    color: #fff !important;
     border-top-left-radius: 7px;
     border-top-right-radius: 7px;
 }
@@ -543,11 +543,12 @@ select option   { background: rgba(0,0,0,0); }
 .row-title-parent { font-weight: 500 !important; }
 
 .adot-split-root {
-    border: 1px solid rgba(255,255,255,.08) !important;
+    border: 0px solid rgba(255,255,255,.1) !important;
     height: 880px;
     min-height: 680px;
     width: 100%;
     border-radius: 5px;
+    margin-left:1rem;
 }
 .adot-divider {
     flex: 0 0 10px;

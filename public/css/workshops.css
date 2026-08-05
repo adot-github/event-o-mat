@@ -1,180 +1,22 @@
-/* ==========================================================================
-   Sponsor / Partner Wall
-   View 1: .sponsor-wall--grid   (Bootstrap 5 card grid)
-   View 2: .sponsor-wall--ticker (animated horizontal marquee)
-   ========================================================================== */
-
-/* ── Shared base ─────────────────────────────────────────────────────────── */
-
-.sponsor-wall {
-    width: 100%;
-    margin: 2rem 0;
+.events-with-filters-card h3, 
+.events-with-filters-card ul,
+.events-with-filters-card .event-teaser,
+.event-teaser,
+.events-with-filters-card .event-details,
+.event-details,
+.select2-result-label,
+.form-check-label {
+    font-size: 1rem ;
 }
 
-.sponsor-wall__group-title {
-    font-size: 0.85rem;
-    font-weight: 600;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    color: #888;
-    margin: 2rem 0 0.75rem;
+.events-with-filters-card ul:first-of-type,
+.workshop-item ul:first-of-type{
+    margin-top: 8px !important;
+    margin-bottom:0 !important;
 }
 
-.sponsor-wall__logo {
-    display: block;
-    width: 100% !important;
-    max-width: 180px;
-    height: 90px !important;
-    max-height: 90px;
-    object-fit: contain;
-    flex: 0 0 auto;
-    filter: grayscale(100%);
-    opacity: 0.85;
-    transition: filter 0.25s ease, opacity 0.25s ease, transform 0.25s ease;
-}
-
-.sponsor-wall__link:hover .sponsor-wall__logo,
-.sponsor-wall__link:focus .sponsor-wall__logo,
-.sponsor-card:hover .sponsor-wall__logo,
-.sponsor-card:focus-within .sponsor-wall__logo {
-    filter: grayscale(0%);
-    opacity: 1;
-    transform: scale(1.03);
-}
-
-.sponsor-wall__link {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 100%;
-    min-height: 100%;
-    outline-offset: 2px;
-    text-decoration: none;
-}
-
-/* ── View 1: Bootstrap 5 Grid / Cards ────────────────────────────────────── */
-
-.sponsor-wall--grid .sponsor-wall__row {
-    margin-right: 0;
-    margin-left: 0;
-}
-
-.sponsor-wall--grid .sponsor-wall__col {
-    padding-right: 0;
-    padding-left: 0;
-}
-
-.sponsor-card {
-    margin: 0;
-    background: #fff;
-    border: 1px solid #d9d9d9;
-    border-radius: 0;
-    box-shadow: none;
-    transition: border-color 0.25s ease;
-}
-
-.sponsor-card:hover {
-    border-color: #bfbfbf;
-}
-
-.sponsor-card__body {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    min-height: 160px;
-    padding: 2rem;
-}
-
-@media (max-width: 575.98px) {
-    .sponsor-card__body {
-        min-height: 120px;
-        padding: 1rem;
-    }
-
-    .sponsor-wall__logo {
-        max-width: 130px;
-        height: 70px !important;
-        max-height: 70px;
-    }
-}
-
-/* ── View 2: Ticker / Marquee ────────────────────────────────────────────── */
-
-.sponsor-wall--ticker {
-    overflow: hidden;
-    position: relative;
-}
-
-/* Fade edges */
-.sponsor-wall--ticker::before,
-.sponsor-wall--ticker::after {
-    content: '';
-    position: absolute;
-    top: 0;
-    bottom: 0;
-    width: 80px;
-    z-index: 2;
-    pointer-events: none;
-}
-
-.sponsor-wall--ticker::before {
-    left: 0;
-    background: linear-gradient(to right, #fff 0%, transparent 100%);
-}
-
-.sponsor-wall--ticker::after {
-    right: 0;
-    background: linear-gradient(to left, #fff 0%, transparent 100%);
-}
-
-.sponsor-wall__mask {
-    overflow: hidden;
-}
-
-.sponsor-wall__track {
-    display: flex;
-    flex-wrap: nowrap;
-    align-items: center;
-    gap: 2rem;
-    width: max-content;
-    animation: sponsor-scroll linear infinite;
-    animation-duration: 40s; /* overridden per-instance via inline style */
-}
-
-.sponsor-wall__track:hover {
-    animation-play-state: paused;
-}
-
-@keyframes sponsor-scroll {
-    0%   { transform: translateX(0); }
-    100% { transform: translateX(-50%); }
-}
-
-.sponsor-wall--ticker .sponsor-wall__item {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: #fff;
-    border: 1px solid #d9d9d9;
-    border-radius: 0;
-    padding: 1rem 1.75rem;
-    min-width: 160px;
-    height: 90px;
-    flex-shrink: 0;
-    transition: border-color 0.25s ease;
-}
-
-.sponsor-wall--ticker .sponsor-wall__item:hover {
-    border-color: #bfbfbf;
-}
-
-/* Reduced motion: disable animation */
-@media (prefers-reduced-motion: reduce) {
-    .sponsor-wall__track {
-        animation: none;
-    }
-
-    .sponsor-wall--ticker {
-        overflow-x: auto;
-    }
+.events-with-filters-card ul ~ ul,
+.workshop-item ul ~ ul{
+    margin-top: 0 !important;
+    margin-bottom:0 !important;
 }

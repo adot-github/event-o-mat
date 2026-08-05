@@ -29,6 +29,7 @@
     require_once dirname(EVENT_REGISTRATION_DIR) . '/classes/class-evtmgr-registrations.php';
     require_once dirname(EVENT_REGISTRATION_DIR) . '/classes/class-evtmgr-registrations-workshops.php';
     require_once dirname(EVENT_REGISTRATION_DIR) . '/classes/class-evtmgr-registrations-billing.php';
+    require_once dirname(EVENT_REGISTRATION_DIR) . '/classes/class-evtmgr-workshop-likes.php';
 
     add_action('init', function () {
         add_shortcode('event_registration', 'event_registration_shortcode');

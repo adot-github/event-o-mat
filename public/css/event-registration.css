@@ -72,14 +72,14 @@
 
 .event-registration-message.is-success {
     background: #eef9f0;
-    border: 1px solid #b9e2c0;
+    border: 1.5px solid #b9e2c0;
     color: #1d5f2b;
 }
 
 .event-registration-message.is-error,
 .event-registration-error {
     background: #fff3f3;
-    border: 1px solid #f0b8b8;
+    border: 1.5px solid #f0b8b8;
     color: #8d2020;
 }
 
@@ -99,8 +99,8 @@
 
 .js-workshop-item {
     position: relative;
-    border: 1.5px solid rgba(255,255,255,.5);
-    padding: .5rem;
+    border: 0px solid rgba(255,255,255,.5);
+    padding: .01rem;
     border-radius: .5rem;
 }
 
@@ -121,10 +121,6 @@
     right: 10px;
     z-index: 5;
 
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-
     align-items: center;
     justify-content: center;
 
@@ -141,7 +137,7 @@
 
 .js-workshop-close:hover,
 .js-workshop-close:focus {
-    background: rgba(255,255,255,.35);
+    background: rgba(245, 149, 149, 0.35);
     color: #fff;
 }
 
@@ -183,7 +179,7 @@
 
 #event_registration_workshop_modal .event-registration-modal-workshop {
     background: #f8f9fa;
-    border: 1px solid #dee2e6;
+    border: 1.5px solid #dee2e6;
     border-radius: 0.75rem;
     padding: 1rem;
     margin-bottom: 1rem;
@@ -198,6 +194,25 @@
     transform: translateY(-1px);
 }
 
+/* Make the trailing X on the replacement button bold and vertically centered */
+.js-workshop-close > span {
+    font-weight: 900;
+    display: inline-block;
+    line-height: 1;
+    font-size: 0.8em;
+    /* subtle text-shadows to visually thicken the glyph for fonts without a heavy bold */
+    text-shadow: 0.6px 0 currentColor, -0.6px 0 currentColor;
+    transform: translateY(-1px);
+}
+.js-workshop-close-replacement > span {
+    font-weight: 900;
+    display: inline-block;
+    line-height: 1;
+    font-size: 0.8em;
+    text-shadow: 0.6px 0 currentColor, -0.6px 0 currentColor;
+    transform: translateY(-1px);
+}
+
 #event_registration_workshop_modal .event-registration-modal-workshop.is-selected,
 #event_registration_workshop_modal .event-registration-modal-workshop.workshop-select-denied {
     background: #e9ecef;
@@ -207,16 +222,19 @@
 }
 
 .btn-select-workshop {
-    background: rgba(255,255,255,.5) !important;
-    margin-left: 1rem;
+    background: rgba(255,255,255,.75) !important;
+    margin-left: 0rem;
+    margin-top:3px;
     border-radius: 1rem !important;
     padding-left: 1rem !important;
     padding-right: 1rem !important;
+    border:1.5px solid black !important;
     color: white;
 }
 
 .btn-select-workshop:hover {
     background-color: #000000 !important;
+    color: #ffffff !important;
 }
 
 
@@ -233,6 +251,8 @@ label {
     cursor: pointer;
 }
 
+td {vertical-align:top !important;}
+
 .event-registration-pricing-child td {
     border-top: 0;
     padding-top: .25rem;
@@ -240,7 +260,7 @@ label {
 }
 
 .event-registration-pricing-total td {
-    border-top: 1px solid #dee2e6;
+    border-top: 1.5px solid #dee2e6;
     font-weight: 700;
 }
 
@@ -358,4 +378,88 @@ tr:not(.pricing-group-odd) + tr.pricing-group-odd > :is(td, th) {
     width: auto;
     margin-right: 0.5rem;
     transform: scale(1.5);
+}
+
+.alert-warning p {margin:0}
+
+/* Clears the floated ReadSpeaker button (.rsbtn) injected before the_content()
+   so it doesn't push the first row of cards to the side. */
+.events-with-filters-wrapper {
+    clear: both;
+}
+
+/* =============================================================================
+   Merkliste – Workshop Like Button
+   ============================================================================= */
+
+.workshop-like-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    padding: 4px;
+    margin-top: .75rem;
+
+    border: none;
+    background: transparent;
+    cursor: pointer;
+}
+
+.workshop-like-button img {
+    width: 100%;
+    height: 100%;
+    filter: grayscale(100%);
+    opacity: 0.55;
+    transition: filter 0.2s ease, opacity 0.2s ease, transform 0.15s ease;
+}
+
+.workshop-like-button:hover img {
+    opacity: 0.85;
+    transform: scale(1.08);
+}
+
+.workshop-like-button.is-liked img {
+    filter: none;
+    opacity: 1;
+}
+
+.workshop-like-button.is-loading {
+    cursor: wait;
+}
+
+/* "Nur Angebote aus meiner Merkliste" checkbox in the workshop-selection
+   modal — same visibility fix as the gallery's "Nur gemerkte Angebote"
+   checkbox (public/css/events-with-filters.css): Bootstrap's default is
+   too small/low-contrast. */
+.js-workshop-modal-filter .form-check {
+    display: flex;
+    align-items: center;
+    gap: .5rem;
+}
+
+.js-workshop-modal-filter .form-check-input {
+    width: 1.35rem;
+    height: 1.35rem;
+    margin-top: 0;
+    border: 1.5px solid #333;
+    cursor: pointer;
+}
+
+.js-workshop-modal-filter .form-check-input:checked {
+    background-color: #000;
+    border-color: #000;
+}
+
+.js-workshop-modal-filter .form-check-input:focus {
+    border-color: #000;
+    box-shadow: 0 0 0 .2rem rgba(0, 0, 0, .15);
+}
+
+.js-workshop-modal-filter .form-check-label {
+    font-size: 15px;
+    font-weight: 600;
+    opacity: 1;
+    color: #000;
+    cursor: pointer;
 }

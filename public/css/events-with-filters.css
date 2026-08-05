@@ -1,0 +1,253 @@
+/* =============================================================================
+   events_with_filters – filter bar
+   Faithful, scoped transcription of db-custom/mks/public/assets/materialadmin.css
+   (musikinderschule.dev/unterrichtsideen/) — a pristine copy of that file lives
+   at public/assets/vendor/materialadmin/materialadmin.css for reference.
+   Every rule that targets elements living inside our own markup is prefixed
+   with .events-with-filters-form-wrapper so it can't leak into the rest of
+   the site's Bootstrap forms. Rules for the Select2 dropdown panel itself
+   (.select2-results, .select2-highlighted) are left unscoped on purpose:
+   Select2 appends that panel to <body>, outside our wrapper's DOM subtree.
+   ============================================================================= */
+
+@font-face {
+    font-family: 'FontAwesome';
+    src: url('fonts/fontawesome-webfont.eot?v=4.7.0');
+    src: url('fonts/fontawesome-webfont.eot?#iefix&v=4.7.0') format('embedded-opentype'),
+         url('fonts/fontawesome-webfont.woff2?v=4.7.0') format('woff2'),
+         url('fonts/fontawesome-webfont.woff?v=4.7.0') format('woff'),
+         url('fonts/fontawesome-webfont.ttf?v=4.7.0') format('truetype'),
+         url('fonts/fontawesome-webfont.svg?v=4.7.0#fontawesomeregular') format('svg');
+    font-weight: normal;
+    font-style: normal;
+}
+
+.events-with-filters-form-wrapper .form-group {
+    position: relative;
+    margin-top: 20px;
+    margin-bottom: 19px;
+}
+
+.events-with-filters-form-wrapper .form-control {
+    padding: 0;
+    height: 37px;
+    border-left: none;
+    border-right: none;
+    border-top: none;
+    border-bottom-color: rgba(12, 12, 12, 0.12);
+    color: #0c0c0c;
+    font-size: 16px;
+    background: none;
+}
+
+.events-with-filters-form-wrapper label {
+    font-weight: 400;
+}
+
+/* "Nur gemerkte Angebote" checkbox — plain Bootstrap default was too small
+   and too low-contrast next to the search field and select dropdowns. */
+.events-with-filters-form-wrapper .form-check {
+    display: flex;
+    align-items: center;
+    gap: .5rem;
+}
+
+.events-with-filters-form-wrapper .form-check-input {
+    width: 1.35rem;
+    height: 1.35rem;
+    margin-top: 0;
+    border: 1.5px solid #333;
+    cursor: pointer;
+}
+
+.events-with-filters-form-wrapper .form-check-input:checked {
+    background-color: #000;
+    border-color: #000;
+}
+
+.events-with-filters-form-wrapper .form-check-input:focus {
+    border-color: #000;
+    box-shadow: 0 0 0 .2rem rgba(0, 0, 0, .15);
+}
+
+.events-with-filters-form-wrapper .form-check-label {
+    font-size: 15px;
+    font-weight: 600;
+    opacity: 1;
+    color: #000;
+    cursor: pointer;
+}
+
+.events-with-filters-form-wrapper .floating-label .form-control:focus ~ label,
+.events-with-filters-form-wrapper .floating-label .form-control.dirty ~ label {
+    top: 0px;
+    font-size: 12px !important;
+}
+
+.events-with-filters-form-wrapper .form-group .form-control ~ label {
+    top: 0;
+    margin-bottom: 0;
+    font-size: 12px;
+    opacity: 0.9;
+}
+
+.events-with-filters-form-wrapper .form-group .form-control ~ label,
+.events-with-filters-form-wrapper .form-group .form-control ~ .form-control-line {
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    pointer-events: none;
+}
+
+.events-with-filters-form-wrapper .form-group > label,
+.events-with-filters-form-wrapper .form-group .control-label {
+    font-size: 12px;
+    opacity: 0.5;
+    margin-bottom: 0;
+}
+
+/* select2 custom colors */
+.events-with-filters-form-wrapper .select2-container-multi .select2-choices .select2-search-choice {
+    color: black;
+    background-color: #fde703;
+    border: 1.5px solid #fde703;
+    border-radius: 15px;
+}
+
+.events-with-filters-form-wrapper .select2-search-choice-close:hover {
+    background: none;
+}
+
+.events-with-filters-form-wrapper .select2-search-choice-close:before {
+    color: black;
+}
+
+/* Select2's dropdown panel is appended to <body>, outside our wrapper —
+   these two rules are intentionally left unscoped so they still apply. */
+.select2-results .select2-highlighted {
+    background-color: #fde703;
+    color: black;
+}
+
+.events-with-filters-form-wrapper .select2-dropdown-open.form-control {
+    border-bottom-color: #fde703;
+}
+
+.select2-container {border-radius:0 !important}
+.form-control {
+    border-bottom-width: 2px !important;
+    border-bottom-color: #cccccc !important;
+    padding-right: 3px !important;
+    margin-right:5px;
+    border-radius:0 !important;
+}
+
+.events-with-filters-form-wrapper ul.select2-choices:after {
+    cursor: pointer;
+    content: "";
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    border-top: 5px solid #333;
+    border-left: 5px solid transparent;
+    border-right: 5px solid transparent;
+}
+
+.events-with-filters-form-wrapper .select2-container-multi .select2-choices .select2-search-choice {
+    font-size: 12px;
+}
+
+/* select2 custom clean-all button */
+.events-with-filters-form-wrapper .input-container .clean-filter:after,
+.events-with-filters-form-wrapper .select-container .clean-filter:after {
+    font-family: FontAwesome;
+    content: "\f00d";
+    position: absolute;
+    left: 7px;
+    top: 50%;
+    transform: translateY(-50%);
+    cursor: pointer;
+    font-size: 12px;
+    background-color: gray;
+    width: 20px;
+    height: 20px;
+    line-height: 20px;
+    text-align: center;
+    border-radius: 10px;
+    color: white;
+    display: none;
+}
+
+.events-with-filters-form-wrapper .input-container .clean-filter:after {
+    top: 20px;
+    left: 0px;
+}
+
+.events-with-filters-form-wrapper .input-container.has-values .clean-filter:after,
+.events-with-filters-form-wrapper .select-container.has-values .clean-filter:after {
+    display: block;
+}
+
+.events-with-filters-form-wrapper .input-container.has-values input,
+.events-with-filters-form-wrapper .select-container.has-values ul.select2-choices {
+    padding-left: 30px !important;
+}
+
+.events-with-filters-form-wrapper .floating-label .form-control:focus ~ label,
+.events-with-filters-form-wrapper .floating-label .form-control.dirty ~ label {
+    top: -18px;
+}
+
+.events-with-filters-form-wrapper .form-group .form-control:focus ~ label:after,
+.events-with-filters-form-wrapper .form-group .form-control:focus ~ .form-control-line:after {
+    visibility: visible;
+    width: 100%;
+    left: 0;
+}
+
+.events-with-filters-form-wrapper .form-group .form-control ~ label:after,
+.events-with-filters-form-wrapper .form-group .form-control ~ .form-control-line:after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 45%;
+    height: 2px;
+    width: 10px;
+    visibility: hidden;
+    background-color: #90c5a9;
+    transition: 0.2s ease all;
+}
+
+.events-with-filters-form-wrapper .form-group .form-control:focus {
+    border-color: rgba(12, 12, 12, 0.12);
+    box-shadow: none !important;
+}
+
+.events-with-filters-form-wrapper .select2-search-choice-close {
+    border-bottom: none !important;
+    text-decoration: none !important;
+}
+
+.events-with-filters-form-wrapper .select2-search-choice:before,
+.events-with-filters-form-wrapper .select2-search-field:before {
+    content: "";
+}
+
+.events-with-filters-form-wrapper .select2-search-choice {
+    list-style-type: none;
+}
+
+.events-with-filters-result-count {
+    margin-bottom: 1rem;
+}
+
+/* Defensive override: some page-builder wrappers reset child margins on
+   the row that holds the search field + submit button, silently eating
+   Bootstrap's .mb-3. Higher specificity than Bootstrap's single-class
+   utility (which is also !important) guarantees the spacing regardless
+   of where this shortcode is embedded. */
+.events-with-filters-form-wrapper .events-with-filters-form > .row.mb-3 {
+    margin-bottom: 1rem !important;
+}

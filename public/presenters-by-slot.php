@@ -3,7 +3,7 @@
  * Keynote speakers per slot accordion.
  *
  * Usage as shortcode:
- * [show_keynotespeakers_by_slot event_uid="xxxx-2026" lang="de"]
+ * [presenters_by_slot event_uid="xxxx-2026" lang="de"]
  */
 
 if (!defined('ABSPATH')) {
@@ -17,17 +17,17 @@ require_once $_ks_classes_dir . 'class-evtmgr-workshops.php';
 require_once $_ks_classes_dir . 'class-evtmgr-presenters.php';
 
 add_action('init', function () {
-    add_shortcode('show_keynotespeakers_by_slot', 'show_keynotespeakers_by_slot_shortcode');
+    add_shortcode('presenters_by_slot', 'presenters_by_slot_shortcode');
 });
 
-function show_keynotespeakers_by_slot_shortcode($atts = array()) {
+function presenters_by_slot_shortcode($atts = array()) {
     $atts = shortcode_atts(
         array(
             'event_uid' => '',
             'lang'      => 'de',
         ),
         $atts,
-        'show_keynotespeakers_by_slot'
+        'presenters_by_slot'
     );
 
     $event_uid = sanitize_text_field((string) $atts['event_uid']);
@@ -54,8 +54,9 @@ function show_keynotespeakers_by_slot_shortcode($atts = array()) {
     $rendered_index    = 0;
 
     foreach ($slots as $slot) {
-        $slot_id   = absint($slot['id'] ?? 0);
-        $slot_name = trim((string) ($slot['str_slot_name'] ?? ''));
+        $slot_id    = absint($slot['id'] ?? 0);
+        $slot_name  = trim((string) ($slot['str_slot_name'] ?? ''));
+        $slot_color = trim((string) ($slot['str_color'] ?? ''));
 
         if ($slot_id <= 0 || $slot_name === '') {
             continue;
@@ -124,11 +125,17 @@ function show_keynotespeakers_by_slot_shortcode($atts = array()) {
 
         $is_first = ($rendered_index === 0);
 
+        $btn_style = '';
+        if ($slot_color !== '') {
+            $btn_style = 'background-color:#' . ltrim($slot_color, '#') . ' !important;';
+        }
+
         $slots_data[] = array(
             'heading_id'  => esc_attr('ks-heading-'  . $slot_id),
             'collapse_id' => esc_attr('ks-collapse-' . $slot_id),
             'slot_name'   => esc_html($slot_name),
             'btn_class'   => 'accordion-button' . ($is_first ? '' : ' collapsed'),
+            'btn_style'   => esc_attr($btn_style),
             'expanded'    => $is_first ? 'true' : 'false',
             'coll_class'  => 'accordion-collapse collapse' . ($is_first ? ' show' : ''),
             'lines'       => $lines,
@@ -148,6 +155,7 @@ function show_keynotespeakers_by_slot_shortcode($atts = array()) {
         $collapse_id = $sd['collapse_id'];
         $slot_name   = $sd['slot_name'];
         $btn_class   = $sd['btn_class'];
+        $btn_style   = $sd['btn_style'];
         $expanded    = $sd['expanded'];
         $coll_class  = $sd['coll_class'];
 
@@ -161,6 +169,7 @@ function show_keynotespeakers_by_slot_shortcode($atts = array()) {
         <div class="accordion-item">
             <h2 class="accordion-header m-0" id="{$heading_id}">
                 <button class="{$btn_class}"
+                        style="{$btn_style}"
                         type="button"
                         data-bs-toggle="collapse"
                         data-bs-target="#{$collapse_id}"

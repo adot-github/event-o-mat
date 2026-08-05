@@ -94,7 +94,7 @@
 
                                     <div class="row js-wokshop-container">
                                         <?php foreach ($session['selected_workshops'] as $workshop_item) : ?>
-                                            <div class="col-md-12 mt-3 selected-workshop-wrapper"
+                                            <div class="col-md-12 mt-1 selected-workshop-wrapper"
                                                  data-workshop="<?php echo esc_attr((string) $workshop_item['id']); ?>">
                                                 <div class="workshop">
                                                     <?php echo $workshop_item['html']; ?>

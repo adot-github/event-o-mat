@@ -23,6 +23,10 @@
     $slots_obj      = new Evtmgr_Slots();
     $workshops_obj  = new Evtmgr_Workshops();
     $presenters_obj  = new Evtmgr_Presenters();
+    $likes_obj      = new Evtmgr_Workshop_Likes();
+
+    $step1_visitor_cookie     = $likes_obj->get_or_create_visitor_cookie();
+    $step1_liked_workshop_ids = $likes_obj->get_liked_workshop_ids($event_uid, $step1_visitor_cookie);
 
     $qry_time_zones_top = $timezones_obj->get_time_zones_top($event_uid, $lang);
     $qry_time_zones_all = $timezones_obj->get_time_zones_all($event_uid, $lang);
@@ -30,6 +34,17 @@
 
     if (!empty($registration_values['selected_workshops'])) {
         $selected_workshops_value = sanitize_text_field((string) $registration_values['selected_workshops']);
+    }
+
+    $selected_workshops_cookie_name = 'event_registration_selected_workshops_' . sanitize_key((string) ($event_uid ?? ''));
+    $selected_workshops_cookie_value = '';
+
+    if (!empty($_COOKIE[$selected_workshops_cookie_name])) {
+        $selected_workshops_cookie_value = sanitize_text_field(wp_unslash((string) $_COOKIE[$selected_workshops_cookie_name]));
+    }
+
+    if ($selected_workshops_value === '' && $selected_workshops_cookie_value !== '') {
+        $selected_workshops_value = $selected_workshops_cookie_value;
     }
 
     $selected_workshop_ids = array();
@@ -105,6 +120,8 @@
             }
         }
 
+        
+
         if ($min_minutes === null || $max_minutes === null) {
             $min_minutes = 9 * 60;
             $max_minutes = 17 * 60;
@@ -154,7 +171,7 @@
     }
 
     if (!function_exists('event_registration_step1_render_workshop_html')) {
-        function event_registration_step1_render_workshop_html(array $workshop, $color, $lang, array $wordings = []) {
+        function event_registration_step1_render_workshop_html(array $workshop, $color, $lang, array $wordings = [], $is_liked = false) {
             $id = !empty($workshop['id'])
                 ? absint($workshop['id'])
                 : 0;
@@ -240,7 +257,8 @@
         $event_uid,
         $lang,
         $selected_workshop_ids,
-        $wordings
+        $wordings,
+        $step1_liked_workshop_ids
     ) {
         $workshop_rows           = array();
         $workshops_per_slot_rows = array();
@@ -381,7 +399,8 @@
                 $workshop,
                 $color,
                 $lang,
-                $wordings
+                $wordings,
+                in_array($workshop_id, $step1_liked_workshop_ids, true)
             );
 
             if ($workshop_html === '') {
@@ -417,7 +436,7 @@
             $slot_options  = array();
 
             foreach ($slot_workshop_rows as $workshop_id => $workshop) {
-                $workshop_html = event_registration_step1_render_workshop_html($workshop, $color, $lang, $wordings);
+                $workshop_html = event_registration_step1_render_workshop_html($workshop, $color, $lang, $wordings, in_array($workshop_id, $step1_liked_workshop_ids, true));
                 if ($workshop_html === '') {
                     continue;
                 }
@@ -583,7 +602,7 @@
     echo ($wordings['ende_der_anmeldung'] ?? 'ende_der_anmeldung') . ' ' .
         wp_date('l, j. F Y', strtotime($qry_events['dtm_registration_closed']));
     ?>
-    <div class="event-registration-description mt-3">
+    <div class="event-registration-description lead mt-3">
         <?php echo wp_kses_post($registration->get_value($qry_events, 'mem_event_description')); ?>
     </div>
 
@@ -725,9 +744,16 @@
                                     <?php echo $wordings['anzahl_angebote_zur_auswahl'] ?? 'anzahl_angebote_zur_auswahl'; ?>
                                     <?php echo esc_html((string) $fw_workshop_count); ?>
                                 </span>
-                                <a href="#" class="btn btn-select-workshop btn-sm js-workshop-add ps-2 pe-2">
+                                <?php $has_selected = !empty($fw_session['selected_workshops']); ?>
+                                <a href="#" class="btn btn-select-workshop btn-sm js-workshop-add ps-2 pe-2"<?php if ($has_selected) : ?> style="display:none"<?php endif; ?>>
                                     <?php echo $wordings['angebot_auswaehlen'] ?? 'angebot_auswaehlen'; ?>
                                 </a>
+                                <?php if ($has_selected) : ?>
+                                    <a href="#" class="btn btn-select-workshop btn-sm js-workshop-close-replacement ps-2 pe-2" role="button" aria-label="Angebot abwählen" title="Angebot abwählen">
+                                        <?php echo $wordings['angebot_abwaehlen'] ?? 'Angebot abwählen'; ?>
+                                        <span style="margin-left:.5rem;">✕</span>
+                                    </a>
+                                <?php endif; ?>
                             </div>
 
                             <div class="row">
@@ -743,10 +769,15 @@
 
                             <div class="row js-wokshop-container">
                                 <?php foreach ($fw_session['selected_workshops'] as $fw_item) : ?>
-                                    <div class="col-md-12 mt-3 selected-workshop-wrapper"
+                                    <div class="col-md-12 mt-1 selected-workshop-wrapper"
                                             data-workshop="<?php echo esc_attr((string) $fw_item['id']); ?>">
                                         <div class="workshop">
-                                            <?php echo $fw_item['html']; ?>
+                                            <?php
+                                                $item_html = (string) ($fw_item['html'] ?? '');
+                                                // remove any old internal close markup so it doesn't show alongside the replacement button
+                                                $item_html = preg_replace('/<div[^>]*class=["\']([^"\']*\bjs-workshop-close\b[^"\']*)["\'][^>]*>.*?<\/div>/is', '', $item_html);
+                                                echo $item_html;
+                                            ?>
                                         </div>
                                     </div>
                                 <?php endforeach; ?>
@@ -758,7 +789,7 @@
                                                 data-workshop="<?php echo esc_attr((string) $fw_item['id']); ?>">
                                         <div class="col-md-12 event-registration-modal-workshop js-workshop-select workshop-select"
                                                 data-workshop="<?php echo esc_attr((string) $fw_item['id']); ?>">
-                                            <div class="workshop p-1 m-1">
+                                            <div class="workshop p-0 m-0">
                                                 <?php echo $fw_item['html']; ?>
                                             </div>
                                         </div>
@@ -794,6 +825,17 @@
             </div>
             <div class="modal-body js-workshop-modal-body">
                 <p class="lead"><?php echo $wordings['bitte_waehlen_sie_das_gewuenschte_angebot_durch_klick_auf_das_angebot'] ?? 'bitte_waehlen_sie_das_gewuenschte_angebot_durch_klick_auf_das_angebot'; ?></p>
+
+                <div class="js-workshop-modal-filter d-flex align-items-center flex-wrap gap-2 mb-3">
+                    <div class="form-check mb-0">
+                        <input class="form-check-input" type="checkbox" id="js_modal_liked_only_checkbox">
+                        <label class="form-check-label" for="js_modal_liked_only_checkbox">
+                            Nur Angebote aus meiner Merkliste
+                        </label>
+                    </div>
+                    <button type="button" class="btn btn-outline-secondary btn-sm js-modal-liked-filter-apply">Filtern</button>
+                </div>
+
                 <div class="row js-workshop-modal-list ps-3 pe-3"></div>
             </div>
         </div>
@@ -827,7 +869,11 @@
         var activeSessionContainer = null;
         var modalElement = document.getElementById('event_registration_workshop_modal');
         var modalList = modalElement ? modalElement.querySelector('.js-workshop-modal-list') : null;
+        var modalLikedOnlyCheckbox = modalElement ? modalElement.querySelector('#js_modal_liked_only_checkbox') : null;
+        var modalLikedFilterButton = modalElement ? modalElement.querySelector('.js-modal-liked-filter-apply') : null;
         var bootstrapModal = null;
+        var selectedWorkshopsCookieName = <?php echo wp_json_encode($selected_workshops_cookie_name); ?>;
+        var selectedWorkshopsStorageKey = 'event_registration_selected_workshops_' + <?php echo wp_json_encode((string) ($event_uid ?? '')); ?>;
 
         function getBootstrapModal() {
             if (!modalElement || typeof bootstrap === 'undefined' || !bootstrap.Modal) {
@@ -871,13 +917,7 @@
             ).filter(Boolean);
         }
 
-        function updateSelectedWorkshopsField() {
-            var field = document.getElementById('selected_workshops');
-
-            if (!field) {
-                return;
-            }
-
+        function getSelectedWorkshopIdsFromDom() {
             var ids = Array.prototype.map.call(
                 document.querySelectorAll('.js-wokshop-container .js-workshop-item'),
                 function (item) {
@@ -885,11 +925,182 @@
                 }
             ).filter(Boolean);
 
-            ids = ids.filter(function (id, index) {
+            return ids.filter(function (id, index) {
                 return ids.indexOf(id) === index;
             });
+        }
 
-            field.value = ids.join(',');
+        function persistSelectedWorkshopsState(value) {
+            if (selectedWorkshopsCookieName) {
+                var cookieValue = value === undefined ? '' : String(value);
+                document.cookie = selectedWorkshopsCookieName + '=' + encodeURIComponent(cookieValue) + '; path=/; max-age=' + (60 * 60 * 24 * 30);
+            }
+
+            try {
+                var state = {};
+                document.querySelectorAll('.js-session-container').forEach(function (container) {
+                    var key = container.getAttribute('data-timezone') || container.getAttribute('data-slot') || '';
+                    if (!key) {
+                        return;
+                    }
+
+                    var selectedIds = Array.prototype.map.call(
+                        container.querySelectorAll('.js-wokshop-container .js-workshop-item'),
+                        function (item) {
+                            return item.getAttribute('data-workshop') || '';
+                        }
+                    ).filter(Boolean);
+
+                    state[key] = selectedIds;
+                });
+
+                localStorage.setItem(selectedWorkshopsStorageKey, JSON.stringify(state));
+            } catch (error) {
+                console.warn('Unable to persist workshop selection state.', error);
+            }
+        }
+
+        function buildSelectedWorkshopNode(selection) {
+            if (!selection) {
+                return null;
+            }
+
+            var newWorkshop = selection.cloneNode(true);
+            newWorkshop.classList.remove('workshop-select');
+            newWorkshop.classList.remove('js-workshop-select');
+            newWorkshop.classList.remove('workshop-select-denied');
+            newWorkshop.classList.remove('event-registration-modal-workshop');
+            newWorkshop.classList.remove('is-selected');
+            newWorkshop.classList.add('selected-workshop-wrapper');
+            newWorkshop.removeAttribute('aria-disabled');
+
+            newWorkshop.querySelectorAll('.js-workshop-close').forEach(function (el) {
+                el.remove();
+            });
+
+            return newWorkshop;
+        }
+
+        function restoreSelectedWorkshopSelections() {
+            try {
+                var storedState = localStorage.getItem(selectedWorkshopsStorageKey);
+                if (!storedState) {
+                    return;
+                }
+
+                var state = JSON.parse(storedState);
+                if (!state || typeof state !== 'object') {
+                    return;
+                }
+
+                document.querySelectorAll('.js-session-container').forEach(function (container) {
+                    var key = container.getAttribute('data-timezone') || container.getAttribute('data-slot') || '';
+                    if (!key || !state[key] || !Array.isArray(state[key])) {
+                        return;
+                    }
+
+                    var targetContainer = container.querySelector('.js-wokshop-container');
+                    if (!targetContainer) {
+                        return;
+                    }
+
+                    targetContainer.innerHTML = '';
+                    var templates = container.querySelectorAll('.js-workshop-options .js-workshop-option-template');
+
+                    templates.forEach(function (template) {
+                        var workshopId = template.getAttribute('data-workshop') || '';
+                        if (!state[key].includes(workshopId)) {
+                            return;
+                        }
+
+                        var node = template.content.firstElementChild.cloneNode(true);
+                        var selectedWorkshopNode = buildSelectedWorkshopNode(node);
+                        if (selectedWorkshopNode) {
+                            targetContainer.appendChild(selectedWorkshopNode);
+                        }
+                    });
+
+                    fixWorkshopContainer(container);
+                });
+            } catch (error) {
+                console.warn('Unable to restore workshop selection state.', error);
+            }
+        }
+
+        function createWorkshopReplacementButton(anchorButton) {
+            if (!anchorButton) {
+                return null;
+            }
+
+            var replacementButton = document.createElement('a');
+            replacementButton.href = '#';
+            var baseClasses = (anchorButton.className || '').replace(/\bjs-workshop-add\b/, '').trim();
+            replacementButton.className = (baseClasses + ' js-workshop-close-replacement ps-2 pe-2').trim();
+            replacementButton.setAttribute('role', 'button');
+            replacementButton.setAttribute('aria-label', 'Angebot abwählen');
+            replacementButton.setAttribute('title', 'Angebot abwählen');
+            replacementButton.appendChild(document.createTextNode('Angebot abwählen'));
+
+            var spanX = document.createElement('span');
+            spanX.style.marginLeft = '.5rem';
+            spanX.textContent = '✕';
+            replacementButton.appendChild(spanX);
+
+            return replacementButton;
+        }
+
+        function syncWorkshopActionButtons(container) {
+            if (!container) {
+                return;
+            }
+
+            var timezone = container.getAttribute('data-timezone') || '';
+            var containers = timezone
+                ? document.querySelectorAll('.js-session-container[data-timezone="' + CSS.escape(timezone) + '"]')
+                : [container];
+
+            containers.forEach(function (sessionContainer) {
+                var addBtn = sessionContainer.querySelector('.js-workshop-add');
+                var hasSelected = sessionContainer.querySelector('.selected-workshop-wrapper') !== null;
+                var existingReplacement = sessionContainer.querySelector('.js-workshop-close-replacement');
+
+                if (existingReplacement) {
+                    existingReplacement.remove();
+                }
+
+                if (addBtn) {
+                    addBtn.style.display = hasSelected ? 'none' : '';
+                }
+
+                if (!hasSelected) {
+                    return;
+                }
+
+                if (addBtn) {
+                    addBtn.parentNode.insertBefore(createWorkshopReplacementButton(addBtn), addBtn);
+                    return;
+                }
+
+                var fallbackTarget = sessionContainer.querySelector('.mt-2') || sessionContainer;
+                var replacementButton = createWorkshopReplacementButton({ className: 'btn btn-select-workshop btn-sm' });
+                if (replacementButton) {
+                    fallbackTarget.insertBefore(replacementButton, fallbackTarget.firstChild);
+                }
+            });
+        }
+
+        function updateSelectedWorkshopsField() {
+            var field = document.getElementById('selected_workshops');
+
+            if (!field) {
+                return;
+            }
+
+            var ids = getSelectedWorkshopIdsFromDom();
+            var value = ids.join(',');
+
+            field.value = value;
+            persistSelectedWorkshopsState(value);
         }
 
         function updatePersonProgramDataField() {
@@ -901,6 +1112,27 @@
             }
 
             field.value = timetable.innerHTML;
+        }
+
+        function applyModalLikedFilter() {
+            if (!modalList || !modalLikedOnlyCheckbox) {
+                return;
+            }
+
+            var onlyLiked = modalLikedOnlyCheckbox.checked;
+
+            Array.prototype.forEach.call(modalList.children, function (wrapper) {
+                var workshopItem = wrapper.querySelector('.js-workshop-item');
+                var isLiked = !!workshopItem && workshopItem.getAttribute('data-liked') === '1';
+
+                wrapper.style.display = (onlyLiked && !isLiked) ? 'none' : '';
+            });
+        }
+
+        if (modalLikedFilterButton) {
+            modalLikedFilterButton.addEventListener('click', function () {
+                applyModalLikedFilter();
+            });
         }
 
         function openWorkshopModal(container) {
@@ -935,6 +1167,8 @@
                 modalList.appendChild(node);
             });
 
+            applyModalLikedFilter();
+
             modal.show();
         }
 
@@ -966,30 +1200,19 @@
                 }
             }
 
-            var newWorkshop = selection.cloneNode(true);
-            newWorkshop.classList.remove('workshop-select');
-            newWorkshop.classList.remove('js-workshop-select');
-            newWorkshop.classList.remove('workshop-select-denied');
-            newWorkshop.classList.remove('event-registration-modal-workshop');
-            newWorkshop.classList.remove('is-selected');
-            newWorkshop.classList.add('selected-workshop-wrapper');
-            newWorkshop.removeAttribute('aria-disabled');
+            var newWorkshop = buildSelectedWorkshopNode(selection);
+            if (!newWorkshop) {
+                return;
+            }
 
-            newWorkshop.querySelectorAll('.js-workshop-close').forEach(function (button) {
-                button.style.display = 'flex';
-                button.innerHTML = '';
-                button.setAttribute('role', 'button');
-                button.setAttribute('aria-label', 'Angebot entfernen');
-                button.setAttribute('title', 'Angebot entfernen');
-            });
-
-
+            // Insert the selected workshop into the container
             var targetContainer = activeSessionContainer.querySelector('.js-wokshop-container');
             if (targetContainer) {
                 targetContainer.appendChild(newWorkshop);
             }
 
             fixWorkshopContainer(activeSessionContainer);
+            syncWorkshopActionButtons(activeSessionContainer);
             updateSelectedWorkshopsField();
 
             var modal = getBootstrapModal();
@@ -1008,12 +1231,15 @@
 
             var selection = event.target.closest('.js-workshop-select');
             if (selection && modalElement && modalElement.contains(selection)) {
+                if (event.target.closest('.accordion-button')) {
+                    return;
+                }
                 event.preventDefault();
                 selectWorkshop(selection);
                 return;
             }
 
-            var closeButton = event.target.closest('.js-workshop-close');
+            var closeButton = event.target.closest('.js-workshop-close, .js-workshop-close-replacement');
             if (closeButton) {
                 event.preventDefault();
                 var container = closeButton.closest('.js-session-container');
@@ -1027,6 +1253,21 @@
                     selectedWorkshop.remove();
                     fixWorkshopContainer(container);
                     updateSelectedWorkshopsField();
+                } else if (container) {
+                    // replacement button clicked – find and remove selected workshop inside the same session container
+                    var found = container.querySelector('.selected-workshop-wrapper');
+                    if (!found) {
+                        found = container.querySelector('.js-workshop-item.selected-workshop-wrapper') || container.querySelector('.js-workshop-item') || null;
+                    }
+                    if (found) {
+                        found.remove();
+                        fixWorkshopContainer(container);
+                        updateSelectedWorkshopsField();
+                    }
+                }
+
+                if (container) {
+                    syncWorkshopActionButtons(container);
                 }
             }
         });
@@ -1045,8 +1286,11 @@
         }
 
         document.querySelectorAll('.js-session-container').forEach(fixWorkshopContainer);
+        restoreSelectedWorkshopSelections();
         updateSelectedWorkshopsField();
         updatePersonProgramDataField();
+
+        document.querySelectorAll('.js-session-container').forEach(syncWorkshopActionButtons);
     })();
 </script>
 

@@ -28,6 +28,14 @@ add_action('admin_enqueue_scripts', function ($hook_suffix) {
         '5.3.8',
         true
     );
+
+    wp_enqueue_script(
+        'event-registration-admin-detect-color',
+        get_stylesheet_directory_uri() . '/db-custom/event-registration/admin/js/admin-detect-color.js',
+        array(),
+        '1.0.0',
+        true
+    );
 });
 
 (function () {
@@ -42,7 +50,7 @@ add_action('admin_enqueue_scripts', function ($hook_suffix) {
     ob_start(function ($html) {
         return str_replace(
             '<head>',
-            '<head><style>html,body{background:#0c0c0c!important}</style>',
+            '<head><style>html,body{background:var(--evtmgr-bg)!important}</style>',
             $html
         );
     });
@@ -103,7 +111,7 @@ add_action('wp_ajax_evtmgr_pdf_generate_person', function () {
         wp_send_json_error(['message' => 'Kein PDF-Layout im Job.']);
     }
 
-    $pages_dir = get_stylesheet_directory() . '/db-custom/event-registration/pages/';
+    $pages_dir = get_stylesheet_directory() . '/db-custom/event-registration/admin/pages/';
     require_once get_stylesheet_directory() . '/db-custom/event-registration/classes/class-pdf-creation.php';
     if (!class_exists('Evtmgr_Options')) {
         require_once get_stylesheet_directory() . '/db-custom/event-registration/classes/class-evtmgr-options.php';
@@ -221,7 +229,7 @@ add_action('wp_ajax_evtmgr_pdf_generate_workshop', function () {
         wp_send_json_error(['message' => 'Kein PDF-Layout im Job.']);
     }
 
-    $pages_dir = get_stylesheet_directory() . '/db-custom/event-registration/pages/';
+    $pages_dir = get_stylesheet_directory() . '/db-custom/event-registration/admin/pages/';
     require_once get_stylesheet_directory() . '/db-custom/event-registration/classes/class-pdf-creation.php';
     require_once get_stylesheet_directory() . '/db-custom/event-registration/classes/class-evtmgr-workshops.php';
     if (!class_exists('Evtmgr_Options')) {

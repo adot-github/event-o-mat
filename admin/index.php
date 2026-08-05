@@ -53,14 +53,6 @@
         ]);
     }
 
-    add_action('admin_head', function () {
-        $page = isset($_GET['page']) ? sanitize_text_field(wp_unslash($_GET['page'])) : '';
-        if ($page === '' || strpos($page, 'evtmgr') === false) {
-            return;
-        }
-        echo '<style>html,body{background:#0c0c0c !important}</style>' . "\n";
-    }, 1);
-
     $editor = Adot_DB_Editor();
     require_once __DIR__ . '/wp_evtmgr_events.php';
     require_once __DIR__ . '/wp_evtmgr_workshops.php';

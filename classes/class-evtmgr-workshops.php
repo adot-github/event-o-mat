@@ -17,8 +17,11 @@ class Evtmgr_Workshops {
     protected $audience_table;
     protected $workshops_categories_table;
     protected $workshop_categories_table;
+    protected $categories_table;
     protected $workshops_persons_table;
+    protected $workshops_presenters_table;
     protected $registrations_workshops_table;
+    protected $workshop_types_table;
 
     public function __construct() {
         global $wpdb;
@@ -31,8 +34,11 @@ class Evtmgr_Workshops {
         $this->audience_table             = 'wp_evtmgr_audience';
         $this->workshops_categories_table = 'wp_evtmgr_tbx_workshops_categories';
         $this->workshop_categories_table  = 'wp_evtmgr_workshop_categories';
+        $this->categories_table           = 'wp_evtmgr_categories';
         $this->workshops_persons_table    = 'wp_evtmgr_tbx_workshops_persons';
+        $this->workshops_presenters_table = 'wp_evtmgr_tbx_workshops_presenters';
         $this->registrations_workshops_table = 'wp_evtmgr_registrations_workshops';
+        $this->workshop_types_table       = 'wp_evtmgr_workshop_types';
     }
 
     public function get_workshops_by_slot($slot_id, $time_slot, $event_uid, $lang = 'de') {
@@ -120,17 +126,180 @@ class Evtmgr_Workshops {
         );
     }
 
+    public function get_workshop_types_for_output($event_uid, $lang = 'de') {
+        $event_uid = sanitize_text_field($event_uid);
+        $lang      = $this->sanitize_language($lang);
+
+        $sql = "
+            SELECT
+                id,
+                str_event_typename_{$lang} AS str_type_name
+            FROM {$this->workshop_types_table}
+            WHERE fky_event_uid = %s
+            ORDER BY str_type_name
+        ";
+
+        return $this->wpdb->get_results(
+            $this->wpdb->prepare($sql, $event_uid),
+            ARRAY_A
+        );
+    }
+
+    public function get_workshops_all_by_type($workshop_type_id, $event_uid, $lang = 'de') {
+        $workshop_type_id = absint($workshop_type_id);
+        $event_uid        = sanitize_text_field($event_uid);
+        $lang             = $this->sanitize_language($lang);
+
+        $sql = "
+            SELECT
+                w.id,
+                w.str_workshop_title_{$lang} AS str_workshop_title,
+                w.str_workshop_title_de,
+                w.str_workshop_subtitle_{$lang} AS str_workshop_subtitle,
+                w.str_workshop_number,
+                w.mem_workshop_description_{$lang} AS mem_workshop_description,
+                w.mem_workshop_description_long_{$lang} AS mem_workshop_description_long,
+                tz.dtm_day,
+                tz.dtm_time_from,
+                tz.dtm_time_to
+            FROM {$this->table_name} w
+            INNER JOIN {$this->time_zones_table} tz
+                ON tz.id = w.fky_timezone_id
+            WHERE w.fky_workshop_type = %d
+              AND w.fky_event_uid = %s
+              AND w.ysn_online = 1
+            ORDER BY tz.dtm_time_from, w.str_workshop_number
+        ";
+
+        return $this->wpdb->get_results(
+            $this->wpdb->prepare($sql, $workshop_type_id, $event_uid),
+            ARRAY_A
+        );
+    }
+
+    public function get_all_categories_for_event($event_uid, $lang = 'de') {
+        $event_uid = sanitize_text_field($event_uid);
+        $lang      = $this->sanitize_language($lang);
+
+        $sql = "
+            SELECT
+                id,
+                str_category_{$lang} AS str_category_name
+            FROM {$this->categories_table}
+            WHERE fky_event_uid = %s
+            ORDER BY str_category_name
+        ";
+
+        return $this->wpdb->get_results(
+            $this->wpdb->prepare($sql, $event_uid),
+            ARRAY_A
+        );
+    }
+
+    /**
+     * All workshops of an event, optionally narrowed down by a free-text
+     * search and/or workshop type / category / presenter filters.
+     *
+     * Categories and presenters are many-to-many, so matches are found via
+     * GROUP_CONCAT + FIND_IN_SET (multiple selected values within the same
+     * filter are OR'ed, the different filters are AND'ed) — mirrored from
+     * db-custom/mks/public/functions.php::mks_get_unterrichtsideen().
+     */
+    public function get_filtered_workshops(
+        $event_uid,
+        $lang = 'de',
+        $search = '',
+        array $type_ids = array(),
+        array $category_ids = array(),
+        array $presenter_ids = array()
+    ) {
+        $event_uid     = sanitize_text_field($event_uid);
+        $lang          = $this->sanitize_language($lang);
+        $search        = trim((string) $search);
+        $type_ids      = array_values(array_unique(array_filter(array_map('absint', $type_ids))));
+        $category_ids  = array_values(array_unique(array_filter(array_map('absint', $category_ids))));
+        $presenter_ids = array_values(array_unique(array_filter(array_map('absint', $presenter_ids))));
+
+        $where  = array('w.fky_event_uid = %s', 'w.ysn_online = 1');
+        $params = array($event_uid);
+
+        if (!empty($type_ids)) {
+            $placeholders = implode(',', array_fill(0, count($type_ids), '%d'));
+            $where[]      = "w.fky_workshop_type IN ({$placeholders})";
+            $params       = array_merge($params, $type_ids);
+        }
+
+        if ($search !== '') {
+            $like    = '%' . $this->wpdb->esc_like($search) . '%';
+            $where[] = "(
+                w.str_workshop_title_{$lang} LIKE %s
+                OR w.mem_workshop_description_{$lang} LIKE %s
+                OR w.mem_workshop_description_long_{$lang} LIKE %s
+            )";
+            $params  = array_merge($params, array($like, $like, $like));
+        }
+
+        $having = array();
+
+        foreach ($category_ids as $category_id) {
+            $having['category'][] = "FIND_IN_SET({$category_id}, category_ids)";
+        }
+
+        foreach ($presenter_ids as $presenter_id) {
+            $having['presenter'][] = "FIND_IN_SET({$presenter_id}, presenter_ids)";
+        }
+
+        $having_sql = '';
+
+        if (!empty($having)) {
+            $having_groups = array_map(
+                static fn($group) => '(' . implode(' OR ', $group) . ')',
+                $having
+            );
+            $having_sql = 'HAVING ' . implode(' AND ', $having_groups);
+        }
+
+        $where_sql = implode(' AND ', $where);
+
+        $sql = "
+            SELECT
+                w.id,
+                w.str_workshop_title_{$lang} AS str_workshop_title,
+                w.str_workshop_number,
+                w.fky_workshop_type,
+                GROUP_CONCAT(DISTINCT wc.fky_category_id) AS category_ids,
+                GROUP_CONCAT(DISTINCT wpr.fky_person_id) AS presenter_ids
+            FROM {$this->table_name} w
+            LEFT JOIN {$this->workshops_categories_table} wc
+                ON wc.fky_workshop_id = w.id
+            LEFT JOIN {$this->workshops_presenters_table} wpr
+                ON wpr.fky_workshop_id = w.id
+            WHERE {$where_sql}
+            GROUP BY w.id
+            {$having_sql}
+            ORDER BY w.str_workshop_number, str_workshop_title
+        ";
+
+        return $this->wpdb->get_results(
+            $this->wpdb->prepare($sql, $params),
+            ARRAY_A
+        );
+    }
+
     public function get_workshop_by_id($workshop_id, $lang = 'de') {
         $workshop_id = absint($workshop_id);
         $lang        = $this->sanitize_language($lang);
 
         $sql = "
-            SELECT *,
-                str_workshop_title_{$lang} AS str_workshop_title,
-                mem_workshop_description_{$lang} AS mem_workshop_description,
-                mem_workshop_description_long_{$lang} AS mem_workshop_description_long
-            FROM {$this->table_name}
-            WHERE id = %d
+            SELECT w.*,
+                w.str_workshop_title_{$lang} AS str_workshop_title,
+                w.mem_workshop_description_{$lang} AS mem_workshop_description,
+                w.mem_workshop_description_long_{$lang} AS mem_workshop_description_long,
+                wt.str_event_typename_{$lang} AS str_workshop_type_name
+            FROM {$this->table_name} w
+            LEFT JOIN {$this->workshop_types_table} wt
+                ON wt.id = w.fky_workshop_type
+            WHERE w.id = %d
             LIMIT 1
         ";
 
@@ -210,6 +379,39 @@ class Evtmgr_Workshops {
             $this->wpdb->prepare($sql, $category_id, $event_uid),
             ARRAY_A
         );
+    }
+
+    public function get_categories_by_workshop_id($workshop_id, $lang = 'de') {
+        $workshop_id = absint($workshop_id);
+        $lang        = $this->sanitize_language($lang);
+
+        $sql = "
+            SELECT
+                c.str_category_{$lang} AS str_category
+            FROM {$this->categories_table} c
+            INNER JOIN {$this->workshops_categories_table} wc
+                ON wc.fky_category_id = c.id
+            WHERE wc.fky_workshop_id = %d
+        ";
+
+        $rows = $this->wpdb->get_results(
+            $this->wpdb->prepare($sql, $workshop_id),
+            ARRAY_A
+        );
+
+        if (empty($rows)) {
+            return '';
+        }
+
+        $categories = array();
+
+        foreach ($rows as $row) {
+            if (!empty($row['str_category'])) {
+                $categories[] = $row['str_category'];
+            }
+        }
+
+        return implode(' | ', $categories);
     }
 
     public function get_workshops_by_audience_id_pairs($event_uid = '') {

@@ -35,6 +35,27 @@
                 'button_add'   => 'Neuen Datensatz hinzufügen',
             ],
 
+            'screen_options' => [
+                'filter_by_workshop_type' => [
+                    'label' => __("Workshop-Typ", "domain"),
+                    'default' => '',
+                    'type' => 'select',
+                    'callback' => function($value){
+                        $sql = '';
+                        if ($value){
+                            $value = absint($value);
+                            $sql = "fky_workshop_type = {$value}";
+                        }
+                        return $sql;
+                    },
+                    'db' => [
+                        'table' => 'evtmgr_workshop_types',
+                        'label' => 'str_event_typename_de',
+                        'condition' => "fky_event_uid='$event_uid'"
+                    ]
+                ]
+            ],
+
         ],
         'langs' => function($table_config) use ($event_languages) {
             return $event_languages;
@@ -49,6 +70,7 @@
             'fields_visual' => '
                 tab:Texte
                 str_workshop_number:col-lg-3 col-md-4
+                fky_workshop_type:col-lg-3 col-md-4
                 -
                 fky_dozierende:col-lg-6 col-md-12
                 -
@@ -61,7 +83,7 @@
                 fky_event_uid:col-lg-3 col-md-4
 
                 tab:Anmeldung/Kosten
-                
+
                 ysn_print:col-lg-3 col-md-4
                 ysn_online:col-lg-3 col-md-4
                 ysn_auto_register:col-lg-3 col-md-4
@@ -72,8 +94,8 @@
                 num_price:col-lg-3 col-md-4
 
                 tab:Konfiguration
-                fky_timezone_id:col-lg-6 col-md-8
                 fky_slot_id:col-lg-6 col-md-8
+                fky_timezone_id:col-lg-6 col-md-8
                 fky_room_id:col-lg-6 col-md-8
                 fky_audience_id:col-lg-3 col-md-4
                 -
@@ -354,7 +376,7 @@
                     'allow_new' => true,
                     'db' => [
                         'allow_new_data'       => ["id" => 0, "str_type" => 'some type', "fky_person_id" => 'some category'],
-                        'tbx_table'            => 'evtmgr_tbx_workshops_presenters', 
+                        'tbx_table'            => 'evtmgr_tbx_workshops_presenters',
                         'tbx_id_main'          => 'fky_workshop_id',
                         'tbx_id_linked'        => 'fky_person_id',
                         'linked_table'         => 'evtmgr_presenters',
@@ -370,11 +392,11 @@
                 'class' => 'col-md-6',
                 'fky' => [
                     'db' => [
-                        'table' => 'evtmgr_timezones',
-                        'id'    => 'id',
-                        'label' => "CONCAT(IFNULL(dtm_time_from, ''), '–' ,IFNULL(dtm_time_to, ''), ' | ',IFNULL(str_timezone_name_de, ''))",
-                        'condition'     => "fky_event_uid='$event_uid'",
-                        'order_by' => 'dtm_time_from, str_timezone_name_de'
+                        'table'     => "evtmgr_timezones tz LEFT JOIN wp_evtmgr_timezones parent_tz ON parent_tz.id = tz.fky_parent_timezone_id",
+                        'id'        => 'tz.id',
+                        'label'     => "CONCAT(IFNULL(CONCAT(parent_tz.str_timezone_name_de, '➜ '), ''), IFNULL(tz.str_timezone_name_de, ''))",
+                        'condition' => "tz.fky_event_uid='$event_uid'",
+                        'order_by'  => 'tz.fky_parent_timezone_id, tz.dtm_time_from',
                     ]
                 ],
                 'acf' => [
@@ -386,11 +408,11 @@
                 'class' => 'col-md-6',
                 'fky' => [
                     'db' => [
-                        'table' => 'evtmgr_slots',
-                        'id'    => 'id',
-                        'label' => 'str_slot_name_de',
-                        'condition'     => "fky_event_uid='$event_uid'",
-                        'order_by' => 'str_slot_name_de'
+                        'table'     => "evtmgr_slots s LEFT JOIN wp_evtmgr_timezones tz ON tz.id = s.fky_timezone_id",
+                        'id'        => 's.id',
+                        'label'     => "CONCAT(IFNULL(s.str_slot_name_de, ''), IFNULL(CONCAT(' (', tz.str_timezone_name_de, ')'), ''))",
+                        'condition' => "s.fky_event_uid='$event_uid'",
+                        'order_by'  => 's.str_slot_name_de',
                     ]
                 ],
                 'acf' => [
@@ -413,6 +435,22 @@
                     'type' => 'adot_relationship'
                 ]
             ],
+            'fky_workshop_type' => [
+                'label' => 'Workshop-Typ',
+                'class' => 'col-md-6',
+                'fky' => [
+                    'db' => [
+                        'table'     => 'evtmgr_workshop_types',
+                        'id'        => 'id',
+                        'label'     => 'str_event_typename_de',
+                        'condition' => "fky_event_uid='$event_uid'",
+                        'order_by'  => 'str_event_typename_de',
+                    ]
+                ],
+                'acf' => [
+                    'type' => 'adot_relationship'
+                ]
+            ],
             'fky_audience_id' => [
             'label' => 'Zielgruppen',
             'acf' => [
@@ -422,7 +460,7 @@
                     'allow_new' => true,
                     'db' => [
                         'allow_new_data'       => ["id" => 0, "str_type" => 'some type', "fky_person_id" => 'some category'],
-                        'tbx_table'            => 'evtmgr_tbx_workshops_audience', 
+                        'tbx_table'            => 'evtmgr_tbx_workshops_audience',
                         'tbx_id_main'          => 'fky_workshop_id',
                         'tbx_id_linked'        => 'fky_audience_id',
                         'linked_table'         => 'evtmgr_audience',
