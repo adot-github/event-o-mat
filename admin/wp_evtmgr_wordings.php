@@ -61,7 +61,7 @@
                 'title_edit'    => 'evtmgr_wordings bearbeiten',
                 'button_add'   => 'Da
                 tensatz speichern',
-                'button_edit'   => 'Datensatz bearbeiten',
+                'button_edit'   => 'Datensatz speichern',
             ],
             'fields_visual' => '
                 str_var_name:col-lg-3 col-md-4

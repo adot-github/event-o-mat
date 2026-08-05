@@ -58,11 +58,13 @@ class Evtmgr_Wordings {
         $wordings = array();
 
         foreach ($rows as $row) {
-            if (empty($row['str_var_name'])) {
+            $var_name = trim((string) ($row['str_var_name'] ?? ''));
+
+            if ($var_name === '') {
                 continue;
             }
 
-            $wordings[$row['str_var_name']] = isset($row['text']) ? $row['text'] : '';
+            $wordings[$var_name] = isset($row['text']) ? $row['text'] : '';
         }
 
         return $wordings;
