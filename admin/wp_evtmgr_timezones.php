@@ -55,10 +55,10 @@
             'fields_visual' => '
                 tab:Texte
                 id:col-lg-3 col-md-4
-                str_timezone_code:col-lg-3 col-md-4
-                fky_parent_timezone_id:col-lg-3 col-md-4
-                int_sort_order:col-lg-3 col-md-4
-                fky_presenters:col-lg-8 col-md-12
+                str_timezone_code:col-lg-1 col-md-2
+                fky_parent_timezone_id:col-lg-4 col-md-4
+                int_sort_order:col-lg-2 col-md-2
+                fky_presenters:col-lg-12 col-md-12
                 -
                 str_timezone_name_{{lang}}:col-md-{{lang_col_count}}
                 mem_timezone_text_{{lang}}:col-md-{{lang_col_count}}
@@ -66,22 +66,22 @@
                 fky_event_uid:col-lg-3 col-md-4
                 
                 tab:Konfiguration
-                
-                str_dec_class:col-lg-3 col-md-4
-                int_level:col-lg-3 col-md-4
-                str_slots:col-lg-3 col-md-4
+                str_dec_class:col-lg-2 col-md-3
+                int_level:col-lg-1 col-md-1
+                -
                 dtm_day:col-lg-3 col-md-4
-                dtm_time_from:col-lg-3 col-md-4
-                dtm_time_to:col-lg-3 col-md-4
-                
-                str_color:col-lg-3 col-md-4
+                dtm_time_from:col-lg-2 col-md-3
+                int_time_from_diff_in_minutes:col-lg-2 col-md-3
+                -
+                dtm_time_to:col-lg-2 col-md-3
                 str_css_class:col-lg-3 col-md-4
                 int_price:col-lg-3 col-md-4
                 -
-                ysn_show_timezone_in_output:col-lg-3 col-md-4
-                ysn_show_text_in_output:col-lg-3 col-md-4
-                ysn_show_time_in_output:col-lg-3 col-md-4
-                ysn_selection_required
+                ysn_show_timezone_in_output:col-lg-2 col-md-4
+                ysn_show_text_in_output:col-lg-2 col-md-4
+                ysn_show_time_in_output:col-lg-2 col-md-4
+                ysn_selection_required:col-lg-2 col-md-4
+                str_color:col-lg-2 col-md-4
                 mem_remark_on_no_selection_{{lang}}:col-md-{{lang_col_count}}
                 -
                 dtm_date_created:col-lg-3 col-md-4
@@ -154,6 +154,13 @@
                     'required'=> true
                 ]
             ],
+           'int_time_from_diff_in_minutes' => [
+                'label' => 'Zeit-Korr. in Min.',
+                'acf' => [
+                    'type' => 'text',
+                    'required'=> true
+                ]
+            ],
            'str_timezone_code' => [
                 'label' => 'str_timezone_code',
                 'acf' => [
@@ -172,7 +179,8 @@
                 ],
                 'searchable' => true,
                 'acf' => [
-                    'type' => 'text'
+                    'type' => 'text',
+                    'required'=> true
                 ]
             ],
            'mem_timezone_text_{{lang}}' => [

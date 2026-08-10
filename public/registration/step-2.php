@@ -155,9 +155,9 @@ registration_values:
             <?php if ($tz_remark !== '') : ?>
                 <?php echo wp_kses_post($tz_remark); ?>
             <?php elseif ($tz_name !== '') : ?>
-                <?php echo esc_html($tz_name); ?>: <?php echo $wordings['sie_haben_keine_workshops_ausgewaehlt_bitte_gehen_sie_einen_schritt_zurueck_und_waehlen_sie_die_gewuenschten_workshops'] ?? 'sie_haben_keine_workshops_ausgewaehlt_bitte_gehen_sie_einen_schritt_zurueck_und_waehlen_sie_die_gewuenschten_workshops'; ?>
+                <?php echo esc_html($tz_name); ?>: <?php echo $wordings['sie_haben_keine_workshops_ausgewaehlt_bitte_gehen_sie_einen_schritt_zurueck'] ?? 'sie_haben_keine_workshops_ausgewaehlt_bitte_gehen_sie_einen_schritt_zurueck'; ?>
             <?php else : ?>
-                <?php echo $wordings['sie_haben_keine_workshops_ausgewaehlt_bitte_gehen_sie_einen_schritt_zurueck_und_waehlen_sie_die_gewuenschten_workshops'] ?? 'sie_haben_keine_workshops_ausgewaehlt_bitte_gehen_sie_einen_schritt_zurueck_und_waehlen_sie_die_gewuenschten_workshops'; ?>
+                <?php echo $wordings['sie_haben_keine_workshops_ausgewaehlt_bitte_gehen_sie_einen_schritt_zurueck'] ?? 'sie_haben_keine_workshops_ausgewaehlt_bitte_gehen_sie_einen_schritt_zurueck'; ?>
             <?php endif; ?>
         </div>
         <?php endforeach; ?>

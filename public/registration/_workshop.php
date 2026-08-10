@@ -209,7 +209,7 @@
     <?php if ($is_booked_out) : ?>
 
         <ul class="free-places-list">
-            <li>ausgebucht</li>
+            <li><?php echo $wordings['ausgebucht'] ?? 'ausgebucht'; ?></li>
         </ul>
 
     <?php elseif ($max_registrations > 0) : ?>
