@@ -1,0 +1,71 @@
+/* ============================================================
+   Moon&Stars · Logo-Raster — 2 Vorschläge
+   Logos einheitlich in gleichen Zellen. Jedes verlinkt.
+   Beim Laden schwarz-weiß, beim Hover farbig.
+   ============================================================ */
+
+*{ box-sizing:border-box; }
+body{
+  margin:0;
+  background:#f4f4f6;
+  font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  color:#2e1640;
+  -webkit-font-smoothing:antialiased;
+}
+
+.lw-wrap{ max-width:1140px; margin:0 auto; padding:54px 32px 80px; }
+
+/* ---- header ---- */
+.lw-eyebrow{ font-size:12px; letter-spacing:.16em; text-transform:uppercase; color:#9a93a6; font-weight:600; }
+.lw-title{ font-size:30px; font-weight:700; margin:6px 0 0; }
+.lw-intro{ font-size:14.5px; color:#6f6880; margin:8px 0 0; max-width:620px; line-height:1.6; }
+
+/* ---- section heading ---- */
+.lw-section{ margin-top:48px; }
+.lw-section + .lw-section{ margin-top:56px; }
+.lw-shead{ display:flex; align-items:baseline; gap:12px; margin-bottom:18px; }
+.lw-num{ display:inline-flex; align-items:center; justify-content:center; min-width:26px; height:26px; padding:0 9px; border-radius:20px; background:#2e1640; color:#f7ffcc; font-size:12.5px; font-weight:700; }
+.lw-h2{ font-size:18px; font-weight:700; margin:0; }
+.lw-note{ font-size:13px; color:#9a93a6; }
+
+/* ---- grids ---- */
+.lw-grid{ display:grid; grid-template-columns:repeat(4,1fr); gap:16px; }
+.lw-sheet{ border:1px solid #e7e7ec; border-radius:20px; overflow:hidden; background:#ececf0; }
+.lw-sheet-grid{ display:grid; grid-template-columns:repeat(4,1fr); gap:1px; }
+
+/* ---- logo cell: shared grayscale -> colour behaviour ---- */
+.lw-logo{
+  display:flex; align-items:center; justify-content:center;
+  text-decoration:none;
+  filter:grayscale(1);
+  opacity:.5;
+  transition:filter .28s ease, opacity .28s ease, transform .28s ease, box-shadow .28s ease, background .28s ease;
+}
+.lw-logo svg{ height:32px; width:auto; max-width:88%; }
+.lw-logo:hover{ filter:grayscale(0); opacity:1; }
+
+/* variant 1 — cards */
+.lw-card{ height:120px; padding:22px; background:#fff; border:1px solid #e7e7ec; border-radius:16px; }
+.lw-card:hover{ transform:translateY(-4px); box-shadow:0 16px 30px -18px rgba(30,18,50,.45); }
+
+/* variant 2 — sheet cells, tint in brand colour on hover */
+.lw-cell{ height:122px; padding:22px; background:#fff; }
+.lw-cell--amber:hover{ background:#fbf7ef; }
+.lw-cell--green:hover{ background:#eef7f3; }
+.lw-cell--coral:hover{ background:#fdf0ed; }
+.lw-cell--leaf:hover{ background:#eff7ef; }
+.lw-cell--purple:hover{ background:#f5f1fc; }
+.lw-cell--teal:hover{ background:#ecf7f6; }
+.lw-cell--red:hover{ background:#fdeeee; }
+.lw-cell--pink:hover{ background:#fdeef5; }
+
+.lw-hint{ font-size:13px; color:#9a93a6; margin:14px 0 0; line-height:1.6; }
+.lw-hint code{ background:#e9e9ee; padding:1px 5px; border-radius:5px; font-size:12px; }
+
+/* responsive */
+@media (max-width:860px){
+  .lw-grid, .lw-sheet-grid{ grid-template-columns:repeat(2,1fr); }
+}
+@media (max-width:480px){
+  .lw-grid, .lw-sheet-grid{ grid-template-columns:1fr; }
+}

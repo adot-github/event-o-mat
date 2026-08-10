@@ -1,6 +1,0 @@
-Ich komme erneut mit einem Problem zu dir: 
-Ich arbeite mit Laragon und WordPress auf meinem lokalen Computer. Dieser Computer ist brandneu und wurde neu eingerichtet. Ich habe damit ein Problem, welches ich auf meinen früheren Geräten nie hatte. 
-Wenn ich eine Datei geändert habe, egal ob PHP oder CSS, dann dauert der erste Ladevorgang in der WordPress-Webseite sehr lange, bis zu 10 Sekunden. Die nachfolgenden Ladevorgänge ohne Änderung sind dann schnell. 
-Irgendetwas passiert also beim ersten Ladevorgang. Ich habe den Verdacht, dass irgendeine Sicherheitsprüfung entweder von Windows Defender oder von Antivirus oder Acronis passiert. Windows Defender läuft nicht, weil Acronis Protection aktiviert ist. Ich habe die Acronis Protection auch schon ausgeschaltet, aber das nützt überhaupt nichts. 
-Ich muss unbedingt eine Lösung finden denn so kann ich nicht arbeiten. 
-Wie soll ich weiter vorgehen? 

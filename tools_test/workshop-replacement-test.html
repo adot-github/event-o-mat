@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Workshop Replace Test</title>
+  <style>
+    .btn {display:inline-flex;align-items:center;padding:.25rem .5rem;border:1px solid #ccc;border-radius:.25rem;background:#f8f9fa;text-decoration:none;color:#000}
+    .selected-workshop-wrapper{border:1px solid #ddd;padding:.5rem;margin-top:.5rem}
+    .js-workshop-close-replacement{margin-left:.5rem}
+  </style>
+</head>
+<body>
+  <div class="js-session-container" data-timezone="1" style="padding:1rem;border:1px dashed #ccc;max-width:480px">
+    <div class="mt-2">
+      <a href="#" class="btn btn-select-workshop btn-sm js-workshop-add ps-2 pe-2">Angebot auswählen</a>
+    </div>
+    <div class="js-wokshop-container"></div>
+    <div class="js-workshop-options" hidden>
+      <template class="js-workshop-option-template" data-workshop="42">
+        <div class="js-workshop-select workshop-select" data-workshop="42">
+          <div class="js-workshop-item" data-workshop="42">
+            <div class="workshop-item">
+              <div class="icon-dark worskhop-remove js-workshop-close" style="display:none">✕</div>
+              <div>Workshop 42 — Einführung</div>
+            </div>
+          </div>
+        </div>
+      </template>
+    </div>
+  </div>
+
+  <script>
+    var activeSessionContainer = null;
+
+    function fixWorkshopContainer() { /* noop for test */ }
+    function updateSelectedWorkshopsField() { /* noop for test */ }
+    function getBootstrapModal(){return null;}
+
+    function selectWorkshop(selection) {
+      if (!activeSessionContainer || !selection.classList.contains('workshop-select')) return;
+      var selectedItem = selection.querySelector('.js-workshop-item');
+      var workshopId = selectedItem ? selectedItem.getAttribute('data-workshop') : '';
+      if (!workshopId) return;
+
+      var timezoneId = activeSessionContainer.getAttribute('data-timezone') || '';
+
+      // clear current
+      document.querySelectorAll('.js-session-container[data-timezone="' + CSS.escape(timezoneId) + '"] .js-wokshop-container').forEach(function (container){container.innerHTML='';});
+
+      var newWorkshop = selection.cloneNode(true);
+      newWorkshop.classList.remove('workshop-select');
+      newWorkshop.classList.remove('js-workshop-select');
+      newWorkshop.classList.add('selected-workshop-wrapper');
+      newWorkshop.removeAttribute('aria-disabled');
+
+      var targetContainer = activeSessionContainer.querySelector('.js-wokshop-container');
+      if (targetContainer) targetContainer.appendChild(newWorkshop);
+
+      // hide add and insert replacement
+      document.querySelectorAll('.js-session-container[data-timezone="' + CSS.escape(timezoneId) + '"]').forEach(function (sess){
+        var addBtn = sess.querySelector('.js-workshop-add'); if (addBtn) addBtn.style.display='none';
+        if (!sess.querySelector('.js-workshop-close-replacement')){
+          var closeBtn = document.createElement('a'); closeBtn.href='#';
+          var baseClasses = (addBtn.className||'').replace(/\bjs-workshop-add\b/,'').trim();
+          closeBtn.className = (baseClasses + ' js-workshop-close-replacement').trim();
+          closeBtn.setAttribute('role','button'); closeBtn.setAttribute('aria-label','Angebot abwählen');
+          closeBtn.appendChild(document.createTextNode('Angebot abwählen'));
+          var iconTemplate = newWorkshop.querySelector('.js-workshop-close');
+          if (iconTemplate){ var iconClone = iconTemplate.cloneNode(true); iconClone.style.display='inline-flex'; iconClone.style.marginLeft='0.5rem'; iconClone.classList.remove('js-workshop-close'); closeBtn.appendChild(iconClone);} else { var spanX=document.createElement('span'); spanX.textContent=' ✕'; closeBtn.appendChild(spanX); }
+            addBtn.parentNode.insertBefore(closeBtn, addBtn);
+        }
+      });
+
+      fixWorkshopContainer(activeSessionContainer);
+      updateSelectedWorkshopsField();
+    }
+
+    document.addEventListener('click', function(event){
+      var addButton = event.target.closest('.js-workshop-add');
+      if (addButton){ event.preventDefault(); activeSessionContainer = addButton.closest('.js-session-container');
+        var tpl = activeSessionContainer.querySelector('.js-workshop-option-template'); var sel = tpl.content.firstElementChild.cloneNode(true); sel.classList.add('workshop-select'); sel.classList.add('js-workshop-select'); selectWorkshop(sel); return; }
+
+      var closeButton = event.target.closest('.js-workshop-close, .js-workshop-close-replacement');
+      if (closeButton){ event.preventDefault(); var container = closeButton.closest('.js-session-container');
+        var selectedWorkshop = closeButton.closest('.selected-workshop-wrapper'); if (!selectedWorkshop) selectedWorkshop = closeButton.closest('.js-workshop-item');
+        if (selectedWorkshop) selectedWorkshop.remove();
+        fixWorkshopContainer(container); updateSelectedWorkshopsField();
+
+        if (container){ var timezone = container.getAttribute('data-timezone')||''; if (timezone){ document.querySelectorAll('.js-session-container[data-timezone="'+CSS.escape(timezone)+'"]').forEach(function(sess){ var addBtn=sess.querySelector('.js-workshop-add'); if (addBtn) addBtn.style.display=''; var repl=sess.querySelector('.js-workshop-close-replacement'); if (repl) repl.remove(); }); } else { var addBtn=container.querySelector('.js-workshop-add'); if (addBtn) addBtn.style.display=''; var repl=container.querySelector('.js-workshop-close-replacement'); if (repl) repl.remove(); } }
+      }
+    });
+  </script>
+</body>
+</html>
