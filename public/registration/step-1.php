@@ -501,14 +501,26 @@
         $workshop_source_mode = 'direct';
         $direct_workshop_data = $workshop_data;
 
-        $time_from = event_registration_format_time_number($timezone['dtm_time_from'] ?? '');
-        $time_to   = event_registration_format_time_number($timezone['dtm_time_to'] ?? '');
+        $raw_time_from = $timezone['dtm_time_from'] ?? '';
+        $time_from     = event_registration_format_time_number($raw_time_from);
+        $time_to       = event_registration_format_time_number($timezone['dtm_time_to'] ?? '');
 
         if ($time_to === '') {
             $time_to = $time_from;
         }
 
-        $time_label_from = event_registration_format_time_label($timezone['dtm_time_from'] ?? '');
+        $diff_minutes       = isset($timezone['int_time_from_diff_in_minutes']) && $timezone['int_time_from_diff_in_minutes'] !== null && $timezone['int_time_from_diff_in_minutes'] !== ''
+            ? (int) $timezone['int_time_from_diff_in_minutes']
+            : null;
+        $label_time_from    = $raw_time_from;
+        if ($diff_minutes !== null && $raw_time_from !== '') {
+            $ts = strtotime($raw_time_from);
+            if ($ts !== false) {
+                $label_time_from = date('H:i:s', $ts + $diff_minutes * 60);
+            }
+        }
+
+        $time_label_from = event_registration_format_time_label($label_time_from);
         $time_label_to   = event_registration_format_time_label($timezone['dtm_time_to'] ?? '');
 
         if ($time_label_to === '') {
