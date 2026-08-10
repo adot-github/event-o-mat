@@ -316,13 +316,11 @@
 
                 $invoice_event    = [];
                 $inv_event_name   = '';
-                $inv_event_date   = '';
 
                 if (class_exists('Evtmgr_Events')) {
                     $ev_obj        = new Evtmgr_Events();
                     $invoice_event = (array) ($ev_obj->get_events_by_event_uid($event_uid ?? '', 'de') ?? []);
                     $inv_event_name = $invoice_event['str_event_name'] ?? $invoice_event['str_event_name_de'] ?? '';
-                    $inv_event_date = $inv_pdf_creator->format_date((string) ($invoice_event['dtm_event_date'] ?? ''));
                 }
 
                 $person_lang = strtolower(trim($inv_pdf_creator->value_ci($invoice_person, 'str_language', $current_lang)));
@@ -336,6 +334,17 @@
                     $person_event_name     = $inv_pdf_creator->event_text_by_language($invoice_event, 'str_event_name', $person_lang, $inv_event_name);
                     $person_event_subtitle = $inv_pdf_creator->event_text_by_language($invoice_event, 'str_event_subtitle', $person_lang, '');
 
+                    $billing_date_created = $wpdb->get_var(
+                        $wpdb->prepare(
+                            "SELECT dtm_date_created FROM {$wpdb->prefix}evtmgr_registrations_billing
+                             WHERE fky_person_id = %d AND fky_event_uid = %s
+                             ORDER BY dtm_date_created DESC LIMIT 1",
+                            $person_id,
+                            $event_uid ?? ''
+                        )
+                    );
+                    $inv_billing_date = $inv_pdf_creator->format_date((string) ($billing_date_created ?? ''));
+
                     $image_replacements = $inv_pdf_creator->get_image_replacements($inv_layout);
                     $text_replacements  = $inv_pdf_creator->text_replacements($inv_layout, $person_lang);
                     $core_replacements  = $inv_pdf_creator->person_replacements($invoice_person, [
@@ -344,7 +353,7 @@
                         '{str_event_subtitle}'    => esc_html($person_event_subtitle),
                         '{str_event_subtitle_de}' => esc_html($person_event_subtitle),
                         '{id}'                    => esc_html($inv_pdf_creator->get_person_id($invoice_person)),
-                        '{dtm_event_date}'        => esc_html($inv_event_date),
+                        '{dtm_event_date}'        => esc_html($inv_billing_date),
                     ]);
 
                     $callback_replacements = [];
@@ -377,6 +386,14 @@
                     file_put_contents($full_path, $pdf_data);
 
                     $invoice_pdf_attachments = [$full_path];
+
+                    $wpdb->update(
+                        $wpdb->prefix . 'evtmgr_persons',
+                        array('int_billing_status' => 1),
+                        array('id' => $person_id),
+                        array('%d'),
+                        array('%d')
+                    );
                 }
             }
         } catch (Throwable $e) {

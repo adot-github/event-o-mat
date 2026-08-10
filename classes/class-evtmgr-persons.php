@@ -93,6 +93,90 @@ class class_evtmgr_persons {
         );
     }
 
+    /**
+     * Recalculate num_invoice_total from wp_evtmgr_registrations_billing (SUM of int_price).
+     *
+     * Pass a person id to update only that person. Omit it (or pass 0) to update
+     * every person that has at least one row in wp_evtmgr_registrations_billing.
+     *
+     * @param int $person_id Optional. Person id to limit the update to.
+     * @return array Update summary.
+     */
+    public function person_update_invoice_total($person_id = 0) {
+        $person_id     = absint($person_id);
+        $billing_table = 'wp_evtmgr_registrations_billing';
+
+        $summary = array(
+            'success'   => true,
+            'field'     => 'num_invoice_total',
+            'person_id' => $person_id,
+            'checked'   => 0,
+            'updated'   => 0,
+            'skipped'   => 0,
+            'errors'    => array(),
+        );
+
+        $columns          = $this->get_table_columns();
+        $primary_key      = $this->get_column_name($columns, array('id'));
+        $target_column    = $this->get_column_name($columns, array('num_invoice_total'));
+
+        if ($primary_key === '' || $target_column === '') {
+            $summary['success']  = false;
+            $summary['errors'][] = 'Could not resolve id or num_invoice_total column on wp_evtmgr_persons.';
+            return $summary;
+        }
+
+        if ($person_id > 0) {
+            $person_ids = array($person_id);
+        } else {
+            $person_ids = $this->wpdb->get_col(
+                "SELECT DISTINCT fky_person_id FROM {$billing_table} WHERE fky_person_id > 0"
+            );
+            $person_ids = array_map('absint', (array) $person_ids);
+        }
+
+        if (empty($person_ids)) {
+            return $summary;
+        }
+
+        foreach ($person_ids as $current_person_id) {
+            $summary['checked']++;
+
+            if ($current_person_id <= 0) {
+                $summary['skipped']++;
+                continue;
+            }
+
+            $total = $this->wpdb->get_var(
+                $this->wpdb->prepare(
+                    "SELECT SUM(int_price) FROM {$billing_table} WHERE fky_person_id = %d",
+                    $current_person_id
+                )
+            );
+
+            $total = number_format((float) $total, 2, '.', '');
+
+            $updated = $this->wpdb->update(
+                $this->person_table,
+                array($target_column => $total),
+                array($primary_key => $current_person_id),
+                array('%s'),
+                array('%d')
+            );
+
+            if ($updated === false) {
+                $summary['success']  = false;
+                $summary['skipped']++;
+                $summary['errors'][] = 'Database update failed for person id ' . $current_person_id . ': ' . $this->wpdb->last_error;
+                continue;
+            }
+
+            $summary['updated']++;
+        }
+
+        return $summary;
+    }
+
     protected function person_update_pdf_field($target_field, $event_uid, $type) {
         $event_uid = sanitize_text_field((string) $event_uid);
 

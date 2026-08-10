@@ -9,6 +9,13 @@
     $event_languages = $event_obj->get_current_event_languages();
     $additional_sql_condition = $event_obj->get_current_event_sql_condition();
     $additional_sql_condition_for_tbx = $event_obj->get_current_event_sql_condition('record');
+
+    // Refresh num_invoice_total for this one person whenever their edit form is opened.
+    $evtmgr_persons_edit_record_id = absint($_GET['record'] ?? 0);
+    if ($evtmgr_persons_edit_record_id > 0) {
+        require_once get_stylesheet_directory() . '/db-custom/event-registration/classes/class-evtmgr-persons.php';
+        (new class_evtmgr_persons())->person_update_invoice_total($evtmgr_persons_edit_record_id);
+    }
 ?>
 
 <?php

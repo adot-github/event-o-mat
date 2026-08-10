@@ -136,6 +136,21 @@ add_action('wp_ajax_evtmgr_pdf_generate_person', function () {
             ]);
         }
 
+        // Invoices show the billing creation date instead of the event date.
+        if ($pdf_layout === 'dachverband-rechnung.php') {
+            global $wpdb;
+            $billing_date_created = $wpdb->get_var(
+                $wpdb->prepare(
+                    "SELECT dtm_date_created FROM {$wpdb->prefix}evtmgr_registrations_billing
+                     WHERE fky_person_id = %d AND fky_event_uid = %s
+                     ORDER BY dtm_date_created DESC LIMIT 1",
+                    $person_id,
+                    $event_uid
+                )
+            );
+            $dtm_event_date = $pdf_creator->format_date((string) ($billing_date_created ?? ''));
+        }
+
         $person_event_name     = $pdf_creator->event_text_by_language($event, 'str_event_name',     $person_lang, $str_event_name_);
         $person_event_subtitle = $pdf_creator->event_text_by_language($event, 'str_event_subtitle', $person_lang, '');
 

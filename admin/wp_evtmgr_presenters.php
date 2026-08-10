@@ -227,7 +227,7 @@
                     ]
                 ]
             ],
-           'mem_presenter_text_de{{lang}}' => [
+           'mem_presenter_text_{{lang}}' => [
                 'label' => 'Text zur Person',
                 'langs' => [
                     'de' => ['label' => 'Text zur Person (deutsch)'],

@@ -41,16 +41,16 @@ $manual_links = array(
     ),
     array(
         'str_group'       => 'Workshop-Konfigurationen',
-        'str_title'       => 'Preisstruktur bearbeiten',
-        'str_url'         => '/wp-admin/admin.php?page=adot_evtmgr_pricing',
-        'mem_description' => 'Die Kostenstruktur des Events erfassen oder bearbeiten',
-    ),
-    array(
-        'str_group'       => 'Workshop-Konfigurationen',
         'str_title'       => 'Slots bearbeiten',
         'str_url'         => '/wp-admin/admin.php?page=adot_evtmgr_slots',
         'mem_description' => 'Die Slots/Tracks erfassen oder bearbeiten',
     ),
+    array(
+        'str_group'       => 'Workshop-Konfigurationen',
+        'str_title'       => 'Preisstruktur bearbeiten',
+        'str_url'         => '/wp-admin/admin.php?page=adot_evtmgr_pricing',
+        'mem_description' => 'Die Kostenstruktur des Events erfassen oder bearbeiten',
+    )
     
 );
 ?>

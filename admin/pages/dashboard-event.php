@@ -26,6 +26,12 @@ $manual_links = array(
         'str_url'         => '/wp-admin/admin.php?page=report-income',
         'mem_description' => 'Liste aller Personen mit zu bezahlendem Betrag',
     ),
+    array(
+        'str_group'       => 'Optionen',
+        'str_title'       => 'Optionen des Events',
+        'str_url'         => '/wp-admin/admin.php?page=adot_evtmgr_options',
+        'mem_description' => 'Diverse Optionen für den Event ',
+    ),
 );
 
 ?>

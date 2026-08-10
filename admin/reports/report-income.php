@@ -4,6 +4,11 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
+require_once dirname(__DIR__) . '/../classes/class-evtmgr-persons.php';
+
+$persons_obj = new class_evtmgr_persons();
+$persons_obj->person_update_invoice_total();
+
 $report_title = 'Umsatz-Report';
 $report_table = 'wp_evtmgr_persons';
 
