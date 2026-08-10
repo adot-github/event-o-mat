@@ -6,7 +6,11 @@ if (!defined('ABSPATH')) {
 
 global $wpdb;
 $table_name = 'wp_evtmgr_wordings_default';
-$public_dir = get_stylesheet_directory() . '/db-custom/event-registration/public';
+$event_registration_dir = get_stylesheet_directory() . '/db-custom/event-registration';
+$scan_dirs = array(
+    'public'  => $event_registration_dir . '/public',
+    'classes' => $event_registration_dir . '/classes',
+);
 
 $result = null;
 $errors = array();
@@ -14,23 +18,31 @@ $errors = array();
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['wordings_scan_action'])) {
     if (!isset($_POST['wordings_scan_nonce']) || !wp_verify_nonce(sanitize_text_field(wp_unslash($_POST['wordings_scan_nonce'])), 'wordings_scan')) {
         $errors[] = 'Sicherheitsprüfung fehlgeschlagen.';
-    } elseif (!is_dir($public_dir)) {
-        $errors[] = 'Public-Verzeichnis nicht gefunden: ' . esc_html($public_dir);
     } else {
-        // Collect all PHP files recursively from public/
-        $iterator = new RecursiveIteratorIterator(
-            new RecursiveDirectoryIterator($public_dir, RecursiveDirectoryIterator::SKIP_DOTS)
-        );
+        foreach ($scan_dirs as $scan_label => $scan_dir) {
+            if (!is_dir($scan_dir)) {
+                $errors[] = ucfirst($scan_label) . '-Verzeichnis nicht gefunden: ' . esc_html($scan_dir);
+            }
+        }
+    }
 
+    if (empty($errors)) {
+        // Collect all PHP files recursively from public/ and classes/
         $php_files = array();
-        foreach ($iterator as $file) {
-            if ($file->isFile() && $file->getExtension() === 'php') {
-                $abs_path      = $file->getPathname();
-                $rel_path      = ltrim(str_replace($public_dir, '', $abs_path), DIRECTORY_SEPARATOR . '/');
-                $template_name = str_replace(array(DIRECTORY_SEPARATOR, '\\'), '/', pathinfo($rel_path, PATHINFO_DIRNAME) . '/' . pathinfo($rel_path, PATHINFO_FILENAME));
-                $template_name = ltrim($template_name, '/.');
+        foreach ($scan_dirs as $scan_label => $scan_dir) {
+            $iterator = new RecursiveIteratorIterator(
+                new RecursiveDirectoryIterator($scan_dir, RecursiveDirectoryIterator::SKIP_DOTS)
+            );
 
-                $php_files[$template_name] = file_get_contents($abs_path);
+            foreach ($iterator as $file) {
+                if ($file->isFile() && $file->getExtension() === 'php') {
+                    $abs_path      = $file->getPathname();
+                    $rel_path      = ltrim(str_replace($scan_dir, '', $abs_path), DIRECTORY_SEPARATOR . '/');
+                    $template_name = str_replace(array(DIRECTORY_SEPARATOR, '\\'), '/', pathinfo($rel_path, PATHINFO_DIRNAME) . '/' . pathinfo($rel_path, PATHINFO_FILENAME));
+                    $template_name = $scan_label . '/' . ltrim($template_name, '/.');
+
+                    $php_files[$template_name] = file_get_contents($abs_path);
+                }
             }
         }
 
@@ -98,7 +110,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['wordings_scan_action'
     <h1 class="h3 mb-4">Wordings: Vorkommen in Templates scannen</h1>
 
     <p class="text-muted mb-4">
-        Durchsucht alle PHP-Dateien in <code><?php echo esc_html($public_dir); ?></code>
+        Durchsucht alle PHP-Dateien in
+        <?php foreach ($scan_dirs as $scan_label => $scan_dir) : ?>
+            <code><?php echo esc_html($scan_dir); ?></code><?php echo $scan_label !== array_key_last($scan_dirs) ? ' und ' : ''; ?>
+        <?php endforeach; ?>
         nach dem Wert aus <code>str_var_string</code> und aktualisiert
         <code>int_num_of_occurences</code> und <code>str_template</code>.
     </p>

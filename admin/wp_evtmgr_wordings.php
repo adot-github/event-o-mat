@@ -71,8 +71,10 @@
                 int_len_of_german:col-lg-3 col-md-4
                 translate:col-lg-3 col-md-4
                 fky_event_uid:col-lg-3 col-md-4
+                str_type_of_edit:col-lg-3 col-md-4
                 dtm_date_created:col-lg-3 col-md-4
                 dtm_date_updated:col-lg-3 col-md-4'
+                
         ],
         'fields' => [
             'id' => [
@@ -130,31 +132,49 @@
                     'type' => 'textarea',
                 ],
                 'ckeditor' => [
-                    'mode' => 'standalone',    
+                    'mode' => 'standalone',
+                ],
+                'before_render' => function($field_config, $record) {
+                    if (($record['str_type_of_edit'] ?? '') !== 'text') {
+                        $field_config['acf']['type'] = 'adot_ckeditor';
+                    }
+                    return $field_config;
+                },
+            ],
+           'str_type_of_edit' => [
+                'label' => 'str_type_of_edit',
+                'acf' => [
+                    'type' => 'text',
+                    'readonly' => true,
+                    'readonly' => true,
                 ]
             ],
            'str_group' => [
                 'label' => 'str_group',
                 'acf' => [
                     'type' => 'text',
+                    'readonly' => true,
                 ]
             ],
            'int_num_of_occurences' => [
                 'label' => 'int_num_of_occurences',
                 'acf' => [
                     'type' => 'text',
+                    'readonly' => true,
                 ]
             ],
            'int_len_of_german' => [
                 'label' => 'int_len_of_german',
                 'acf' => [
                     'type' => 'text',
+                    'readonly' => true,
                 ]
             ],
            'translate' => [
                 'label' => 'translate',
                 'acf' => [
                     'type' => 'text',
+                    'readonly' => true,
                 ]
             ],
            'fky_event_uid' => [

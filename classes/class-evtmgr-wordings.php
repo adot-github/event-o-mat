@@ -73,9 +73,11 @@ class Evtmgr_Wordings {
     }
 
     /**
-     * Copies all records from wp_evtmgr_wordings_default into wp_evtmgr_wordings
-     * for every existing event, skipping any that already exist (matched by str_var_name).
-     * All column values are always copied (except id, fky_event_uid, dtm_date_*).
+     * Synchronizes wp_evtmgr_wordings with wp_evtmgr_wordings_default for every existing event:
+     * - inserts wordings that are missing (matched by str_var_name),
+     * - updates existing wordings with the default's current column values,
+     *   except str_text_de / str_text_en / str_text_fr / str_text_it (translations are never overwritten),
+     * - deletes wordings that no longer exist in wp_evtmgr_wordings_default.
      *
      * @return int  Number of newly inserted rows (across all events), or -1 if a required table is missing.
      */
@@ -117,34 +119,68 @@ class Evtmgr_Wordings {
     }
 
     /**
-     * Copies missing default wordings into wp_evtmgr_wordings for a single event.
+     * Copies missing default wordings into wp_evtmgr_wordings for a single event,
+     * updates existing ones (except translation fields) and deletes obsolete ones.
      */
     protected function sync_default_wordings_for_event(string $event_uid, array $defaults): int {
-        $existing_names = $this->wpdb->get_col(
+        $existing_rows = $this->wpdb->get_results(
             $this->wpdb->prepare(
-                "SELECT str_var_name FROM {$this->table_name} WHERE fky_event_uid = %s",
+                "SELECT * FROM {$this->table_name} WHERE fky_event_uid = %s",
                 $event_uid
-            )
+            ),
+            ARRAY_A
         );
 
-        if (!is_array($existing_names)) {
-            $existing_names = array();
+        $existing_by_name = array();
+        foreach ((array) $existing_rows as $existing_row) {
+            $existing_var_name = (string) ($existing_row['str_var_name'] ?? '');
+            if ($existing_var_name !== '') {
+                $existing_by_name[$existing_var_name] = $existing_row;
+            }
         }
 
-        $inserted = 0;
+        $skip_insert = array('id', 'fky_event_uid', 'dtm_date_created', 'dtm_date_updated');
+        $skip_update = array_merge($skip_insert, array(
+            'str_var_name', 'str_text_de', 'str_text_en', 'str_text_fr', 'str_text_it',
+        ));
+
+        $inserted     = 0;
+        $default_names = array();
 
         foreach ($defaults as $row) {
             $var_name = (string) ($row['str_var_name'] ?? '');
 
-            if ($var_name === '' || in_array($var_name, $existing_names, true)) {
+            if ($var_name === '') {
+                continue;
+            }
+
+            $default_names[$var_name] = true;
+
+            if (isset($existing_by_name[$var_name])) {
+                $data = array();
+                foreach ($row as $col => $val) {
+                    if (!in_array($col, $skip_update, true)) {
+                        $data[$col] = $val;
+                    }
+                }
+
+                if (!empty($data)) {
+                    $this->wpdb->update(
+                        $this->table_name,
+                        $data,
+                        array(
+                            'fky_event_uid' => $event_uid,
+                            'str_var_name'  => $var_name,
+                        )
+                    );
+                }
+
                 continue;
             }
 
             $data = array('fky_event_uid' => $event_uid);
-
-            $skip = array('id', 'fky_event_uid', 'dtm_date_created', 'dtm_date_updated');
             foreach ($row as $col => $val) {
-                if (!in_array($col, $skip, true)) {
+                if (!in_array($col, $skip_insert, true)) {
                     $data[$col] = $val;
                 }
             }
@@ -153,8 +189,19 @@ class Evtmgr_Wordings {
 
             if ($result !== false) {
                 $inserted++;
-                $existing_names[] = $var_name;
             }
+        }
+
+        $obsolete_names = array_diff(array_keys($existing_by_name), array_keys($default_names));
+
+        foreach ($obsolete_names as $obsolete_name) {
+            $this->wpdb->delete(
+                $this->table_name,
+                array(
+                    'fky_event_uid' => $event_uid,
+                    'str_var_name'  => $obsolete_name,
+                )
+            );
         }
 
         return $inserted;

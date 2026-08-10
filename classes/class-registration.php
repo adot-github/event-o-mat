@@ -355,17 +355,17 @@ class Event_Registration {
             </style>
         ';
 
-        $greeting_text = $wordings['guten_tag'] ?? 'guten_tag';
-        $notice_text   = $wordings['bitte_beachten_sie_ihre_anmeldung_ist_verbindlich_abmeldungen'] ?? 'bitte_beachten_sie_ihre_anmeldung_ist_verbindlich_abmeldungen';
-        $subject_text  = $wordings['ihre_anmeldung'] ?? 'ihre_anmeldung';
+        $email_greeting_text = $wordings['guten_tag'] ?? 'guten_tag';
+        $email_body_text   = $wordings['email_text_besten_dank_für_ihre_anmeldung'] ?? 'email_text_besten_dank_für_ihre_anmeldung';
+        $email_subject_text  = $wordings['email_subject_besten_dank_für_ihre_anmeldung'] ?? 'email_subject_besten_dank_für_ihre_anmeldung';
 
         $show_email_text = '
-            <p>' . esc_html($greeting_text) . ' ' . esc_html(trim($first_name . ' ' . $last_name)) . '<br><br>'
-            . wp_kses_post($notice_text) .
+            <p>' . esc_html($email_greeting_text) . ' ' . esc_html(trim($first_name . ' ' . $last_name)) . '<br><br>'
+            . wp_kses_post($email_body_text) .
             '<br><br></p>
         ';
 
-        $subject = trim($event_name . ' – ' . wp_strip_all_tags((string) $subject_text));
+        $subject = trim(wp_strip_all_tags((string) $email_subject_text));
 
         $message = '
             <!doctype html>
