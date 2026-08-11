@@ -376,6 +376,16 @@ textarea[readonly] {
 select:focus    { color: #000 !important; border-color: rgba(255,255,255,.5); }
 select option   { background: rgba(0,0,0,0); }
 
+input[type=radio]:checked {
+    border-color: white !important;
+    border-width:2px !important;
+}
+
+input[type=checkbox],input[type=radio] {
+    background: rgba(255,255,255,.5)!important;
+
+}
+
 /* --- List / Table ----------------------------------------- */
 .form-text,
 .list-group-item {
