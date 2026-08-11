@@ -1,6 +1,34 @@
 <?php
     require_once get_stylesheet_directory() . '/db-custom/event-registration/classes/class-evtmgr-events.php';
     require_once get_stylesheet_directory() . '/db-custom/event-registration/classes/class_database_fields.php';
+
+    add_action('db_editor/after_save', function($table_name, $record_id) {
+        global $wpdb;
+        if ($table_name !== $wpdb->prefix . 'evtmgr_wordings') {
+            return;
+        }
+        $text_de = $wpdb->get_var($wpdb->prepare(
+            "SELECT str_text_de FROM {$wpdb->prefix}evtmgr_wordings WHERE id = %d",
+            $record_id
+        ));
+        $plain = trim(strip_tags((string) $text_de));
+        if (mb_strlen($plain) > 100) {
+            $cut        = mb_substr($plain, 0, 130);
+            $last_space = mb_strrpos($cut, ' ');
+            $preview    = ($last_space !== false ? mb_substr($cut, 0, $last_space) : $cut) . ' …';
+        } else {
+            $preview = $plain;
+        }
+        $wpdb->update(
+            $wpdb->prefix . 'evtmgr_wordings',
+            [
+                'str_text_for_tree' => $preview,
+                'int_len_of_german' => mb_strlen($plain),
+            ],
+            ['id' => $record_id]
+        );
+    }, 10, 2);
+
     $event_obj = new Evtmgr_Events();
     $event_languages = $event_obj->get_current_event_languages();
     $event_uid = $event_obj->get_current_event_uid();
@@ -64,14 +92,15 @@
                 'button_edit'   => 'Datensatz speichern',
             ],
             'fields_visual' => '
-                str_var_name:col-lg-3 col-md-4
                 str_text_{{lang}}:col-md-{{lang_col_count}}
+                str_var_name:col-lg-3 col-md-4
                 str_group:col-lg-3 col-md-4
                 int_num_of_occurences:col-lg-3 col-md-4
                 int_len_of_german:col-lg-3 col-md-4
                 translate:col-lg-3 col-md-4
                 fky_event_uid:col-lg-3 col-md-4
                 str_type_of_edit:col-lg-3 col-md-4
+                -
                 dtm_date_created:col-lg-3 col-md-4
                 dtm_date_updated:col-lg-3 col-md-4'
 
@@ -126,6 +155,9 @@
                 'searchable' => true,
                 'acf' => [
                     'type' => 'textarea',
+                ],
+                'formatter' => [
+                    'save' => 'adot_ckeditor',
                 ],
                 'ckeditor' => [
                     'mode' => 'standalone',
