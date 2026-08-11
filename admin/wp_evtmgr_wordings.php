@@ -1,10 +1,12 @@
 <?php
     require_once get_stylesheet_directory() . '/db-custom/event-registration/classes/class-evtmgr-events.php';
+    require_once get_stylesheet_directory() . '/db-custom/event-registration/classes/class_database_fields.php';
     $event_obj = new Evtmgr_Events();
     $event_languages = $event_obj->get_current_event_languages();
     $event_uid = $event_obj->get_current_event_uid();
     $additional_sql_condition = $event_obj->get_current_event_sql_condition();
     $additional_sql_condition_for_tbx = $event_obj->get_current_event_sql_condition('record');
+    $labels = (new Evtmgr_Database_Fields())->get_labels('wp_evtmgr_wordings');
 ?>
 
 <?php
@@ -29,7 +31,6 @@
                 'title'     => 'Wordings bearbeiten',
                 'button_add'   => 'Neuen Datensatz hinzufügen',
             ],
-            
 
             'screen_options' => [
                  'custom_filter_1' => [
@@ -50,7 +51,7 @@
                     ]
                 ]
             ]
-           
+
         ],
         'langs' => function($table_config) {
             return ["de","fr","it"];
@@ -59,8 +60,7 @@
             'labels' => [
                 'title_add'     => 'Neuen Datensatz hinzufügen',
                 'title_edit'    => 'evtmgr_wordings bearbeiten',
-                'button_add'   => 'Da
-                tensatz speichern',
+                'button_add'   => 'Datensatz speichern',
                 'button_edit'   => 'Datensatz speichern',
             ],
             'fields_visual' => '
@@ -74,45 +74,45 @@
                 str_type_of_edit:col-lg-3 col-md-4
                 dtm_date_created:col-lg-3 col-md-4
                 dtm_date_updated:col-lg-3 col-md-4'
-                
+
         ],
         'fields' => [
             'id' => [
-                'label'    => 'ID'
+                'label' => $labels['id'] ?? 'ID'
             ],
            'str_template' => [
-                'label' => 'str_template',
+                'label' => $labels['str_template'] ?? 'str_template',
                 'acf' => [
                     'type' => 'text',
                 ]
             ],
            'str_backup' => [
-                'label' => 'str_backup',
+                'label' => $labels['str_backup'] ?? 'str_backup',
                 'acf' => [
                     'type' => 'text',
                 ]
             ],
            'str_var_string' => [
-                'label' => 'str_var_string',
+                'label' => $labels['str_var_string'] ?? 'str_var_string',
                 'acf' => [
                     'type' => 'text',
                 ]
             ],
            'str_var_string_short' => [
-                'label' => 'str_var_string_short',
+                'label' => $labels['str_var_string_short'] ?? 'str_var_string_short',
                 'acf' => [
                     'type' => 'text',
                 ]
             ],
            'str_var_name' => [
-                'label' => 'str_var_name',
+                'label' => $labels['str_var_name'] ?? 'str_var_name',
                 'acf' => [
                     'type' => 'text',
                     'readonly' => true,
                 ]
             ],
            'str_text_for_tree' => [
-                'label' => 'str_text_for_tree',
+                'label' => $labels['str_text_for_tree'] ?? 'str_text_for_tree',
                 'formatter' => [
                     'list' => 'actions'
                 ],
@@ -121,12 +121,8 @@
                 ]
             ],
            'str_text_{{lang}}' => [
-                'label' => 'str_text',
-                'langs' => [
-                    'de' => ['label' => 'str_text (deutsch)'],
-                    'fr' => ['label' => 'str_text (französisch)'],
-                    'it' => ['label' => 'str_text (italienisch)'],
-                ],
+                'label' => $labels['str_text_de'] ?? 'str_text',
+
                 'searchable' => true,
                 'acf' => [
                     'type' => 'textarea',
@@ -142,43 +138,42 @@
                 },
             ],
            'str_type_of_edit' => [
-                'label' => 'str_type_of_edit',
+                'label' => $labels['str_type_of_edit'] ?? 'str_type_of_edit',
                 'acf' => [
                     'type' => 'text',
-                    'readonly' => true,
                     'readonly' => true,
                 ]
             ],
            'str_group' => [
-                'label' => 'str_group',
+                'label' => $labels['str_group'] ?? 'str_group',
                 'acf' => [
                     'type' => 'text',
                     'readonly' => true,
                 ]
             ],
            'int_num_of_occurences' => [
-                'label' => 'int_num_of_occurences',
+                'label' => $labels['int_num_of_occurences'] ?? 'int_num_of_occurences',
                 'acf' => [
                     'type' => 'text',
                     'readonly' => true,
                 ]
             ],
            'int_len_of_german' => [
-                'label' => 'int_len_of_german',
+                'label' => $labels['int_len_of_german'] ?? 'int_len_of_german',
                 'acf' => [
                     'type' => 'text',
                     'readonly' => true,
                 ]
             ],
            'translate' => [
-                'label' => 'translate',
+                'label' => $labels['translate'] ?? 'translate',
                 'acf' => [
                     'type' => 'text',
                     'readonly' => true,
                 ]
             ],
            'fky_event_uid' => [
-                'label' => 'fky_event_uid',
+                'label' => $labels['fky_event_uid'] ?? 'fky_event_uid',
                 'acf' => [
                     'type' => 'text',
                     'readonly' => true,
@@ -186,14 +181,14 @@
                 ],
             ],
            'dtm_date_created' => [
-                'label' => 'dtm_date_created',
+                'label' => $labels['dtm_date_created'] ?? 'dtm_date_created',
                 'acf' => [
                     'type' => 'date_time_picker',
                     'readonly' => true,
                 ]
             ],
            'dtm_date_updated' => [
-                'label' => 'dtm_date_updated',
+                'label' => $labels['dtm_date_updated'] ?? 'dtm_date_updated',
                 'acf' => [
                     'type' => 'date_time_picker',
                     'readonly' => true,

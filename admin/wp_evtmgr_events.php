@@ -4,6 +4,7 @@
     }
 
     require_once get_stylesheet_directory() . '/db-custom/event-registration/classes/class-evtmgr-events.php';
+    require_once get_stylesheet_directory() . '/db-custom/event-registration/classes/class_database_fields.php';
     $event_obj = new Evtmgr_Events();
     $event_languages = $event_obj->get_current_event_languages();
     $event_uid = $event_obj->get_current_event_uid();
@@ -11,6 +12,7 @@
     ? absint(wp_unslash($_GET['record']))
     : 0;
     $qry_events_active = $event_obj->get_event_by_id($record_id, 'de');
+    $labels = (new Evtmgr_Database_Fields())->get_labels('wp_evtmgr_events');
 ?>
 
 
@@ -56,7 +58,7 @@
                 -
                 id:col-lg-1
                 event_uid:col-lg-2 col-md-2
-                
+
                 tab:Datum und Anmeldung
 				dtm_event_date:col-lg-2 col-md-3
                 dtm_registration_opened:col-lg-2 col-md-3
@@ -66,7 +68,7 @@
                 tab:E-Mail
                 str_event_email_from:col-lg-3 col-md-4
                 str_event_email_bcc:col-lg-3 col-md-4
-                
+
                 tab:Varia
                 str_event_languages:col-lg-3 col-md-4
                 str_event_color:col-lg-3 col-md-4
@@ -75,11 +77,11 @@
                 dtm_date_created:col-lg-3 col-md-4
                 dtm_date_updated:col-lg-3 col-md-4
                 '
-                
+
         ],
         'fields' => [
         'id' => [
-                'label' => 'ID',
+                'label' => $labels['id'] ?? 'ID',
                     'formatter' => [
                         'list' => 'actions'
                     ],
@@ -90,21 +92,21 @@
             ],
 
            'str_event_name_{{lang}}' => [
-                'label' => 'Name des Events',
+                'label' => $labels['str_event_name_de'] ?? 'Name des Events',
                 'searchable' => true,
                 'acf' => [
                     'type' => 'text'
                 ]
             ],
            'str_event_subtitle_{{lang}}' => [
-                'label' => 'Untertitel',
+                'label' => $labels['str_event_subtitle_de'] ?? 'Untertitel',
                 'searchable' => true,
                 'acf' => [
                     'type' => 'text'
                 ]
             ],
            'mem_event_description_{{lang}}' => [
-                'label' => 'Beschreibung',
+                'label' => $labels['mem_event_description_de'] ?? 'Beschreibung',
                 'langs' => [
                     'de' => ['label' => 'Beschreibung DE'],
                     'fr' => ['label' => 'Beschreibung FR'],
@@ -119,19 +121,19 @@
                 ]
             ],
            'str_event_email_from' => [
-                'label' => 'Absender E-Mail',
+                'label' => $labels['str_event_email_from'] ?? 'Absender E-Mail',
                 'acf' => [
                     'type' => 'text',
                 ]
             ],
            'str_event_email_bcc' => [
-                'label' => 'E-Mail BCC',
+                'label' => $labels['str_event_email_bcc'] ?? 'E-Mail BCC',
                 'acf' => [
                     'type' => 'text',
                 ]
             ],
            'str_event_languages' => [
-                'label' => 'Sprachen des Events',
+                'label' => $labels['str_event_languages'] ?? 'Sprachen des Events',
                 'acf' => [
                     'type' => "checkbox",
                     'layout' => 'horizontal',
@@ -144,31 +146,31 @@
                 ]
             ],
            'str_event_color' => [
-                'label' => 'Farbe der Fusszeile',
+                'label' => $labels['str_event_color'] ?? 'Farbe der Fusszeile',
                 'acf' => [
                     'type' => 'color_picker'
                 ]
             ],
            'dtm_event_date' => [
-                'label' => 'Tag des Events',
+                'label' => $labels['dtm_event_date'] ?? 'Tag des Events',
                 'acf' => [
                     'type' => 'date_picker'
                 ]
             ],
            'dtm_registration_opened' => [
-                'label' => 'Beginn der Anmeldung',
+                'label' => $labels['dtm_registration_opened'] ?? 'Beginn der Anmeldung',
                 'acf' => [
                     'type' => 'date_picker'
                 ]
             ],
            'dtm_registration_closed' => [
-                'label' => 'Ende der Anmeldung',
+                'label' => $labels['dtm_registration_closed'] ?? 'Ende der Anmeldung',
                 'acf' => [
                     'type' => 'date_picker'
                 ]
             ],
            'mem_text_on_closed_{{lang}}' => [
-                'label' => 'Text, wenn die Anmeldung geschlossen ist',
+                'label' => $labels['mem_text_on_closed_de'] ?? 'Text, wenn die Anmeldung geschlossen ist',
                 'langs' => [
                     'de' => ['label' => 'mem_text_on_closed (deutsch)'],
                     'fr' => ['label' => 'mem_text_on_closed (französisch)'],
@@ -180,19 +182,19 @@
                 ]
             ],
            'str_logo_text_1' => [
-                'label' => 'Logo-Text 1',
+                'label' => $labels['str_logo_text_1'] ?? 'Logo-Text 1',
                 'acf' => [
                     'type' => 'text',
                 ]
             ],
            'str_logo_text_2' => [
-                'label' => 'Logo-Text 2',
+                'label' => $labels['str_logo_text_2'] ?? 'Logo-Text 2',
                 'acf' => [
                     'type' => 'text',
                 ]
             ],
            'str_image' => [
-                'label' => 'Bild (2100×700px)',
+                'label' => $labels['str_image'] ?? 'Bild (2100×700px)',
                 'acf' => [
                     'type' => 'adot_file_selector',
                     'file_type' => 'image',
@@ -202,21 +204,21 @@
                 ],
             ],
            'event_uid' => [
-                'label' => 'UID',
+                'label' => $labels['event_uid'] ?? 'UID',
                 'acf' => [
                     'type' => 'text',
                     'default_value'=> $event_uid,
                 ],
             ],
            'dtm_date_created' => [
-                'label' => 'Erstellt am',
+                'label' => $labels['dtm_date_created'] ?? 'Erstellt am',
                 'acf' => [
                     'type' => 'date_time_picker',
                     'readonly' => true,
                 ]
             ],
            'dtm_date_updated' => [
-                'label' => 'Geändert am',
+                'label' => $labels['dtm_date_updated'] ?? 'Geändert am',
                 'acf' => [
                     'type' => 'date_time_picker',
                     'readonly' => true,

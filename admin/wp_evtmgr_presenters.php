@@ -4,11 +4,13 @@
     }
 
     require_once get_stylesheet_directory() . '/db-custom/event-registration/classes/class-evtmgr-events.php';
+    require_once get_stylesheet_directory() . '/db-custom/event-registration/classes/class_database_fields.php';
     $event_obj = new Evtmgr_Events();
     $event_languages = $event_obj->get_current_event_languages();
     $event_uid = $event_obj->get_current_event_uid();
     $additional_sql_condition = $event_obj->get_current_event_sql_condition();
     $additional_sql_condition_for_tbx = $event_obj->get_current_event_sql_condition('record');
+    $labels = (new Evtmgr_Database_Fields())->get_labels('wp_evtmgr_presenters');
 ?>
 
 
@@ -39,7 +41,7 @@
                 'title'     => 'Datensatz bearbeiten',
                 'button_add'   => 'Neuen Datensatz hinzufügen',
             ],
-            
+
         ],
         'langs' => function($table_config) use ($event_languages) {
             return $event_languages;
@@ -74,11 +76,11 @@
                 str_city:col-lg-2 col-md-3
                 str_country:col-lg-2 col-md-3
                 str_language:col-lg-2 col-md-3
-                
+
                 tab:Texte/Bild
                 mem_presenter_text_de{{lang}}:col-md-{{lang_col_count}}
                 str_person_image:col-lg-6 col-md-6
-                
+
                 tab:Varia
                 ysn_print:col-lg-3 col-md-4
                 ysn_website:col-lg-3 col-md-4
@@ -93,7 +95,7 @@
         ],
         'fields' => [
             'id' => [
-                'label' => 'ID',
+                'label' => $labels['id'] ?? 'ID',
                 'searchable' => true,
                 'acf' => [
                     'type' => 'text',
@@ -108,7 +110,7 @@
                 'is_form_hidden' => true
             ],
            'int_type_of_address' => [
-                'label' => 'Art der Adresse',
+                'label' => $labels['int_type_of_address'] ?? 'Art der Adresse',
                 'langs' => [
                     'de' => ['label' => 'Art der Adresse (deutsch)'],
                     'fr' => ['label' => 'Art der Adresse (französisch)'],
@@ -120,20 +122,20 @@
                 ]
             ],
            'str_employer' => [
-                'label' => 'xxx-undefiniert',
+                'label' => $labels['str_employer'] ?? 'xxx-undefiniert',
                 'acf' => [
                     'type' => 'text',
                 ]
             ],
            'str_first_name' => [
-                'label' => 'Vorname',
+                'label' => $labels['str_first_name'] ?? 'Vorname',
                 'searchable' => true,
                 'acf' => [
                     'type' => 'text',
                 ]
             ],
            'str_last_name' => [
-                'label' => 'Nachname',
+                'label' => $labels['str_last_name'] ?? 'Nachname',
                 'searchable' => true,
                     'formatter' => [
                         'list' => 'actions'
@@ -143,71 +145,71 @@
                 ]
             ],
            'str_salutation' => [
-                'label' => 'Anrede',
+                'label' => $labels['str_salutation'] ?? 'Anrede',
                 'acf' => [
                     'type' => 'text',
                 ]
             ],
            'str_academic_title' => [
-                'label' => 'Akad. Titel',
+                'label' => $labels['str_academic_title'] ?? 'Akad. Titel',
                 'acf' => [
                     'type' => 'text',
                 ]
             ],
            'str_job_title_{{lang}}' => [
-                'label' => 'Funktion',
+                'label' => $labels['str_job_title_de'] ?? 'Funktion',
                 'searchable' => true,
                 'acf' => [
                     'type' => 'text'
                 ]
             ],
            'str_email' => [
-                'label' => 'E-Mail',
+                'label' => $labels['str_email'] ?? 'E-Mail',
                 'acf' => [
                     'type' => 'text',
                 ]
             ],
            'str_phone' => [
-                'label' => 'Telefon',
+                'label' => $labels['str_phone'] ?? 'Telefon',
                 'acf' => [
                     'type' => 'text',
                 ]
             ],
            'str_address' => [
-                'label' => 'Adresse',
+                'label' => $labels['str_address'] ?? 'Adresse',
                 'acf' => [
                     'type' => 'text',
                 ]
             ],
            'str_zip' => [
-                'label' => 'PLZ',
+                'label' => $labels['str_zip'] ?? 'PLZ',
                 'acf' => [
                     'type' => 'text',
                 ]
             ],
            'str_city' => [
-                'label' => 'Ort',
+                'label' => $labels['str_city'] ?? 'Ort',
                 'acf' => [
                     'type' => 'text',
                 ]
             ],
            'str_country' => [
-                'label' => 'Land',
+                'label' => $labels['str_country'] ?? 'Land',
                 'acf' => [
                     'type' => 'text',
                 ]
             ],
            'str_institution_{{lang}}' => [
-                'label' => 'Institution',
+                'label' => $labels['str_institution_de'] ?? 'Institution',
                 'searchable' => true,
                 'acf' => [
                     'type' => 'text'
                 ]
             ],
            'str_person_image' => [
-                'label' => 'Bild der Person',
+                'label' => $labels['str_person_image'] ?? 'Bild der Person',
                 'acf' => [
-                    'type' => 'adot_file_selector',    
+                    'type' => 'adot_file_selector',
                     'file_type' => 'image',
                     'subfolder' => '/',
                     'image_width' => 300,
@@ -215,7 +217,7 @@
                 ],
             ],
            'str_language' => [
-                'label' => 'Sprache',
+                'label' => $labels['str_language'] ?? 'Sprache',
                 'acf' => [
                     'type' => "checkbox",
                     'layout' => 'horizontal',
@@ -228,7 +230,7 @@
                 ]
             ],
            'mem_presenter_text_{{lang}}' => [
-                'label' => 'Text zur Person',
+                'label' => $labels['mem_presenter_text_de'] ?? 'Text zur Person',
                 'langs' => [
                     'de' => ['label' => 'Text zur Person (deutsch)'],
                     'fr' => ['label' => 'Text zur Person (französisch)'],
@@ -239,23 +241,23 @@
                     'type' => 'adot_ckeditor',
                 ],
                 'ckeditor' => [
-                    'mode' => 'standalone',    
+                    'mode' => 'standalone',
                 ]
             ],
            'ysn_print' => [
-                'label' => 'Erscheint in Broschüre',
+                'label' => $labels['ysn_print'] ?? 'Erscheint in Broschüre',
                 'acf' => [
                     'type' => 'true_false',
                 ]
             ],
            'ysn_website' => [
-                'label' => 'Erscheint in Website',
+                'label' => $labels['ysn_website'] ?? 'Erscheint in Website',
                 'acf' => [
                     'type' => 'true_false',
                 ]
             ],
            'fky_event_uid' => [
-                'label' => 'Beziehung',
+                'label' => $labels['fky_event_uid'] ?? 'Beziehung',
                 'acf' => [
                     'type' => 'text',
                     'readonly'=> true,
@@ -263,14 +265,14 @@
                 ],
             ],
            'dtm_date_created' => [
-                'label' => 'Erstellt am',
+                'label' => $labels['dtm_date_created'] ?? 'Erstellt am',
                 'acf' => [
                     'type' => 'date_time_picker',
                     'readonly'=> true,
                 ]
             ],
            'dtm_date_updated' => [
-                'label' => 'Geändert am',
+                'label' => $labels['dtm_date_updated'] ?? 'Geändert am',
                 'acf' => [
                     'type' => 'date_time_picker',
                     'readonly'=> true,

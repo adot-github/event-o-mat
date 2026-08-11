@@ -4,11 +4,13 @@
     }
 
     require_once get_stylesheet_directory() . '/db-custom/event-registration/classes/class-evtmgr-events.php';
+    require_once get_stylesheet_directory() . '/db-custom/event-registration/classes/class_database_fields.php';
     $event_obj = new Evtmgr_Events();
     $event_uid = $event_obj->get_current_event_uid();
     $event_languages = $event_obj->get_current_event_languages();
     $additional_sql_condition = $event_obj->get_current_event_sql_condition();
     $additional_sql_condition_for_tbx = $event_obj->get_current_event_sql_condition('record');
+    $labels = (new Evtmgr_Database_Fields())->get_labels('wp_evtmgr_persons');
 
     // Refresh num_invoice_total for this one person whenever their edit form is opened.
     $evtmgr_persons_edit_record_id = absint($_GET['record'] ?? 0);
@@ -117,7 +119,7 @@
         ],
         'fields' => [
             'id' => [
-                'label' => 'ID',
+                'label' => $labels['id'] ?? 'ID',
                 'langs' => [
                     'de' => ['label' => 'id (deutsch)'],
                     'fr' => ['label' => 'id (französisch)'],
@@ -137,7 +139,7 @@
                 'is_form_hidden' => true
             ],
             'int_type_of_address' => [
-                'label' => 'Art der Adresse',
+                'label' => $labels['int_type_of_address'] ?? 'Art der Adresse',
                 'langs' => [
                     'de' => ['label' => 'int_type_of_address (deutsch)'],
                     'fr' => ['label' => 'int_type_of_address (französisch)'],
@@ -155,14 +157,14 @@
                 ]
             ],
            'str_first_name' => [
-                'label' => 'Vorname',
+                'label' => $labels['str_first_name'] ?? 'Vorname',
                 'searchable' => true,
                 'acf' => [
                     'type' => 'text',
                 ]
             ],
            'str_last_name' => [
-                'label' => 'Nachname',
+                'label' => $labels['str_last_name'] ?? 'Nachname',
                 'searchable' => true,
                     'formatter' => [
                         'list' => 'actions'
@@ -172,102 +174,97 @@
                 ]
             ],
            'str_salutation' => [
-                'label' => 'Anrede',
+                'label' => $labels['str_salutation'] ?? 'Anrede',
                 'acf' => [
                     'type' => 'text',
                 ]
             ],
            'str_academic_title' => [
-                'label' => 'Akad. Titel',
+                'label' => $labels['str_academic_title'] ?? 'Akad. Titel',
                 'acf' => [
                     'type' => 'text',
                 ]
             ],
            'str_job_title' => [
-                'label' => 'Funktion',
+                'label' => $labels['str_job_title'] ?? 'Funktion',
                 'acf' => [
                     'type' => 'text',
                 ]
             ],
            'str_email' => [
-                'label' => 'E-Mail',
+                'label' => $labels['str_email'] ?? 'E-Mail',
                 'acf' => [
                     'type' => 'text',
                 ]
             ],
            'str_phone' => [
-                'label' => 'Telefon',
+                'label' => $labels['str_phone'] ?? 'Telefon',
                 'acf' => [
                     'type' => 'text',
                 ]
             ],
            'str_address' => [
-                'label' => 'Adresse',
+                'label' => $labels['str_address'] ?? 'Adresse',
                 'acf' => [
                     'type' => 'text',
                 ]
             ],
            'str_zip' => [
-                'label' => 'PLZ',
+                'label' => $labels['str_zip'] ?? 'PLZ',
                 'acf' => [
                     'type' => 'text',
                 ]
             ],
            'str_city' => [
-                'label' => 'Ort',
+                'label' => $labels['str_city'] ?? 'Ort',
                 'acf' => [
                     'type' => 'text',
                 ]
             ],
            'str_country' => [
-                'label' => 'Land',
+                'label' => $labels['str_country'] ?? 'Land',
                 'acf' => [
                     'type' => 'text',
                 ]
-            ],[
-                'label'    => __('Anbieter', 'lernorte'),
-                'acf' => [
-                    'type' => 'tab',
-                ],
             ],
            'str_institution' => [
-                'label' => 'Institution',
+                'label' => $labels['str_institution'] ?? 'Institution',
                 'acf' => [
                     'type' => 'text',
                 ]
             ],
            'str_institution_division' => [
-                'label' => 'Institution Abteilung',
+                'label' => $labels['str_institution_division'] ?? 'Institution Abteilung',
                 'acf' => [
                     'type' => 'text',
                 ]
             ],
            'str_institution_name_shield' => [
-                'label' => 'xxx-undefiniert',
+                'label' => $labels['str_institution_name_shield'] ?? 'xxx-undefiniert',
                 'acf' => [
                     'type' => 'text',
                 ]
             ],
            'str_institution_zip' => [
-                'label' => 'Institution PLZ',
+                'label' => $labels['str_institution_zip'] ?? 'Institution PLZ',
                 'acf' => [
                     'type' => 'text',
                 ]
             ],
            'str_institution_address' => [
-                'label' => 'Institution Adresse',
+                'label' => $labels['str_institution_address'] ?? 'Institution Adresse',
                 'acf' => [
                     'type' => 'text',
                 ]
             ],
            'str_institution_city' => [
-                'label' => 'Institution Ort',
+                'label' => $labels['str_institution_city'] ?? 'Institution Ort',
                 'acf' => [
                     'type' => 'text',
                 ]
             ],
            'str_language' => [
-                'label' => 'Sprache',
+                'label' => $labels['str_language'] ?? 'Sprache',
                 'acf' => [
                     'type' => "radio",
                     'layout' => 'horizontal',
@@ -279,9 +276,9 @@
                     ]
                 ]
             ],
-           
+
            'fky_event_uid' => [
-                'label' => 'UID',
+                'label' => $labels['fky_event_uid'] ?? 'UID',
                 'acf' => [
                     'type' => 'text',
                     'readonly'=> true,
@@ -290,14 +287,14 @@
 
             ],
            'dtm_date_created' => [
-                'label' => 'Erstellt am',
+                'label' => $labels['dtm_date_created'] ?? 'Erstellt am',
                 'acf' => [
                     'type' => 'date_time_picker',
                     'readonly'=> true,
                 ]
             ],
            'dtm_date_updated' => [
-                'label' => 'Geändert am',
+                'label' => $labels['dtm_date_updated'] ?? 'Geändert am',
                 'acf' => [
                     'type' => 'date_time_picker',
                     'readonly'=> true,
@@ -305,91 +302,82 @@
                 'value_force' => 'now()'
             ],
            'str_registration_cookie' => [
-                'label' => 'Cookie',
+                'label' => $labels['str_registration_cookie'] ?? 'Cookie',
                 'acf' => [
                     'type' => 'text',
                     'readonly' => true,
                 ]
             ],
            'str_diploma_pdf' => [
-                'label' => 'TN-Bestätigung PDF',
+                'label' => $labels['str_diploma_pdf'] ?? 'TN-Bestätigung PDF',
                 'acf' => [
                     'type' => 'text',
                     'readonly' => true,
                 ]
             ],
            'str_invoice_pdf' => [
-                'label' => 'Rechnung PDF',
+                'label' => $labels['str_invoice_pdf'] ?? 'Rechnung PDF',
                 'acf' => [
                     'type' => 'text',
                     'readonly' => true,
                 ]
             ],
            'str_program_pdf' => [
-                'label' => 'Programm PDF',
+                'label' => $labels['str_program_pdf'] ?? 'Programm PDF',
                 'acf' => [
                     'type' => 'text',
                     'readonly' => true,
                 ]
             ],
             'mem_email_sent' => [
-                'label' => 'mem_email_sent',
+                'label' => $labels['mem_email_sent'] ?? 'mem_email_sent',
                 'searchable' => true,
                 'acf' => [
                     'type' => 'adot_ckeditor',
                 ],
                 'ckeditor' => [
-                    'mode' => 'standalone',    
+                    'mode' => 'standalone',
                 ]
             ],
            'mem_cgi_variables' => [
-                'label' => 'mem_cgi_variables',
+                'label' => $labels['mem_cgi_variables'] ?? 'mem_cgi_variables',
                 'searchable' => true,
                 'acf' => [
                     'type' => 'textarea',
                 ],
-                'ckeditor' => [
-                    'mode' => 'standalone',    
-                ]
             ],
            'mem_form_variables' => [
-                'label' => 'mem_form_variables',
+                'label' => $labels['mem_form_variables'] ?? 'mem_form_variables',
                 'searchable' => true,
                 'acf' => [
                     'type' => 'textarea',
                 ],
-                'ckeditor' => [
-                    'mode' => 'standalone',    
-                ]
             ],
            'mem_person_data' => [
-                'label' => 'mem_person_data',
+                'label' => $labels['mem_person_data'] ?? 'mem_person_data',
                 'searchable' => true,
                 'acf' => [
                     'type' => 'textarea',
                 ],
-                'ckeditor' => [
-                    'mode' => 'standalone',    
-                ]
             ],
            'mem_program_data' => [
-                'label' => 'mem_program_data',
+                'label' => $labels['mem_program_data'] ?? 'mem_program_data',
                 'searchable' => true,
                 'acf' => [
                     'type' => 'adot_ckeditor',
                 ],
                 'ckeditor' => [
-                    'mode' => 'standalone',    
+                    'mode' => 'standalone',
                 ]
             ],
            'mem_price_data' => [
-                'label' => 'mem_price_data',
+                'label' => $labels['mem_price_data'] ?? 'mem_price_data',
                 'searchable' => true,
                 'acf' => [
                     'type' => 'adot_ckeditor',
                 ],
                 'ckeditor' => [
-                    'mode' => 'standalone',    
+                    'mode' => 'standalone',
                 ]
             ],
            'int_billing_status' => [
@@ -407,13 +395,13 @@
                 ]
             ],
            'int_diploma_sent' => [
-                'label' => 'int_diploma_sent',
+                'label' => $labels['int_diploma_sent'] ?? 'int_diploma_sent',
                 'acf' => [
                     'type' => 'text',
                 ]
             ],
            'num_invoice_total' => [
-                'label' => 'num_invoice_total',
+                'label' => $labels['num_invoice_total'] ?? 'num_invoice_total',
                 'acf' => [
                     'type' => 'text',
                 ]

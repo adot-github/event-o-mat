@@ -153,6 +153,33 @@ class Evtmgr_Database_Fields {
         return $labels;
     }
 
+    /**
+     * Copies str_field_label_de from wp_evtmgr_database_fields_labels into
+     * wp_evtmgr_database_fields for every row whose label is still empty.
+     * Matching key: str_frm_field_name.
+     *
+     * @return array{updated:int, skipped:int}
+     */
+    public function sync_labels_from_reference(): array {
+        $ref_table = 'wp_evtmgr_database_fields_labels';
+
+        $updated = $this->wpdb->query("
+            UPDATE {$this->table} df
+            INNER JOIN {$ref_table} lbl ON lbl.str_frm_field_name = df.str_frm_field_name
+            SET df.str_field_label_de = lbl.str_field_label_de
+            WHERE (df.str_field_label_de IS NULL OR df.str_field_label_de = '')
+              AND lbl.str_field_label_de IS NOT NULL
+              AND lbl.str_field_label_de != ''
+        ");
+
+        $total = (int) $this->wpdb->get_var("SELECT COUNT(*) FROM {$this->table}");
+
+        return [
+            'updated' => $updated === false ? 0 : (int) $updated,
+            'skipped' => $total - ($updated === false ? 0 : (int) $updated),
+        ];
+    }
+
     public function get_all(): array {
         $rows = $this->wpdb->get_results(
             "SELECT * FROM {$this->table} ORDER BY str_table_name, str_frm_field_name",

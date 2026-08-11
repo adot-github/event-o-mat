@@ -4,6 +4,7 @@
     }
 
     require_once get_stylesheet_directory() . '/db-custom/event-registration/classes/class-evtmgr-events.php';
+    require_once get_stylesheet_directory() . '/db-custom/event-registration/classes/class_database_fields.php';
     $event_obj = new Evtmgr_Events();
     $event_languages = $event_obj->get_current_event_languages();
     $event_uid = $event_obj->get_current_event_uid();
@@ -11,6 +12,7 @@
     $additional_sql_condition_for_tbx = $event_obj->get_current_event_sql_condition('record');
     $additional_sql_condition_for_tbx_timezone = $event_obj->get_current_event_sql_condition('wp_evtmgr_timezones');
     $additional_sql_condition_for_tbx_timezone = $additional_sql_condition_for_tbx_timezone.' AND fky_parent_timezone_id = 0';
+    $labels = (new Evtmgr_Database_Fields())->get_labels('wp_evtmgr_timezones');
 ?>
 
 <?php
@@ -90,14 +92,14 @@
         ],
         'fields' => [
         'id' => [
-                'label' => 'id',
+                'label' => $labels['id'] ?? 'id',
                 'acf' => [
                     'type' => 'text',
                     'readonly'=> true
                 ]
             ],
            'fky_parent_timezone_id' => [
-                'label' => 'Übergeordnete Zeitzone',
+                'label' => $labels['fky_parent_timezone_id'] ?? 'Übergeordnete Zeitzone',
                 'acf' => [
                     'type' => 'adot_relationship',    
                 ],
@@ -111,72 +113,67 @@
                 ],
             ],
            'int_sort_order' => [
-                'label' => 'int_sort_order',
+                'label' => $labels['int_sort_order'] ?? 'int_sort_order',
                 'acf' => [
                     'type' => 'text',
                 ]
             ],
            'str_dec_class' => [
-                'label' => 'str_dec_class',
+                'label' => $labels['str_dec_class'] ?? 'str_dec_class',
                 'acf' => [
                     'type' => 'text',
                 ]
             ],
            'int_level' => [
-                'label' => 'int_level',
+                'label' => $labels['int_level'] ?? 'int_level',
                 'acf' => [
                     'type' => 'text',
                 ]
             ],
            'str_slots' => [
-                'label' => 'str_slots',
+                'label' => $labels['str_slots'] ?? 'str_slots',
                 'acf' => [
                     'type' => 'text',
                 ]
             ],
            'dtm_day' => [
-                'label' => 'dtm_day',
+                'label' => $labels['dtm_day'] ?? 'dtm_day',
                 'acf' => [
                     'type' => 'date_picker'
                 ]
             ],
            'dtm_time_from' => [
-                'label' => 'dtm_time_from',
+                'label' => $labels['dtm_time_from'] ?? 'dtm_time_from',
                 'acf' => [
                     'type' => 'time_picker',
                     'required'=> true
                 ]
             ],
            'dtm_time_to' => [
-                'label' => 'dtm_time_to',
+                'label' => $labels['dtm_time_to'] ?? 'dtm_time_to',
                 'acf' => [
                     'type' => 'time_picker',
                     'required'=> true
                 ]
             ],
            'int_time_from_diff_in_minutes' => [
-                'label' => 'Zeit-Korr. in Min.',
+                'label' => $labels['int_time_from_diff_in_minutes'] ?? 'Zeit-Korr. in Min.',
                 'acf' => [
                     'type' => 'text',
                     'required'=> true
                 ]
             ],
            'str_timezone_code' => [
-                'label' => 'str_timezone_code',
+                'label' => $labels['str_timezone_code'] ?? 'str_timezone_code',
                 'acf' => [
                     'type' => 'text',
                 ]
             ],
            'str_timezone_name_{{lang}}' => [
-                'label' => 'str_timezone_name',
+                'label' => $labels['str_timezone_name_de'] ?? 'str_timezone_name',
                     'formatter' => [
                         'list' => 'actions'
                     ],
-                'langs' => [
-                    'de' => ['label' => 'str_timezone_name (deutsch)'],
-                    'fr' => ['label' => 'str_timezone_name (französisch)'],
-                    'it' => ['label' => 'str_timezone_name (italienisch)'],
-                ],
                 'searchable' => true,
                 'acf' => [
                     'type' => 'text',
@@ -184,12 +181,7 @@
                 ]
             ],
            'mem_timezone_text_{{lang}}' => [
-                'label' => 'mem_timezone_text',
-                'langs' => [
-                    'de' => ['label' => 'mem_timezone_text (deutsch)'],
-                    'fr' => ['label' => 'mem_timezone_text (französisch)'],
-                    'it' => ['label' => 'mem_timezone_text (italienisch)'],
-                ],
+                'label' => $labels['mem_timezone_text_de'] ?? 'mem_timezone_text',
                 'searchable' => true,
                 'acf' => [
                     'type' => 'adot_ckeditor',
@@ -199,13 +191,13 @@
                 ]
             ],
            'str_color' => [
-                'label' => 'str_color',
+                'label' => $labels['str_color'] ?? 'str_color',
                 'acf' => [
                     'type' => 'color_picker'
                 ]
             ],
             'str_css_class' => [
-                'label'  => 'Anzeige',
+                'label'  => $labels['str_css_class'] ?? 'Anzeige',
                 'acf' => [
                     'type' => 'select',
                     'choices' => [
@@ -217,14 +209,14 @@
                 ]
             ],
            'int_price' => [
-                'label' => 'int_price',
+                'label' => $labels['int_price'] ?? 'int_price',
                 'acf' => [
                     'type' => 'text',
                 ]
             ],
            
            'ysn_show_timezone_in_output' => [
-                'label' => 'ysn_show_timezone_in_output',
+                'label' => $labels['ysn_show_timezone_in_output'] ?? 'ysn_show_timezone_in_output',
                 'acf' => [
                     'type' => 'true_false',
                     'ui'            => 1,
@@ -232,14 +224,14 @@
             ],
            
            'ysn_show_time_in_output' => [
-                'label' => 'ysn_show_time_in_output',
+                'label' => $labels['ysn_show_time_in_output'] ?? 'ysn_show_time_in_output',
                 'acf' => [
                     'type' => 'true_false',
                     'ui'            => 1,
                 ]
             ],
            'ysn_show_text_in_output' => [
-                'label' => 'ysn_show_text_in_output',
+                'label' => $labels['ysn_show_text_in_output'] ?? 'ysn_show_text_in_output',
                 'acf' => [
                     'type' => 'true_false',
                     'ui'            => 1,
@@ -247,26 +239,21 @@
             ]
             ,
            'ysn_selection_required' => [
-                'label' => 'ysn_selection_required',
+                'label' => $labels['ysn_selection_required'] ?? 'ysn_selection_required',
                 'acf' => [
                     'type' => 'true_false',
                     'ui'            => 1,
                 ]
             ],
            'ysn_print_on_label' => [
-                'label' => 'ysn_print_on_label',
+                'label' => $labels['ysn_print_on_label'] ?? 'ysn_print_on_label',
                 'acf' => [
                     'type' => 'true_false',
                     'ui'            => 1,
                 ]
             ],
            'mem_remark_on_no_selection_{{lang}}' => [
-                'label' => 'mem_remark_on_no_selection',
-                'langs' => [
-                    'de' => ['label' => 'mem_remark_on_no_selection (deutsch)'],
-                    'fr' => ['label' => 'mem_remark_on_no_selection (französisch)'],
-                    'it' => ['label' => 'mem_remark_on_no_selection (italienisch)'],
-                ],
+                'label' => $labels['mem_remark_on_no_selection_de'] ?? 'mem_remark_on_no_selection',
                 'searchable' => true,
                 'acf' => [
                     'type' => 'adot_ckeditor',
@@ -276,7 +263,7 @@
                 ]
             ],
            'fky_event_uid' => [
-                'label' => 'fky_event_uid',
+                'label' => $labels['fky_event_uid'] ?? 'fky_event_uid',
                 'acf' => [
                     'type' => 'text',
                     'readonly'=> true,
@@ -284,14 +271,14 @@
                 ],
             ],
            'dtm_date_created' => [
-                'label' => 'dtm_date_created',
+                'label' => $labels['dtm_date_created'] ?? 'dtm_date_created',
                 'acf' => [
                     'type' => 'date_time_picker',
                     'readonly'=> true
                 ]
             ],
            'dtm_date_updated' => [
-                'label' => 'dtm_date_updated',
+                'label' => $labels['dtm_date_updated'] ?? 'dtm_date_updated',
                 'acf' => [
                     'type' => 'date_time_picker',
                     'readonly'=> true

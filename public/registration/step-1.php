@@ -58,34 +58,39 @@
         $selected_workshop_ids = array_values(array_filter(array_map('absint', explode(',', $selected_workshops_value))));
     }
 
-    function event_registration_format_time_number($time_value) {
-        if (empty($time_value)) {
-            return '';
+    if (!function_exists('event_registration_format_time_number')) {
+        function event_registration_format_time_number($time_value) {
+            if (empty($time_value)) {
+                return '';
+            }
+
+            $timestamp = strtotime($time_value);
+
+            if (!$timestamp) {
+                return '';
+            }
+
+            return date('Hi', $timestamp);
         }
-
-        $timestamp = strtotime($time_value);
-
-        if (!$timestamp) {
-            return '';
-        }
-
-        return date('Hi', $timestamp);
     }
 
-    function event_registration_format_time_label($time_value) {
-        if (empty($time_value)) {
-            return '';
+    if (!function_exists('event_registration_format_time_label')) {
+        function event_registration_format_time_label($time_value) {
+            if (empty($time_value)) {
+                return '';
+            }
+
+            $timestamp = strtotime($time_value);
+
+            if (!$timestamp) {
+                return '';
+            }
+
+            return date('G.i', $timestamp);
         }
-
-        $timestamp = strtotime($time_value);
-
-        if (!$timestamp) {
-            return '';
-        }
-
-        return date('G.i', $timestamp);
     }
 
+    if (!function_exists('event_registration_step1_time_number_to_minutes')) {
     function event_registration_step1_time_number_to_minutes($time_number) {
         $time_number = preg_replace('/[^0-9]/', '', (string) $time_number);
 
@@ -103,7 +108,9 @@
 
         return ($hours * 60) + $minutes;
     }
+    }
 
+    if (!function_exists('event_registration_step1_build_timetable_hours')) {
     function event_registration_step1_build_timetable_hours(array $sessions) {
         $min_minutes = null;
         $max_minutes = null;
@@ -151,22 +158,25 @@
             'hours'      => $hours,
         );
     }
+    }
 
 ?>
 
 <?php
 
-    function event_registration_step1_sanitize_css_classes($class_value) {
-        $class_value = trim((string) $class_value);
+    if (!function_exists('event_registration_step1_sanitize_css_classes')) {
+        function event_registration_step1_sanitize_css_classes($class_value) {
+            $class_value = trim((string) $class_value);
 
-        if ($class_value === '') {
-            return '';
+            if ($class_value === '') {
+                return '';
+            }
+
+            $classes = preg_split('/\s+/', $class_value);
+            $classes = array_filter(array_map('sanitize_html_class', $classes));
+
+            return implode(' ', array_unique($classes));
         }
-
-        $classes = preg_split('/\s+/', $class_value);
-        $classes = array_filter(array_map('sanitize_html_class', $classes));
-
-        return implode(' ', array_unique($classes));
     }
 
     if (!function_exists('event_registration_step1_get_first_slot_id_from_timezone')) {

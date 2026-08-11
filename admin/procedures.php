@@ -243,6 +243,14 @@ $adot_evtmgr_hidden_pages = array(
         'active_submenu'    => 'dashboard-tools',
     ),
     array(
+        'page_title'        => '> database fields fill',
+        'menu_title'        => '> database fields fill',
+        'capability'        => 'edit_posts',
+        'menu_slug'         => 'database-fields-fill',
+        'file'              => '/db-custom/event-registration/admin/pages/database-fields-fill.php',
+        'active_submenu'    => 'dashboard-tools',
+    ),
+    array(
         'page_title'        => '> filestorage clean',
         'menu_title'        => '> filestorage clean',
         'capability'        => 'edit_posts',

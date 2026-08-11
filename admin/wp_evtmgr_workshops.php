@@ -4,12 +4,14 @@
     }
 
     require_once get_stylesheet_directory() . '/db-custom/event-registration/classes/class-evtmgr-events.php';
+    require_once get_stylesheet_directory() . '/db-custom/event-registration/classes/class_database_fields.php';
     $event_obj = new Evtmgr_Events();
     $event_languages = $event_obj->get_current_event_languages();
     $event_uid = $event_obj->get_current_event_uid();
     $additional_sql_condition = $event_obj->get_current_event_sql_condition();
     $additional_sql_condition_for_tbx = $event_obj->get_current_event_sql_condition('record');
     $event_uid = $event_obj->get_current_event_uid(true);
+    $labels = (new Evtmgr_Database_Fields())->get_labels('wp_evtmgr_workshops');
 ?>
 
 <?php
@@ -116,7 +118,7 @@
         ],
         'fields' => [
             'id' => [
-                'label' => 'ID',
+                'label' => $labels['id'] ?? 'ID',
                 'langs' => [
                     'de' => ['label' => 'id (deutsch)'],
                     'fr' => ['label' => 'id (französisch)'],
@@ -128,20 +130,20 @@
                 ]
             ],
            'str_workshop_number' => [
-                'label' => 'Workshop-Nummer',
+                'label' => $labels['str_workshop_number'] ?? 'Workshop-Nummer',
                 'acf' => [
                     'type' => 'text',
                 ]
             ],
            'int_sort_print' => [
-                'label' => 'Sortierung',
+                'label' => $labels['int_sort_print'] ?? 'Sortierung',
                 'searchable' => true,
                 'acf' => [
                     'type' => 'text'
                 ]
             ],
            'str_workshop_title_{{lang}}' => [
-                'label' => 'Titel des Workshops',
+                'label' => $labels['str_workshop_title_de'] ?? 'Titel des Workshops',
                     'formatter' => [
                         'list' => 'actions'
                     ],
@@ -151,20 +153,20 @@
                 ]
             ],
            'str_workshop_subtitle_{{lang}}' => [
-                'label' => 'Untertitel des Workshops',
+                'label' => $labels['str_workshop_subtitle_de'] ?? 'Untertitel des Workshops',
                 'searchable' => true,
                 'acf' => [
                     'type' => 'text'
                 ]
             ],
            'str_workshop_type' => [
-                'label' => 'Workshop-Typ',
+                'label' => $labels['str_workshop_type'] ?? 'Workshop-Typ',
                 'acf' => [
                     'type' => 'text',
                 ]
             ],
            'mem_workshop_description_{{lang}}' => [
-                'label' => 'Beschreibung',
+                'label' => $labels['mem_workshop_description_de'] ?? 'Beschreibung',
                 'searchable' => true,
                 'acf' => [
                     'type' => 'adot_ckeditor',
@@ -174,7 +176,7 @@
                 ]
             ],
            'mem_workshop_description_long_{{lang}}' => [
-                'label' => 'Beschreibung detailliert',
+                'label' => $labels['mem_workshop_description_long_de'] ?? 'Beschreibung detailliert',
                 'langs' => [
                     'de' => ['label' => 'mem_workshop_description_long (deutsch)'],
                     'fr' => ['label' => 'mem_workshop_description_long (französisch)'],
@@ -189,7 +191,7 @@
                 ]
             ],
            'mem_comments' => [
-                'label' => 'Interne Bemerkungen',
+                'label' => $labels['mem_comments'] ?? 'Interne Bemerkungen',
                 'langs' => [
                     'de' => ['label' => 'mem_comments (deutsch)'],
                     'fr' => ['label' => 'mem_comments (französisch)'],
@@ -201,41 +203,41 @@
                 ]
             ],
            'ysn_booked_out' => [
-                'label' => 'Ausgebucht',
+                'label' => $labels['ysn_booked_out'] ?? 'Ausgebucht',
                 'acf' => [
                     'type' => 'true_false',
                 ]
             ],
            'ysn_print' => [
-                'label' => 'Erscheint in Broschüre',
+                'label' => $labels['ysn_print'] ?? 'Erscheint in Broschüre',
                 'acf' => [
                     'type' => 'true_false',
                     'ui'            => 1,
                 ]
             ],
            'ysn_online' => [
-                'label' => 'Erscheint Online',
+                'label' => $labels['ysn_online'] ?? 'Erscheint Online',
                 'acf' => [
                     'type' => 'true_false',
                     'ui'            => 1,
                 ]
             ],
            'ysn_auto_register' => [
-                'label' => 'Obligatorische&nbsp;Anmeldung',
+                'label' => $labels['ysn_auto_register'] ?? 'Obligatorische&nbsp;Anmeldung',
                 'acf' => [
                     'type' => 'true_false',
                     'ui'            => 1,
                 ]
             ],
            'ysn_no_registration_possible' => [
-                'label' => 'Keine Anmeldung',
+                'label' => $labels['ysn_no_registration_possible'] ?? 'Keine Anmeldung',
                 'acf' => [
                     'type' => 'true_false',
                     'ui'            => 1,
                 ]
             ],
            'int_number_of_registrations' => [
-                'label' => 'Anzahl Anmeldungen',
+                'label' => $labels['int_number_of_registrations'] ?? 'Anzahl Anmeldungen',
                 'langs' => [
                     'de' => ['label' => 'int_number_of_registrations (deutsch)'],
                     'fr' => ['label' => 'int_number_of_registrations (französisch)'],
@@ -248,7 +250,7 @@
                 ]
             ],
            'int_max_number_of_registrations' => [
-                'label' => 'Max. Anzahl Teilnehmende',
+                'label' => $labels['int_max_number_of_registrations'] ?? 'Max. Anzahl Teilnehmende',
                 'langs' => [
                     'de' => ['label' => 'int_max_number_of_registrations (deutsch)'],
                     'fr' => ['label' => 'int_max_number_of_registrations (französisch)'],
@@ -260,7 +262,7 @@
                 ]
             ],
            'num_price' => [
-                'label' => 'Preis',
+                'label' => $labels['num_price'] ?? 'Preis',
                 'langs' => [
                     'de' => ['label' => 'num_price (deutsch)'],
                     'fr' => ['label' => 'num_price (französisch)'],
@@ -272,14 +274,14 @@
                 ]
             ],
            'ysn_no_discount' => [
-                'label' => 'Nicht Rabatt-berechtigt',
+                'label' => $labels['ysn_no_discount'] ?? 'Nicht Rabatt-berechtigt',
                 'acf' => [
                     'type' => 'true_false',
                 ]
             ],
 
            'int_typo_count' => [
-                'label' => 'int_typo_count',
+                'label' => $labels['int_typo_count'] ?? 'int_typo_count',
                 'langs' => [
                     'de' => ['label' => 'int_typo_count (deutsch)'],
                     'fr' => ['label' => 'int_typo_count (französisch)'],
@@ -291,13 +293,13 @@
                 ]
             ],
            'str_typo_count' => [
-                'label' => 'str_typo_count',
+                'label' => $labels['str_typo_count'] ?? 'str_typo_count',
                 'acf' => [
                     'type' => 'text',
                 ]
             ],
            'mem_workshop_description_short_print' => [
-                'label' => 'Beschreibung lang DE',
+                'label' => $labels['mem_workshop_description_short_print'] ?? 'Beschreibung lang DE',
                 'langs' => [
                     'de' => ['label' => 'mem_workshop_description_short_print (deutsch)'],
                     'fr' => ['label' => 'mem_workshop_description_short_print (französisch)'],
@@ -309,7 +311,7 @@
                 ]
             ],
            'mem_workshop_description_print' => [
-                'label' => 'Beschreibung lang DE',
+                'label' => $labels['mem_workshop_description_print'] ?? 'Beschreibung lang DE',
                 'langs' => [
                     'de' => ['label' => 'mem_workshop_description_print (deutsch)'],
                     'fr' => ['label' => 'mem_workshop_description_print (französisch)'],
@@ -321,31 +323,31 @@
                 ]
             ],
            'str_audience_print' => [
-                'label' => 'str_audience_print',
+                'label' => $labels['str_audience_print'] ?? 'str_audience_print',
                 'acf' => [
                     'type' => 'text',
                 ]
             ],
            'str_time_print' => [
-                'label' => 'str_time_print',
+                'label' => $labels['str_time_print'] ?? 'str_time_print',
                 'acf' => [
                     'type' => 'text',
                 ]
             ],
            'str_room_print' => [
-                'label' => 'str_room_print',
+                'label' => $labels['str_room_print'] ?? 'str_room_print',
                 'acf' => [
                     'type' => 'text',
                 ]
             ],
            'str_presenters_print' => [
-                'label' => 'str_presenters_print',
+                'label' => $labels['str_presenters_print'] ?? 'str_presenters_print',
                 'acf' => [
                     'type' => 'text',
                 ]
             ],
            'dtm_date_updated' => [
-                'label' => 'Geändert am',
+                'label' => $labels['dtm_date_updated'] ?? 'Geändert am',
                 'acf' => [
                     'type' => 'date_time_picker',
                     'readonly'=> true,
@@ -353,14 +355,14 @@
                 'value_force' => 'now()'
             ],
            'dtm_date_created' => [
-                'label' => 'Erstellt am',
+                'label' => $labels['dtm_date_created'] ?? 'Erstellt am',
                 'acf' => [
                     'type' => 'date_time_picker',
                     'readonly'=> true,
                 ]
             ],
            'fky_event_uid' => [
-                'label' => 'UID',
+                'label' => $labels['fky_event_uid'] ?? 'UID',
                 'acf' => [
                     'type' => 'text',
                     'readonly' => true,
@@ -368,7 +370,7 @@
                 ],
             ],
             'fky_dozierende' => [
-                'label' => 'Dozierende',
+                'label' => $labels['fky_dozierende'] ?? 'Dozierende',
                 'acf' => [
                     'type' => 'adot_relationship'
                 ],
@@ -388,7 +390,7 @@
                 ]
             ],
             'fky_timezone_id' => [
-                'label' => 'Zeitzone',
+                'label' => $labels['fky_timezone_id'] ?? 'Zeitzone',
                 'class' => 'col-md-6',
                 'fky' => [
                     'db' => [
@@ -404,7 +406,7 @@
                 ]
             ],
             'fky_slot_id' => [
-                'label' => 'Slot',
+                'label' => $labels['fky_slot_id'] ?? 'Slot',
                 'class' => 'col-md-6',
                 'fky' => [
                     'db' => [
@@ -420,7 +422,7 @@
                 ]
             ],
             'fky_room_id' => [
-                'label' => 'Raum',
+                'label' => $labels['fky_room_id'] ?? 'Raum',
                 'class' => 'col-md-6',
                 'fky' => [
                     'db' => [
@@ -436,7 +438,7 @@
                 ]
             ],
             'fky_workshop_type' => [
-                'label' => 'Workshop-Typ',
+                'label' => $labels['fky_workshop_type'] ?? 'Workshop-Typ',
                 'class' => 'col-md-6',
                 'fky' => [
                     'db' => [
@@ -452,7 +454,7 @@
                 ]
             ],
             'fky_audience_id' => [
-            'label' => 'Zielgruppen',
+            'label' => $labels['fky_audience_id'] ?? 'Zielgruppen',
             'acf' => [
                 'type' => 'adot_relationship'
             ],
