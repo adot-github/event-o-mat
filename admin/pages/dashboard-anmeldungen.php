@@ -25,6 +25,24 @@ if ($event_uid === '' && !empty($_COOKIE['current_event_uid'])) {
     $event_uid = sanitize_text_field(wp_unslash($_COOKIE['current_event_uid']));
 }
 
+if (!empty($event_uid)) {
+    if (!class_exists('Evtmgr_Workshops')) {
+        $evtmgr_workshops_class_file = get_stylesheet_directory() . '/db-custom/event-registration/classes/class-evtmgr-workshops.php';
+
+        if (file_exists($evtmgr_workshops_class_file)) {
+            require_once $evtmgr_workshops_class_file;
+        }
+    }
+
+    if (class_exists('Evtmgr_Workshops')) {
+        $workshops_obj = new Evtmgr_Workshops();
+
+        if (method_exists($workshops_obj, 'sync_registrations')) {
+            $workshops_obj->sync_registrations($event_uid);
+        }
+    }
+}
+
 $workshop_report_rows = array();
 
 if (!empty($event_uid) && isset($wpdb)) {

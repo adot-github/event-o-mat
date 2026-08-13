@@ -14,6 +14,7 @@ if (!defined('ABSPATH')) {
 require_once dirname(__DIR__) . '/../classes/class-evtmgr-events.php';
 require_once dirname(__DIR__) . '/../classes/class-evtmgr-options.php';
 require_once dirname(__DIR__) . '/../classes/class-evtmgr-wordings.php';
+require_once dirname(__DIR__) . '/../classes/class-evtmgr-workshops.php';
 
 $cookie_event_uid       = 'current_event_uid';
 $cookie_event_languages = 'current_event_languages';
@@ -38,6 +39,16 @@ $events       = $event_obj->get_events_all('de');
 
 if (!is_array($events)) {
     $events = array();
+}
+
+$workshops_obj = new Evtmgr_Workshops();
+
+foreach ($events as $event) {
+    $sync_event_uid = isset($event['event_uid']) ? (string) $event['event_uid'] : '';
+
+    if ($sync_event_uid !== '' && method_exists($workshops_obj, 'sync_registrations')) {
+        $workshops_obj->sync_registrations($sync_event_uid);
+    }
 }
 
 ?>
