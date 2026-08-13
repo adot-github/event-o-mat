@@ -22,6 +22,8 @@ class Evtmgr_Workshops {
     protected $workshops_presenters_table;
     protected $registrations_workshops_table;
     protected $workshop_types_table;
+    protected $persons_table;
+    protected $events_table;
 
     public function __construct() {
         global $wpdb;
@@ -39,6 +41,8 @@ class Evtmgr_Workshops {
         $this->workshops_presenters_table = 'wp_evtmgr_tbx_workshops_presenters';
         $this->registrations_workshops_table = 'wp_evtmgr_registrations_workshops';
         $this->workshop_types_table       = 'wp_evtmgr_workshop_types';
+        $this->persons_table               = 'wp_evtmgr_persons';
+        $this->events_table                = $wpdb->prefix . 'evtmgr_events';
     }
 
     public function get_workshops_by_slot($slot_id, $time_slot, $event_uid, $lang = 'de') {
@@ -486,7 +490,26 @@ class Evtmgr_Workshops {
             if ($event_uid === '') {
                 return array('success' => false, 'checked' => 0, 'updated' => 0, 'errors' => array('event_uid is empty.'));
             }
-    
+
+            $orphan_delete_sql = "
+                DELETE rw FROM {$this->registrations_workshops_table} AS rw
+                LEFT JOIN {$this->persons_table} AS p ON p.id = rw.fky_person_id
+                LEFT JOIN {$this->events_table} AS e ON e.id = rw.fky_event_id
+                WHERE rw.fky_event_uid = %s
+                AND (p.id IS NULL OR e.id IS NULL)
+            ";
+
+            $orphans_deleted = $this->wpdb->query($this->wpdb->prepare($orphan_delete_sql, $event_uid));
+
+            if ($orphans_deleted === false) {
+                return array(
+                    'success' => false,
+                    'checked' => 0,
+                    'updated' => 0,
+                    'errors'  => array($this->wpdb->last_error),
+                );
+            }
+
             $sql = "
                 UPDATE {$this->table_name} AS w
                 LEFT JOIN (
@@ -511,10 +534,11 @@ class Evtmgr_Workshops {
             }
     
             return array(
-                'success' => true,
-                'checked' => (int) $updated,
-                'updated' => (int) $updated,
-                'errors'  => array(),
+                'success'         => true,
+                'checked'         => (int) $updated,
+                'updated'         => (int) $updated,
+                'orphans_deleted' => (int) $orphans_deleted,
+                'errors'          => array(),
             );
         }
     
