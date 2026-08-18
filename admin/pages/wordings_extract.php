@@ -14,7 +14,10 @@ $wex_apply = (
     && wp_verify_nonce(sanitize_text_field(wp_unslash($_POST['wex_nonce'])), 'wex_apply')
 );
 
-$wex_scan_dir = get_stylesheet_directory() . '/db-custom/event-registration/public';
+$wex_scan_dirs = [
+    get_stylesheet_directory() . '/db-custom/event-registration/public',
+    get_stylesheet_directory() . '/db-custom/event-registration/classes',
+];
 
 // ── helpers ───────────────────────────────────────────────────────────────────
 
@@ -183,14 +186,11 @@ if (!function_exists('wex_resolve_wording')) {
 
 // ── scan dir label ─────────────────────────────────────────────────────────────
 
-$wex_scan_dir_rel = ltrim(
-    str_replace(
-        rtrim(str_replace('\\', '/', ABSPATH), '/'),
-        '',
-        str_replace('\\', '/', $wex_scan_dir)
-    ),
-    '/'
-);
+$wex_wp_root_norm = rtrim(str_replace('\\', '/', ABSPATH), '/');
+$wex_scan_dir_rel = implode(', ', array_map(
+    fn($d) => ltrim(str_replace($wex_wp_root_norm, '', str_replace('\\', '/', $d)), '/'),
+    $wex_scan_dirs
+));
 
 $wex_current_url = admin_url('admin.php?page=wordings-extract');
 
@@ -241,9 +241,12 @@ $WEX_RE_BARE   = '/\$([^\$£\r\n\'\"]+)£/u';
 
 $wex_wp_root = rtrim(str_replace('\\', '/', ABSPATH), '/');
 
-$wex_iterator = new RecursiveIteratorIterator(
-    new RecursiveDirectoryIterator($wex_scan_dir, FilesystemIterator::SKIP_DOTS)
-);
+$wex_iterator = new AppendIterator();
+foreach ($wex_scan_dirs as $wex_scan_dir) {
+    $wex_iterator->append(new RecursiveIteratorIterator(
+        new RecursiveDirectoryIterator($wex_scan_dir, FilesystemIterator::SKIP_DOTS)
+    ));
+}
 
 foreach ($wex_iterator as $fileinfo) {
     if (strtolower($fileinfo->getExtension()) !== 'php') continue;

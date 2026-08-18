@@ -59,6 +59,15 @@
             return $type_compare;
         }
 
+        $number_compare = strcasecmp(
+            (string) ($a['str_workshop_number'] ?? ''),
+            (string) ($b['str_workshop_number'] ?? '')
+        );
+
+        if ($number_compare !== 0) {
+            return $number_compare;
+        }
+
         return strcasecmp(
             (string) ($a['str_workshop_title'] ?? ''),
             (string) ($b['str_workshop_title'] ?? '')

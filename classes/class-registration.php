@@ -341,7 +341,7 @@ class Event_Registration {
                 h3 {font-size:18px}
                 table {border-collapse:collapse;border:none}
                 table td {border:none;}
-                p, ul, ol, li, td {font-family:Helvetica;font-size:16px;line-height:150%;vertical-align:top;color:#000000 !important;}
+                p, ul, ol, li, td {font-family:Arial;font-size:16px;line-height:150%;vertical-align:top;color:#000000 !important;}
                 p .fhnw-footer {font-size:8pt !important}
                 #topTitle {font-size:12pt;font-weight:bold;font-family:Arial;color:#000000 !important;margin:0;padding:0}
                 #subTitle {font-size:12pt;font-weight:normal;font-family:Arial;color:#000000 !important;margin:0;padding:0}
@@ -375,16 +375,26 @@ class Event_Registration {
                 ' . $css . '
             </head>
             <body>
-                <table width="600" cellpadding="0" cellspacing="0" style="max-width:600px;width:100%">
+                <table width="100%" cellpadding="0" cellspacing="0" role="presentation">
                     <tr>
-                        <td style="padding:0 20px">
-                            <h1>' . esc_html($event_name) . '</h1>
-                            <br>
-                            ' . $show_email_text . '
-                            <br>
-                            ' . wp_kses_post($show_price_data) . '
-                            <br>
-                            ' . wp_kses_post($show_user_data) . '
+                        <td align="center">
+                            <!--[if mso]>
+                            <table width="800" cellpadding="0" cellspacing="0"><tr><td>
+                            <![endif]-->
+                            <table width="100%" cellpadding="0" cellspacing="0" style="max-width:800px;" role="presentation">
+                                <tr>
+                                    <td style="padding:0 20px">
+                                        <h1>' . esc_html($event_name) . '</h1>
+                                        <br>
+                                        ' . $show_email_text . '
+                                        <br>
+                                        ' . wp_kses_post($show_price_data) . '
+                                        <br>
+                                        ' . wp_kses_post($show_user_data) . '
+                                    </td>
+                                </tr>
+                            </table>
+                            <!--[if mso]></td></tr></table><![endif]-->
                         </td>
                     </tr>
                 </table>

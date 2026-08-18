@@ -41,7 +41,7 @@
     $has_missing_selection = !empty($missing_timezones);
 
     $pricing_obj = new Evtmgr_Pricing();
-    $qry_billings = $pricing_obj->build_registration_pricing_options($event_uid, $lang, $selected_workshop_ids);
+    $qry_billings = $pricing_obj->build_registration_pricing_options($event_uid, $lang, $selected_workshop_ids, $wordings);
     $pricing_group_saved_normalized = $pricing_obj->normalize_pricing_group($pricing_group_saved);
 
     if (!function_exists('event_registration_format_discount_date')) {

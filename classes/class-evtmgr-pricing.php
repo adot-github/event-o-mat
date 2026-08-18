@@ -161,7 +161,7 @@ class Evtmgr_Pricing {
         return is_array($rows) ? $rows : array();
     }
 
-    public function build_registration_pricing_options($event_uid, $lang, $selected_workshop_ids) {
+    public function build_registration_pricing_options($event_uid, $lang, $selected_workshop_ids, array $wordings = []) {
         $event_uid    = sanitize_text_field($event_uid);
         $lang         = $this->sanitize_language($lang);
         $workshop_ids = Event_Registration_Helpers::sanitize_ids($selected_workshop_ids);
@@ -270,7 +270,7 @@ class Evtmgr_Pricing {
                     'type'        => 'total',
                     'id'          => 0,
                     'billing_id'  => 0,
-                    'label'       => '$Kosten total£',
+                    'label'       => $wordings['kosten_total'] ?? 'kosten_total',
                     'description' => '',
                     'amount'      => $total,
                     'is_total'    => true,
