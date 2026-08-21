@@ -58,12 +58,12 @@ $editor->add_page_config([
 /** ENO */
 /**
  * Hidden admin pages that should belong to the existing parent:
- * /wp-admin/admin.php?page=adot_evtmgr_events
+ * /wp-admin/admin.php?page=acdb_evtmgr_events
  *
  * They stay registered as real submenu pages, but are hidden visually.
  * When one of them is opened, another visible submenu item can be marked active.
  */
-$adot_evtmgr_hidden_pages = array(
+$acdb_evtmgr_hidden_pages = array(
     array(
         'page_title'        => '> dashboard-event',
         'menu_title'        => '> dashboard-event',
@@ -261,50 +261,50 @@ $adot_evtmgr_hidden_pages = array(
 
 );
 
-$adot_evtmgr_hidden_sys_pages = array(
+$acdb_evtmgr_hidden_sys_pages = array(
     array(
-        'menu_slug'         => 'adot_evtmgr_workshops',
+        'menu_slug'         => 'acdb_evtmgr_workshops',
         'active_submenu'    => 'dashboard',
     ),
     array(
-        'menu_slug'         => 'adot_evtmgr_events',
+        'menu_slug'         => 'acdb_evtmgr_events',
         'active_submenu'    => 'dashboard',
     ),
     array(
-        'menu_slug'         => 'adot_evtmgr_persons',
+        'menu_slug'         => 'acdb_evtmgr_persons',
         'active_submenu'    => 'dashboard',
     ),
     array(
-        'menu_slug'         => 'adot_evtmgr_presenters',
+        'menu_slug'         => 'acdb_evtmgr_presenters',
         'active_submenu'    => 'dashboard',
     ),
     array(
-        'menu_slug'         => 'adot_evtmgr_wordings',
+        'menu_slug'         => 'acdb_evtmgr_wordings',
         'active_submenu'    => 'dashboard',
     ),
     array(
-        'menu_slug'         => 'adot_evtmgr_timezones',
+        'menu_slug'         => 'acdb_evtmgr_timezones',
         'active_submenu'    => 'dashboard',
     ),
     array(
-        'menu_slug'         => 'adot_evtmgr_slots',
+        'menu_slug'         => 'acdb_evtmgr_slots',
         'active_submenu'    => 'dashboard',
     ),
     array(
-        'menu_slug'         => 'adot_evtmgr_pricing',
+        'menu_slug'         => 'acdb_evtmgr_pricing',
         'active_submenu'    => 'dashboard',
     ),
     array(
-        'menu_slug'         => 'adot_evtmgr_options',
+        'menu_slug'         => 'acdb_evtmgr_options',
         'active_submenu'    => 'dashboard',
     )
 );
 
-add_action('admin_menu', function () use ($adot_evtmgr_hidden_pages) {
+add_action('admin_menu', function () use ($acdb_evtmgr_hidden_pages) {
 
-    foreach ($adot_evtmgr_hidden_pages as $page) {
+    foreach ($acdb_evtmgr_hidden_pages as $page) {
         add_submenu_page(
-            'adot_evtmgr_events',
+            'acdb_evtmgr_events',
             $page['page_title'],
             $page['menu_title'],
             $page['capability'],
@@ -323,12 +323,12 @@ add_action('admin_menu', function () use ($adot_evtmgr_hidden_pages) {
  * Do not use remove_submenu_page(), otherwise WordPress loses the parent relation.
  */
 
-add_action('admin_head', function () use ($adot_evtmgr_hidden_pages,$adot_evtmgr_hidden_sys_pages) {
+add_action('admin_head', function () use ($acdb_evtmgr_hidden_pages,$acdb_evtmgr_hidden_sys_pages) {
     echo '<!-- ENO--><style>';
-    foreach ($adot_evtmgr_hidden_pages as $page) {
+    foreach ($acdb_evtmgr_hidden_pages as $page) {
         echo ' #adminmenu a[href*="page=' . esc_attr($page['menu_slug']) . '"] { display: none !important; }';
     }
-    foreach ($adot_evtmgr_hidden_sys_pages as $page) {
+    foreach ($acdb_evtmgr_hidden_sys_pages as $page) {
         echo ' #adminmenu a[href*="page=' . esc_attr($page['menu_slug']) . '"] { display: none !important; }';
     }
     echo '</style>';
@@ -338,14 +338,14 @@ add_action('admin_head', function () use ($adot_evtmgr_hidden_pages,$adot_evtmgr
 /**
  * Keep parent menu open.
  */
-add_filter('parent_file', function ($parent_file) use ($adot_evtmgr_hidden_pages) {
+add_filter('parent_file', function ($parent_file) use ($acdb_evtmgr_hidden_pages) {
     $current_page = isset($_GET['page'])
         ? sanitize_key(wp_unslash($_GET['page']))
         : '';
 
-    foreach ($adot_evtmgr_hidden_pages as $page) {
+    foreach ($acdb_evtmgr_hidden_pages as $page) {
         if ($current_page === $page['menu_slug']) {
-            return 'adot_evtmgr_events';
+            return 'acdb_evtmgr_events';
         }
     }
 
@@ -356,12 +356,12 @@ add_filter('parent_file', function ($parent_file) use ($adot_evtmgr_hidden_pages
 /**
  * Mark configured visible submenu as active.
  */
-add_filter('submenu_file', function ($submenu_file) use ($adot_evtmgr_hidden_pages) {
+add_filter('submenu_file', function ($submenu_file) use ($acdb_evtmgr_hidden_pages) {
     $current_page = isset($_GET['page'])
         ? sanitize_key(wp_unslash($_GET['page']))
         : '';
 
-    foreach ($adot_evtmgr_hidden_pages as $page) {
+    foreach ($acdb_evtmgr_hidden_pages as $page) {
         if ($current_page === $page['menu_slug']) {
             return $page['active_submenu'];
         }

@@ -333,7 +333,7 @@
                 'label' => $labels['mem_email_sent'] ?? 'mem_email_sent',
                 'searchable' => true,
                 'acf' => [
-                    'type' => 'adot_ckeditor',
+                    'type' => 'acdb_ckeditor',
                 ],
                 'ckeditor' => [
                     'mode' => 'standalone',
@@ -364,7 +364,7 @@
                 'label' => $labels['mem_program_data'] ?? 'mem_program_data',
                 'searchable' => true,
                 'acf' => [
-                    'type' => 'adot_ckeditor',
+                    'type' => 'acdb_ckeditor',
                 ],
                 'ckeditor' => [
                     'mode' => 'standalone',
@@ -374,7 +374,7 @@
                 'label' => $labels['mem_price_data'] ?? 'mem_price_data',
                 'searchable' => true,
                 'acf' => [
-                    'type' => 'adot_ckeditor',
+                    'type' => 'acdb_ckeditor',
                 ],
                 'ckeditor' => [
                     'mode' => 'standalone',

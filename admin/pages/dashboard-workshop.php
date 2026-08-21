@@ -4,7 +4,7 @@ $manual_links = array(
     array(
         'str_group'       => 'Workshops',
         'str_title'       => 'Workshops bearbeiten',
-        'str_url'         => '/wp-admin/admin.php?page=adot_evtmgr_workshops',
+        'str_url'         => '/wp-admin/admin.php?page=acdb_evtmgr_workshops',
         'mem_description' => 'Formular zur Bearbeitung aller vorhandenen Workshops.',
     ),
     array(
@@ -23,7 +23,7 @@ $manual_links = array(
     array(
         'str_group'       => 'Präsentierende Personen',
         'str_title'       => 'Präsentierende Personen bearbeiten',
-        'str_url'         => '/wp-admin/admin.php?page=adot_evtmgr_presenters',
+        'str_url'         => '/wp-admin/admin.php?page=acdb_evtmgr_presenters',
         'mem_description' => 'Formular zur Bearbeitung aller vorhandenen Dozierenden.',
     ),
 
@@ -36,19 +36,19 @@ $manual_links = array(
     array(
         'str_group'       => 'Workshop-Konfigurationen',
         'str_title'       => 'Zeitplan bearbeiten',
-        'str_url'         => '/wp-admin/admin.php?page=adot_evtmgr_timezones',
+        'str_url'         => '/wp-admin/admin.php?page=acdb_evtmgr_timezones',
         'mem_description' => 'Den Ablauf des Events erfassen oder mutieren.',
     ),
     array(
         'str_group'       => 'Workshop-Konfigurationen',
         'str_title'       => 'Slots bearbeiten',
-        'str_url'         => '/wp-admin/admin.php?page=adot_evtmgr_slots',
+        'str_url'         => '/wp-admin/admin.php?page=acdb_evtmgr_slots',
         'mem_description' => 'Die Slots/Tracks erfassen oder bearbeiten',
     ),
     array(
         'str_group'       => 'Workshop-Konfigurationen',
         'str_title'       => 'Preisstruktur bearbeiten',
-        'str_url'         => '/wp-admin/admin.php?page=adot_evtmgr_pricing',
+        'str_url'         => '/wp-admin/admin.php?page=acdb_evtmgr_pricing',
         'mem_description' => 'Die Kostenstruktur des Events erfassen oder bearbeiten',
     )
     

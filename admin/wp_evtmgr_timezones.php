@@ -101,7 +101,7 @@
            'fky_parent_timezone_id' => [
                 'label' => $labels['fky_parent_timezone_id'] ?? 'Übergeordnete Zeitzone',
                 'acf' => [
-                    'type' => 'adot_relationship',    
+                    'type' => 'acdb_relationship',    
                 ],
                 'fky' => [
                     'db' => [
@@ -184,7 +184,7 @@
                 'label' => $labels['mem_timezone_text_de'] ?? 'mem_timezone_text',
                 'searchable' => true,
                 'acf' => [
-                    'type' => 'adot_ckeditor',
+                    'type' => 'acdb_ckeditor',
                 ],
                 'ckeditor' => [
                     'mode' => 'standalone',    
@@ -256,7 +256,7 @@
                 'label' => $labels['mem_remark_on_no_selection_de'] ?? 'mem_remark_on_no_selection',
                 'searchable' => true,
                 'acf' => [
-                    'type' => 'adot_ckeditor',
+                    'type' => 'acdb_ckeditor',
                 ],
                 'ckeditor' => [
                     'mode' => 'standalone',    
@@ -288,7 +288,7 @@
             'fky_presenters' => [
             'label' => 'Dozierende',
             'acf' => [
-                'type' => 'adot_relationship'
+                'type' => 'acdb_relationship'
             ],
             'dbx' => [
                     'allow_new' => true,

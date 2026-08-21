@@ -169,7 +169,7 @@
                 'label' => $labels['mem_workshop_description_de'] ?? 'Beschreibung',
                 'searchable' => true,
                 'acf' => [
-                    'type' => 'adot_ckeditor',
+                    'type' => 'acdb_ckeditor',
                 ],
                 'ckeditor' => [
                     'mode' => 'standalone',
@@ -184,7 +184,7 @@
                 ],
                 'searchable' => true,
                 'acf' => [
-                    'type' => 'adot_ckeditor',
+                    'type' => 'acdb_ckeditor',
                 ],
                 'ckeditor' => [
                     'mode' => 'standalone',
@@ -372,7 +372,7 @@
             'fky_dozierende' => [
                 'label' => $labels['fky_dozierende'] ?? 'Dozierende',
                 'acf' => [
-                    'type' => 'adot_relationship'
+                    'type' => 'acdb_relationship'
                 ],
                 'dbx' => [
                     'allow_new' => true,
@@ -402,7 +402,7 @@
                     ]
                 ],
                 'acf' => [
-                    'type' => 'adot_relationship'
+                    'type' => 'acdb_relationship'
                 ]
             ],
             'fky_slot_id' => [
@@ -418,7 +418,7 @@
                     ]
                 ],
                 'acf' => [
-                    'type' => 'adot_relationship'
+                    'type' => 'acdb_relationship'
                 ]
             ],
             'fky_room_id' => [
@@ -434,7 +434,7 @@
                     ]
                 ],
                 'acf' => [
-                    'type' => 'adot_relationship'
+                    'type' => 'acdb_relationship'
                 ]
             ],
             'fky_workshop_type' => [
@@ -450,13 +450,13 @@
                     ]
                 ],
                 'acf' => [
-                    'type' => 'adot_relationship'
+                    'type' => 'acdb_relationship'
                 ]
             ],
             'fky_audience_id' => [
             'label' => $labels['fky_audience_id'] ?? 'Zielgruppen',
             'acf' => [
-                'type' => 'adot_relationship'
+                'type' => 'acdb_relationship'
             ],
             'dbx' => [
                     'allow_new' => true,

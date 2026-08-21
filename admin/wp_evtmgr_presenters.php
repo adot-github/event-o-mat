@@ -209,7 +209,7 @@
            'str_person_image' => [
                 'label' => $labels['str_person_image'] ?? 'Bild der Person',
                 'acf' => [
-                    'type' => 'adot_file_selector',
+                    'type' => 'acdb_file_selector',
                     'file_type' => 'image',
                     'subfolder' => '/',
                     'image_width' => 300,
@@ -238,7 +238,7 @@
                 ],
                 'searchable' => true,
                 'acf' => [
-                    'type' => 'adot_ckeditor',
+                    'type' => 'acdb_ckeditor',
                 ],
                 'ckeditor' => [
                     'mode' => 'standalone',

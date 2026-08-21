@@ -143,7 +143,7 @@
            'fky_pricing_parent_id' => [
                 'label' => $labels['fky_pricing_parent_id'] ?? 'Übergeordnete Gruppe',
                 'acf' => [
-                    'type' => 'adot_relationship',    
+                    'type' => 'acdb_relationship',    
                 ],
                 'fky' => [
                     'db' => [
@@ -167,7 +167,7 @@
            'fky_workshop_id' => [
                 'label' => $labels['fky_workshop_id'] ?? 'Workshops',
                 'acf' => [
-                    'type' => 'adot_relationship',    
+                    'type' => 'acdb_relationship',    
                 ],
                 'fky' => [
                     'db' => [
@@ -193,7 +193,7 @@
                 'label' => $labels['mem_pricing_description_de'] ?? 'mem_pricing_description',
                 'searchable' => true,
                 'acf' => [
-                    'type' => 'adot_ckeditor',
+                    'type' => 'acdb_ckeditor',
                 ],
                 'ckeditor' => [
                     'mode' => 'standalone',    

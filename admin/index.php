@@ -1,6 +1,6 @@
 <?php
 (function(){
-    if (!function_exists('Adot_DB_Editor')) {
+    if (!function_exists('Acdb_DB_Editor')) {
         return;
     }
 
@@ -18,18 +18,18 @@
             'dashboard-workshop',
             'dashboard-anmeldungen',
             'dashboard-tools',
-            // TBX add_table_config pages (slug = 'adot_' + table name)
-            'adot_evtmgr_events',
-            'adot_evtmgr_workshops',
-            'adot_evtmgr_persons',
-            'adot_evtmgr_presenters',
-            'adot_evtmgr_timezones',
-            'adot_evtmgr_pricing',
-            'adot_evtmgr_wordings',
-            'adot_evtmgr_slots',
-            'adot_evtmgr_options',
-            'adot_evtmgr_rooms',
-            // Hidden submenu pages (procedures.php $adot_evtmgr_hidden_pages)
+            // TBX add_table_config pages (slug = 'acdb_' + table name)
+            'acdb_evtmgr_events',
+            'acdb_evtmgr_workshops',
+            'acdb_evtmgr_persons',
+            'acdb_evtmgr_presenters',
+            'acdb_evtmgr_timezones',
+            'acdb_evtmgr_pricing',
+            'acdb_evtmgr_wordings',
+            'acdb_evtmgr_slots',
+            'acdb_evtmgr_options',
+            'acdb_evtmgr_rooms',
+            // Hidden submenu pages (procedures.php $acdb_evtmgr_hidden_pages)
             'report-income',
             'report-participant-workshops',
             'workshop-booking-lists-pdf-create',
@@ -53,7 +53,7 @@
         ]);
     }
 
-    $editor = Adot_DB_Editor();
+    $editor = Acdb_DB_Editor();
     require_once __DIR__ . '/wp_evtmgr_events.php';
     require_once __DIR__ . '/wp_evtmgr_workshops.php';
     require_once __DIR__ . '/wp_evtmgr_persons.php';

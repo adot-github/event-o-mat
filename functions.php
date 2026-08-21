@@ -1,7 +1,7 @@
 <?php
 add_action('admin_enqueue_scripts', function ($hook_suffix) {
     global $admin_page_hooks;
-    $evtmgr_prefix = $admin_page_hooks['adot_evtmgr_events'] ?? '';
+    $evtmgr_prefix = $admin_page_hooks['acdb_evtmgr_events'] ?? '';
     $is_evtmgr = strpos($hook_suffix, 'evtmgr') !== false
               || ($evtmgr_prefix !== '' && strpos($hook_suffix, $evtmgr_prefix) !== false);
     if (!$is_evtmgr) {
@@ -40,7 +40,7 @@ add_action('admin_enqueue_scripts', function ($hook_suffix) {
 
 (function () {
     $action = isset($_GET['action']) ? sanitize_text_field(wp_unslash($_GET['action'])) : '';
-    if (!in_array($action, ['adot_iframe_left', 'adot_iframe_right'], true)) {
+    if (!in_array($action, ['acdb_iframe_left', 'acdb_iframe_right'], true)) {
         return;
     }
     $page = isset($_GET['page']) ? sanitize_text_field(wp_unslash($_GET['page'])) : '';
