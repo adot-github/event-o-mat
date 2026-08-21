@@ -253,7 +253,7 @@ registration_values:
                                             : 'event-registration-pricing-child';
                                         ?>
                                         <tr class="<?php echo esc_attr(trim($row_class . ' ' . $group_class)); ?>">
-                                            <td style="padding-left:3rem;">
+                                            <td style="padding-left:2rem;">
                                                 <?php if ($is_total) : ?>
                                                     <?php echo esc_html($line['label'] ?? ''); ?>
                                                 <?php else : ?>

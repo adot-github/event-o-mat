@@ -12,7 +12,7 @@ class Evtmgr_Database_Fields {
     public function __construct() {
         global $wpdb;
         $this->wpdb  = $wpdb;
-        $this->table = 'wp_evtmgr_database_fields';
+        $this->table = $wpdb->prefix . 'evtmgr_database_fields';
     }
 
     /**
@@ -117,6 +117,10 @@ class Evtmgr_Database_Fields {
         if ($str_table_name === '') {
             return [];
         }
+
+        // Normalize: strip any hardcoded prefix and apply the actual DB prefix.
+        // This ensures callers passing 'wp_evtmgr_X' work on any WP table prefix.
+        $str_table_name = $this->wpdb->prefix . preg_replace('/^[^_]+_/', '', $str_table_name);
 
         $rows = $this->wpdb->get_results(
             $this->wpdb->prepare(
