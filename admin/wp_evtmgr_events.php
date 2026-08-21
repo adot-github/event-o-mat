@@ -114,7 +114,7 @@
                 ],
                 'searchable' => true,
                 'acf' => [
-                    'type' => 'adot_ckeditor',
+                    'type' => 'acdb_ckeditor',
                 ],
                 'ckeditor' => [
                     'mode' => 'standalone',
@@ -196,7 +196,7 @@
            'str_image' => [
                 'label' => $labels['str_image'] ?? 'Bild (2100×700px)',
                 'acf' => [
-                    'type' => 'adot_file_selector',
+                    'type' => 'acdb_file_selector',
                     'file_type' => 'image',
                     'subfolder' => '/',
                     'image_width' => 300,

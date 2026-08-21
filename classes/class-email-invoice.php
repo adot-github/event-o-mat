@@ -1,9 +1,9 @@
 <?php
 
-require_once ADOT_SYS_COMPONENTS_PATH . '/email_sendout/classes/AdotEmailSendoutDatasource.php';
-class Email_Invoice extends AdotEmailSendoutDatasource {
+require_once ACDB_SYS_COMPONENTS_PATH . '/email_sendout/classes/AcdbEmailSendoutDatasource.php';
+class Email_Invoice extends AcdbEmailSendoutDatasource {
     public function __construct($options = []) {
-        // All possible options are located in email_sendout/classes/AdotEmailSendoutDatasource.php
+        // All possible options are located in email_sendout/classes/AcdbEmailSendoutDatasource.php
         parent::__construct(array_merge([
             'custom_page' => 'invoice-send-by-email',
             'title_base' => 'Rechnungen für Teilnehmende',

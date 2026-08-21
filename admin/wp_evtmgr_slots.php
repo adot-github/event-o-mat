@@ -76,7 +76,7 @@
             'fky_slot_parent_id' => [
                 'label' => $labels['fky_slot_parent_id'] ?? 'Übergeordneter Slot',
                 'acf' => [
-                    'type' => 'adot_relationship',    
+                    'type' => 'acdb_relationship',    
                 ],
                 'fky' => [
                     'db' => [
@@ -99,7 +99,7 @@
             'fky_timezone_id' => [
                 'label' => $labels['fky_timezone_id'] ?? 'Zeitraster',
                 'acf' => [
-                    'type' => 'adot_relationship'
+                    'type' => 'acdb_relationship'
                 ],
                 'fky' => [
                     'db' => [
@@ -126,7 +126,7 @@
                 'label' => $labels['mem_slot_description_de'] ?? 'mem_slot_description',
                 'searchable' => true,
                 'acf' => [
-                    'type' => 'adot_ckeditor',
+                    'type' => 'acdb_ckeditor',
                 ],
 
                 'ckeditor' => [

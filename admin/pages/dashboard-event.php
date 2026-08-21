@@ -4,7 +4,7 @@ $manual_links = array(
     array(
         'str_group'       => 'Events',
         'str_title'       => 'Events bearbeiten',
-        'str_url'         => '/wp-admin/admin.php?page=adot_evtmgr_events',
+        'str_url'         => '/wp-admin/admin.php?page=acdb_evtmgr_events',
         'mem_description' => 'Formular zur Bearbeitung aller vorhandenen Events.',
     ),
     array(
@@ -29,7 +29,7 @@ $manual_links = array(
     array(
         'str_group'       => 'Optionen',
         'str_title'       => 'Optionen des Events',
-        'str_url'         => '/wp-admin/admin.php?page=adot_evtmgr_options',
+        'str_url'         => '/wp-admin/admin.php?page=acdb_evtmgr_options',
         'mem_description' => 'Diverse Optionen für den Event ',
     ),
 );

@@ -3,7 +3,7 @@
 $manual_links = array(
     array(
         'str_title'       => 'Workshops bearbeiten',
-        'str_url'         => '/wp-admin/admin.php?page=adot_evtmgr_workshops',
+        'str_url'         => '/wp-admin/admin.php?page=acdb_evtmgr_workshops',
         'mem_description' => 'Formular zur Bearbeitung aller vorhandenen Workshops.',
     ),
     array(
@@ -19,7 +19,7 @@ $manual_links = array(
 
     array(
         'str_title'       => 'Präsentierende Personen',
-        'str_url'         => '/wp-admin/admin.php?page=adot_evtmgr_presenters',
+        'str_url'         => '/wp-admin/admin.php?page=acdb_evtmgr_presenters',
         'mem_description' => 'Formular zur Bearbeitung aller vorhandenen Dozierenden.',
     ),
 

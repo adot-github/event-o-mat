@@ -10,7 +10,7 @@ $manual_links = array(
     array(
         'str_group'       => 'Wordings',
         'str_title'       => 'Wordings bearbeiten',
-        'str_url'         => '/wp-admin/admin.php?page=adot_evtmgr_wordings',
+        'str_url'         => '/wp-admin/admin.php?page=acdb_evtmgr_wordings',
         'mem_description' => 'Texte in der Anmeldung bearbeiten',
     ),
     array(

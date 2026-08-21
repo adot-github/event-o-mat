@@ -157,14 +157,14 @@
                     'type' => 'textarea',
                 ],
                 'formatter' => [
-                    'save' => 'adot_ckeditor',
+                    'save' => 'acdb_ckeditor',
                 ],
                 'ckeditor' => [
                     'mode' => 'standalone',
                 ],
                 'before_render' => function($field_config, $record) {
                     if (($record['str_type_of_edit'] ?? '') !== 'text') {
-                        $field_config['acf']['type'] = 'adot_ckeditor';
+                        $field_config['acf']['type'] = 'acdb_ckeditor';
                     }
                     return $field_config;
                 },

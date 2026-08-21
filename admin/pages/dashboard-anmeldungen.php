@@ -88,7 +88,7 @@ $manual_links = array(
     array(
         'str_group'       => 'Anmeldungen',
         'str_title'       => 'Anmeldungen bearbeiten',
-        'str_url'         => '/wp-admin/admin.php?page=adot_evtmgr_persons',
+        'str_url'         => '/wp-admin/admin.php?page=acdb_evtmgr_persons',
         'mem_description' => 'Formular zur Bearbeitung aller vorhandenen Anmeldungen.',
     ),
     array(
