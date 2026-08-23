@@ -74,10 +74,15 @@ return array(
             }
         }
 
-        /* ---- always DE subtitle (as requested) ---- */
-        $str_event_subtitle_de = trim(
-            $event_lc['str_event_subtitle_de'] ?? $event_lc['str_event_subtitle'] ?? ''
-        );
+        /* ---- language-correct event subtitle ---- */
+        $str_event_subtitle = '';
+        foreach (['str_event_subtitle_' . $lang, 'str_event_subtitle_de', 'str_event_subtitle'] as $key) {
+            $val = trim($event_lc[$key] ?? '');
+            if ($val !== '') {
+                $str_event_subtitle = $val;
+                break;
+            }
+        }
 
         /* ---- formatted registration date ---- */
         $days_de = ['Sonntag', 'Montag', 'Dienstag', 'Mittwoch', 'Donnerstag', 'Freitag', 'Samstag'];
@@ -166,7 +171,7 @@ return array(
 
         return [
             '{str_event_name}'        => esc_html($str_event_name),
-            '{str_event_subtitle_de}' => esc_html($str_event_subtitle_de),
+            '{str_event_subtitle}' => esc_html($str_event_subtitle),
             '{dtm_date_created_fmt}'  => esc_html($dtm_date_created_fmt),
             '{qr_img_src}'            => esc_url($qr_src),
             '{workshops_html}'        => $workshops_html,
@@ -342,7 +347,7 @@ return array(
     </div>
 
     <div class="event-name">{str_event_name}</div>
-    <div class="event-subtitle">{str_event_subtitle_de}</div>
+    <div class="event-subtitle">{str_event_subtitle}</div>
 
   <hr>
 

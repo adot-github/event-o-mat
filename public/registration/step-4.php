@@ -194,9 +194,9 @@
                             id="str_salutation"
                             class="form-control"
                             required>
-                        <option value="" disabled <?php selected($str_salutation, ''); ?>>Anrede</option>
-                        <option value="Herr" <?php selected($str_salutation, 'Herr'); ?>>Herr</option>
-                        <option value="Frau" <?php selected($str_salutation, 'Frau'); ?>>Frau</option>
+                        <option value="" disabled <?php selected($str_salutation, ''); ?>><?php echo $wordings['anrede'] ?? 'anrede'; ?></option>
+                        <option value="<?php echo $wordings['herr'] ?? 'herr'; ?>" <?php selected($str_salutation, $wordings['herr'] ?? 'herr'); ?>><?php echo $wordings['herr'] ?? 'herr'; ?></option>
+                        <option value="<?php echo $wordings['frau'] ?? 'frau'; ?>" <?php selected($str_salutation, $wordings['frau'] ?? 'frau'); ?>><?php echo $wordings['frau'] ?? 'frau'; ?></option>
                     </select>
                 </div>
             </div>

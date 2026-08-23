@@ -128,7 +128,7 @@
             <div class="accordion-item">
                 <p class="accordion-header" id="heading-description-<?php echo esc_attr($workshop_id); ?>">
                     <button class="accordion-button accordion-button-text-size collapsed p-1 ps-2 pe-2" type="button" data-bs-toggle="collapse" data-bs-target="#collapse-description-<?php echo esc_attr($workshop_id); ?>" aria-expanded="false" aria-controls="collapse-description-<?php echo esc_attr($workshop_id); ?>">
-                        Beschreibung
+                        <?php echo $wordings['beschreibung'] ?? 'beschreibung'; ?>
                     </button>
                 </p>
                 <div id="collapse-description-<?php echo esc_attr($workshop_id); ?>" class="accordion-collapse collapse" aria-labelledby="heading-description-<?php echo esc_attr($workshop_id); ?>" data-bs-parent="#workshop-description-<?php echo esc_attr($workshop_id); ?>">

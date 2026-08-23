@@ -776,8 +776,8 @@
                                     <?php echo $wordings['angebot_auswaehlen'] ?? 'angebot_auswaehlen'; ?>
                                 </a>
                                 <?php if ($has_selected) : ?>
-                                    <a href="#" class="btn btn-select-workshop btn-sm js-workshop-close-replacement ps-2 pe-2" role="button" aria-label="Angebot abwählen" title="Angebot abwählen">
-                                        <?php echo $wordings['angebot_abwaehlen'] ?? 'Angebot abwählen'; ?>
+                                    <a href="#" class="btn btn-select-workshop btn-sm js-workshop-close-replacement ps-2 pe-2" role="button" aria-label="<?php echo $wordings['angebot_abwaehlen'] ?? 'angebot_abwaehlen'; ?>" title="<?php echo $wordings['angebot_abwaehlen'] ?? 'angebot_abwaehlen'; ?>">
+                                        <?php echo $wordings['angebot_abwaehlen'] ?? $wordings['angebot_abwaehlen'] ?? 'angebot_abwaehlen'; ?>
                                         <span style="margin-left:.5rem;">✕</span>
                                     </a>
                                 <?php endif; ?>
@@ -1066,9 +1066,9 @@
             var baseClasses = (anchorButton.className || '').replace(/\bjs-workshop-add\b/, '').trim();
             replacementButton.className = (baseClasses + ' js-workshop-close-replacement ps-2 pe-2').trim();
             replacementButton.setAttribute('role', 'button');
-            replacementButton.setAttribute('aria-label', 'Angebot abwählen');
-            replacementButton.setAttribute('title', 'Angebot abwählen');
-            replacementButton.appendChild(document.createTextNode('Angebot abwählen'));
+            replacementButton.setAttribute('aria-label', $wordings['angebot_abwaehlen'] ?? 'angebot_abwaehlen');
+            replacementButton.setAttribute('title', $wordings['angebot_abwaehlen'] ?? 'angebot_abwaehlen');
+            replacementButton.appendChild(document.createTextNode($wordings['angebot_abwaehlen'] ?? 'angebot_abwaehlen'));
 
             var spanX = document.createElement('span');
             spanX.style.marginLeft = '.5rem';

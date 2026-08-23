@@ -155,8 +155,8 @@
                                             <?php echo $wordings['angebot_auswaehlen'] ?? 'angebot_auswaehlen'; ?>
                                         </a>
                                         <?php if ($has_selected_col) : ?>
-                                            <a href="#" class="btn btn-select-workshop btn-sm js-workshop-close-replacement ps-2 pe-2" role="button" aria-label="Angebot abwählen" title="Angebot abwählen">
-                                                <?php echo $wordings['angebot_abwaehlen'] ?? 'Angebot abwählen'; ?>
+                                            <a href="#" class="btn btn-select-workshop btn-sm js-workshop-close-replacement ps-2 pe-2" role="button" aria-label="<?php echo $wordings['angebot_abwaehlen'] ?? 'angebot_abwaehlen'; ?>" title="<?php echo $wordings['angebot_abwaehlen'] ?? 'angebot_abwaehlen'; ?>">
+                                                <?php echo $wordings['angebot_abwaehlen'] ?? 'angebot_abwaehlen'; ?>
                                                 <span style="margin-left:.5rem;">✕</span>
                                             </a>
                                         <?php endif; ?>
