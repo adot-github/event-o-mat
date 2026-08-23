@@ -895,6 +895,7 @@
 
 <script>
     (function () {
+        var wordingAngebotAbwaehlen = <?php echo wp_json_encode($wordings['angebot_abwaehlen'] ?? 'angebot_abwaehlen'); ?>;
         var activeSessionContainer = null;
         var modalElement = document.getElementById('event_registration_workshop_modal');
         var modalList = modalElement ? modalElement.querySelector('.js-workshop-modal-list') : null;
@@ -1066,9 +1067,9 @@
             var baseClasses = (anchorButton.className || '').replace(/\bjs-workshop-add\b/, '').trim();
             replacementButton.className = (baseClasses + ' js-workshop-close-replacement ps-2 pe-2').trim();
             replacementButton.setAttribute('role', 'button');
-            replacementButton.setAttribute('aria-label', $wordings['angebot_abwaehlen'] ?? 'angebot_abwaehlen');
-            replacementButton.setAttribute('title', $wordings['angebot_abwaehlen'] ?? 'angebot_abwaehlen');
-            replacementButton.appendChild(document.createTextNode($wordings['angebot_abwaehlen'] ?? 'angebot_abwaehlen'));
+            replacementButton.setAttribute('aria-label', wordingAngebotAbwaehlen);
+            replacementButton.setAttribute('title', wordingAngebotAbwaehlen);
+            replacementButton.appendChild(document.createTextNode(wordingAngebotAbwaehlen));
 
             var spanX = document.createElement('span');
             spanX.style.marginLeft = '.5rem';
