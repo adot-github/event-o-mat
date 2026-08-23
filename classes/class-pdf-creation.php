@@ -208,7 +208,7 @@ class Event_Registration_Pdf_Creation {
         ));
 
         foreach ($suffixes as $suffix) {
-            $value = $this->value_ci($event, $base_field . $suffix);
+            $value = $this->value_ci($event, $base_field . '_' . $suffix);
 
             if (trim($value) !== '') {
                 return $value;
