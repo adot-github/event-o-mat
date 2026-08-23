@@ -121,6 +121,53 @@
         <div class="event-registration-error"><?php echo esc_html($error); ?></div>
     <?php endforeach; ?>
 
+    <div id="event-registration-loading-overlay" class="event-registration-loading-overlay" style="display:none;">
+        <div class="event-registration-loading-box">
+            <div class="event-registration-spinner" aria-hidden="true"></div>
+            <div class="event-registration-loading-text">
+                <?php echo esc_html($wordings['bitte_warten'] ?? 'Bitte warten!'); ?>
+            </div>
+        </div>
+    </div>
+
+    <style>
+        .event-registration-loading-overlay {
+            position: fixed;
+            inset: 0;
+            z-index: 99999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(255, 255, 255, 0.85);
+        }
+
+        .event-registration-loading-box {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .event-registration-spinner {
+            width: 48px;
+            height: 48px;
+            border: 5px solid rgba(0, 0, 0, 0.15);
+            border-top-color: #0f4f79;
+            border-radius: 50%;
+            animation: event-registration-spin 0.8s linear infinite;
+        }
+
+        .event-registration-loading-text {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #0f4f79;
+        }
+
+        @keyframes event-registration-spin {
+            to { transform: rotate(360deg); }
+        }
+    </style>
+
     <form method="post" action="">
         <?php wp_nonce_field(Event_Registration::NONCE_ACTION, Event_Registration::NONCE_NAME); ?>
         <input type="hidden" name="current_step" value="<?php echo esc_attr($step); ?>">
@@ -152,6 +199,37 @@
         ?>
     </form>
 </div>
+
+<script>
+    (function () {
+        var form    = document.querySelector('.event-registration-wrapper form');
+        var overlay = document.getElementById('event-registration-loading-overlay');
+
+        if (!form || !overlay) {
+            return;
+        }
+
+        form.addEventListener('submit', function (event) {
+            var submitter = event.submitter;
+            var currentStepInput = form.querySelector('input[name="current_step"]');
+            var isFinalSubmit = submitter
+                && submitter.name === 'registration_action'
+                && submitter.value === 'next'
+                && currentStepInput
+                && currentStepInput.value === String(<?php echo (int) Event_Registration::MAX_STEP - 1; ?>);
+
+            if (!isFinalSubmit) {
+                return;
+            }
+
+            overlay.style.display = 'flex';
+
+            form.querySelectorAll('button[type="submit"]').forEach(function (button) {
+                button.disabled = true;
+            });
+        });
+    })();
+</script>
 
 <?php
         return ob_get_clean();
