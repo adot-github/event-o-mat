@@ -224,9 +224,13 @@
 
             overlay.style.display = 'flex';
 
-            form.querySelectorAll('button[type="submit"]').forEach(function (button) {
-                button.disabled = true;
-            });
+            // Deferred: disabling the submitter synchronously here would drop
+            // its name=value pair from the submitted form data.
+            window.setTimeout(function () {
+                form.querySelectorAll('button[type="submit"]').forEach(function (button) {
+                    button.disabled = true;
+                });
+            }, 0);
         });
     })();
 </script>
