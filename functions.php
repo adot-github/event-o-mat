@@ -48,9 +48,22 @@ add_action('admin_enqueue_scripts', function ($hook_suffix) {
         return;
     }
     ob_start(function ($html) {
+        global $_wp_admin_css_colors;
+
+        $bg     = '';
+        $scheme = get_user_option('admin_color');
+
+        if ($scheme && isset($_wp_admin_css_colors[$scheme]) && !empty($_wp_admin_css_colors[$scheme]->colors)) {
+            $bg = sanitize_hex_color($_wp_admin_css_colors[$scheme]->colors[0]);
+        }
+
+        if (!$bg) {
+            $bg = '#1d2327';
+        }
+
         return str_replace(
             '<head>',
-            '<head><style>html,body{background:var(--evtmgr-bg)!important}</style>',
+            '<head><style>html,body{background:' . $bg . '!important}</style>',
             $html
         );
     });
