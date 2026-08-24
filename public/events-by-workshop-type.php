@@ -88,8 +88,8 @@ function events_by_workshop_type_shortcode($atts = array()) {
     $upload_baseurl = rtrim((string) ($upload_dir['baseurl'] ?? ''), '/');
 
     $pdf_subfolder = 'workshop-booking-lists';
-    $pdf_basedir   = get_stylesheet_directory()     . '/db-custom/event-registration/file-storage/' . sanitize_file_name($pdf_subfolder) . '/' . sanitize_file_name($event_uid) . '/';
-    $pdf_baseurl   = get_stylesheet_directory_uri() . '/db-custom/event-registration/file-storage/' . rawurlencode($pdf_subfolder) . '/' . rawurlencode($event_uid) . '/';
+    $pdf_basedir   = get_stylesheet_directory()     . '/db-custom/event-registration/admin/file-storage/' . sanitize_file_name($pdf_subfolder) . '/' . sanitize_file_name($event_uid) . '/';
+    $pdf_baseurl   = get_stylesheet_directory_uri() . '/db-custom/event-registration/admin/file-storage/' . rawurlencode($pdf_subfolder) . '/' . rawurlencode($event_uid) . '/';
 
     $groups      = array();
     $group_index = 0;

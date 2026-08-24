@@ -305,7 +305,7 @@ class Event_Registration_Pdf_Creation {
     }
 
     public function get_pdf_url(string $subfolder_for_pdf, string $event_uid, string $file_name = ''): string {
-        $url = get_stylesheet_directory_uri() . '/db-custom/event-registration/file-storage/' .
+        $url = get_stylesheet_directory_uri() . '/db-custom/event-registration/admin/file-storage/' .
             rawurlencode($subfolder_for_pdf) . '/' .
             rawurlencode($event_uid);
 
