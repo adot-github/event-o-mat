@@ -26,7 +26,7 @@ return array(
             'anmeldung_am'    => 'Ihre Anmeldung',
             'angebote_titel'  => 'Ihre gebuchten Angebote',
             'gruss'           => 'Wir freuen uns, Sie am {dtm_event_date} in Bern begrüssen zu dürfen.',
-            'bitte_drucken'   => 'Bitte drucken Sie das Ticket aus und weisen Sie dieses an der Fachtagung beim Check-In vor.',
+            'bitte_drucken'   => 'Bitte weisen Sie das ausgedruckte Ticket an der Fachtagung beim Check-In vor oder halten Sie das Ticket auf Ihrem Handy bereit.',
         ),
         'fr' => array(
             'ticket_label'    => 'Votre ticket',
@@ -34,7 +34,7 @@ return array(
             'anmeldung_am'    => 'Votre inscription',
             'angebote_titel'  => 'Vos offres réservées',
             'gruss'           => 'Nous nous réjouissons de vous accueillir à Berne le {dtm_event_date}.',
-            'bitte_drucken'   => 'Veuillez imprimer ce ticket et le présenter lors du check-in au colloque.',
+            'bitte_drucken'   => "Veuillez présenter votre billet imprimé lors de l'enregistrement à la conférence, ou ayez-le à portée de main sur votre téléphone portable.",
         ),
         'it' => array(
             'ticket_label'    => 'Il suo ticket',
