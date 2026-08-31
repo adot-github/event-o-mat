@@ -11,13 +11,13 @@ $manual_links = array(
         'str_group'       => 'Workshops',
         'str_title'       => 'Workshops umbuchen',
         'str_url'         => '/wp-admin/admin.php?page=workshop-booking-changes',
-        'mem_description' => 'Formular zur Anpassung der gebuchten Workshops. Danach müssen eventuell auch die Kosten angepasst werden.',
+        'mem_description' => 'Formular zur Anpassung der gebuchten Workshops. Danach müssen auch die Kosten angepasst werden.',
     ),
     array(
         'str_group'       => 'Workshops',
         'str_title'       => 'Buchungslisten für Workshops',
         'str_url'         => '/wp-admin/admin.php?page=workshop-booking-lists-pdf-create',
-        'mem_description' => 'Erstellt Liste aller Teilnehmenden als PDF für jeden Workshop/Anlass',
+        'mem_description' => 'Erstellt Liste aller Teilnehmenden als PDF für jeden Workshop/Anlass.',
     ),
 
     array(
@@ -31,7 +31,7 @@ $manual_links = array(
         'str_group'       => 'Präsentierende Personen',
         'str_title'       => 'Liste der präsentierenden Personen',
         'str_url'         => '/wp-admin/admin.php?page=report-presenters',
-        'mem_description' => 'Liste aller Personen, welche in Workshops etc. präsentieren',
+        'mem_description' => 'Liste aller Personen, welche in Workshops präsentieren.',
     ),
     array(
         'str_group'       => 'Workshop-Konfigurationen',
@@ -43,13 +43,13 @@ $manual_links = array(
         'str_group'       => 'Workshop-Konfigurationen',
         'str_title'       => 'Slots bearbeiten',
         'str_url'         => '/wp-admin/admin.php?page=acdb_evtmgr_slots',
-        'mem_description' => 'Die Slots/Tracks erfassen oder bearbeiten',
+        'mem_description' => 'Die Slots/Tracks erfassen oder bearbeiten.',
     ),
     array(
         'str_group'       => 'Workshop-Konfigurationen',
         'str_title'       => 'Preisstruktur bearbeiten',
         'str_url'         => '/wp-admin/admin.php?page=acdb_evtmgr_pricing',
-        'mem_description' => 'Die Kostenstruktur des Events erfassen oder bearbeiten',
+        'mem_description' => 'Die Kostenstruktur des Events erfassen oder bearbeiten.',
     )
     
 );

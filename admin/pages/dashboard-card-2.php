@@ -26,7 +26,7 @@
             <div class="row g-4">
         <?php endif; ?>
 
-        <div class="col-12 col-lg-4 mt-0">
+        <div class="col-12 col-lg-4 mt-0 mb-3">
             <div class="card evtmgr-tier <?php echo $current_tier; ?> h-100">
                 <div class="card-body">
 

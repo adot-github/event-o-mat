@@ -11,7 +11,7 @@ $manual_links = array(
         'str_group'       => 'Wordings',
         'str_title'       => 'Wordings bearbeiten',
         'str_url'         => '/wp-admin/admin.php?page=acdb_evtmgr_wordings',
-        'mem_description' => 'Texte in der Anmeldung bearbeiten',
+        'mem_description' => 'Texte in der Anmeldung bearbeiten.',
     ),
     array(
         
@@ -30,7 +30,7 @@ $manual_links = array(
         'str_group'       => 'Datenbank',
         'str_title'       => 'Felder extrahieren',
         'str_url'         => '/wp-admin/admin.php?page=database-fields-extract',
-        'mem_description' => 'Anzahl Verwendungen in der Datenbank aktualisieren.',
+        'mem_description' => 'Neue Datenbank-Felder finden und Datenbank aktualisieren.',
     ),    
     array(
         'str_group'       => 'Datenbank',

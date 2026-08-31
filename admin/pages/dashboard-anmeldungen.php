@@ -93,9 +93,9 @@ $manual_links = array(
     ),
     array(
         'str_group'       => 'Anmeldungen',
-        'str_title'       => 'Umbuchungen von Workshops',
+        'str_title'       => 'Anmeldungen umbuchen',
         'str_url'         => '/wp-admin/admin.php?page=workshop-booking-changes',
-        'mem_description' => 'Formular zur Anpassung der gebuchten Workshops. Danach müssen eventuell auch die Kosten angepasst werden.',
+        'mem_description' => 'Formular zur Anpassung der gebuchten Workshops. Danach müssen auch die Kosten angepasst werden.',
     ),
     array(
         'str_group'       => 'Anmeldungen',
@@ -112,42 +112,42 @@ $manual_links = array(
     ),
     array(
         'str_group'       => 'Rechnungen',
-        'str_title'       => 'Rechnungen für Teilnehmende erstellen',
+        'str_title'       => 'Rechnungen generieren',
         'str_url'         => '/wp-admin/admin.php?page=invoice-pdf-create',
-        'mem_description' => 'Erstellt eine Rechnung als PDF für alle angemeldeten Personen',
+        'mem_description' => 'Erstellt eine Rechnung als PDF für angemeldete Personen.',
     ),
     array(
         'str_group'       => 'Rechnungen',
-        'str_title'       => 'Rechnungen für Teilnehmende versenden',
+        'str_title'       => 'Rechnungen versenden',
         'str_url'         => '/wp-admin/admin.php?page=invoice-send-by-email',
-        'mem_description' => 'Erstellt eine Rechnung als PDF für alle angemeldeten Personen',
+        'mem_description' => 'Verschickt eine Rechnung als PDF an ausgewählte Personen.',
     ),
     
     array(
         'str_group'       => 'Teilnahmebestätigungen',
-        'str_title'       => 'Teilnahmebestätigungen für Teilnehmende als PDF erstellen',
+        'str_title'       => 'Teilnahmebestätigungen generieren',
         'str_url'         => '/wp-admin/admin.php?page=diploma-pdf-create',
-        'mem_description' => 'Erstellt eine Teilnahmebestätigung als PDF für alle angemeldeten Personen',
+        'mem_description' => 'Erstellt eine Teilnahmebestätigung als PDF für angemeldete Personen.',
     ),
     
     array(
         'str_group'       => 'Teilnahmebestätigungen',
         'str_title'       => 'Teilnahmebestätigungen versenden',
         'str_url'         => '/wp-admin/admin.php?page=diploma-send-by-email',
-        'mem_description' => 'Teilnahmebestätigungen per E-Mail versenden',
+        'mem_description' => 'Verschickt eine Teilnahmebestätigungen als PDF an ausgewählte Personen.',
     ),
 
     array(
         'str_group'       => 'Namensschilder und Tickets',
-        'str_title'       => 'Namensschilder PDF generieren',
+        'str_title'       => 'Namensschilder generieren',
         'str_url'         => '/wp-admin/admin.php?page=etiketten-pdf-create',
-        'mem_description' => 'Namens-Etiketten und Namens-Etiketten erstellen zur BEschriftung der Teilnehmnden.',
+        'mem_description' => 'Erstellt Namens-Etiketten zur Beschriftung für angemeldeten Personen.',
     ),
     array(
         'str_group'       => 'Namensschilder und Tickets',
-        'str_title'       => 'Ticket PDF generieren',
+        'str_title'       => 'Tickets generieren',
         'str_url'         => '/wp-admin/admin.php?page=ticket-pdf-create',
-        'mem_description' => 'Tickets für den Check-In generieren.',
+        'mem_description' => 'Erstellt Tickets für den Check-In für angemeldeten Personen.',
     ),
 
 
@@ -156,23 +156,23 @@ $manual_links = array(
 
     array(
         'str_group'       => 'Listen',
-        'str_title'       => 'Liste der angemeldeten Personen',
+        'str_title'       => 'Angemeldete Personen',
         'str_url'         => '/wp-admin/admin.php?page=report-persons',
-        'mem_description' => 'Liste aller Personen, welche sich angemeldet haben',
+        'mem_description' => 'Liste aller Personen, welche sich angemeldet haben.',
     ),
     array(
         'str_group'       => 'Listen',
-        'str_title'       => 'Liste der angemeldeten Personen mit Workshops',
+        'str_title'       => 'Angemeldete Personen mit Workshops',
         'str_url'         => '/wp-admin/admin.php?page=report-participant-workshops',
-        'mem_description' => 'Liste aller Personen, welche sich angemeldet haben mit den angemeldeten Workshops',
+        'mem_description' => 'Liste aller Personen, welche sich angemeldet haben, mit den angemeldeten Workshops.',
     ),
 
     
     array(
         'str_group'       => 'PDF erstellen',
-        'str_title'       => 'Programme für Teilnehmende als PDF',
+        'str_title'       => 'Programme für Teilnehmende',
         'str_url'         => '/wp-admin/admin.php?page=person-program-pdf-create',
-        'mem_description' => 'Erstellt das individuelle Programm als PDF für alle angemeldeten Personen',
+        'mem_description' => 'Erstellt das individuelle Programm als PDF für angemeldeten Personen.',
     ),
 );
 ?>

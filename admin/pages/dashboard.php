@@ -53,6 +53,7 @@ foreach ($events as $event) {
 
 ?>
 <div class="container py-4 py-lg-5 event-dashboard-page">
+    <h1>Event aktivieren </h1>
 
     <?php
     $evtmgr_notice = isset($_GET['evtmgr_notice'])
