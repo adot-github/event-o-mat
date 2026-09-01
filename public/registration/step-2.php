@@ -115,7 +115,7 @@
 
 ?>
 
-<div class="container my-4 event-registration-step-2">
+<div class="container-fluid my-4 event-registration-step-2">
 
     <?php if ($debug_step2) : ?>
         <pre style="background:#111;color:#0f0;padding:12px;white-space:pre-wrap;overflow:auto;font-size:11px;">

@@ -26,7 +26,7 @@ function sponsor_wall_ticker_shortcode($atts = array()) {
         array(
             'event_uid' => '',
             'lang'      => 'de',
-            'speed'     => '40',
+            'speed'     => '60',
         ),
         $atts,
         'sponsor_ticker'
@@ -39,6 +39,8 @@ function sponsor_wall_ticker_shortcode($atts = array()) {
     if ($speed < 5) {
         $speed = 5;
     }
+
+    Event_Registration_Helpers::enqueue_bootstrap($event_uid);
 
     $obj      = new Evtmgr_Sponsors();
     $sponsors = $obj->get_sponsors_by_event_uid($event_uid, $lang);

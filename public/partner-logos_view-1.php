@@ -80,6 +80,8 @@ function sponsor_wall_grid_shortcode($atts = array()) {
     $event_uid = sanitize_text_field((string) $atts['event_uid']);
     $lang      = sanitize_key((string) $atts['lang']);
 
+    Event_Registration_Helpers::enqueue_bootstrap($event_uid);
+
     $obj      = new Evtmgr_Sponsors();
     $sponsors = $obj->get_sponsors_by_event_uid($event_uid, $lang);
 
@@ -96,11 +98,12 @@ function sponsor_wall_grid_shortcode($atts = array()) {
 
     ob_start();
     ?>
+
     <div class="sponsor-wall sponsor-wall--grid">
         <?php foreach ($groups as $group_label => $items) : ?>
 
             <?php if ($group_label !== '') : ?>
-            <h3 class="sponsor-wall__group-title"><?php echo esc_html($group_label); ?></h3>
+            <h2 class="sponsor-wall__group-title"><?php echo esc_html($group_label); ?></h2>
             <?php endif; ?>
 
             <div class="row g-0 sponsor-wall__row">
@@ -115,7 +118,7 @@ function sponsor_wall_grid_shortcode($atts = array()) {
 
                     $img_url  = sponsor_wall_resolve_logo_url($logo);
                     $link_url = $link !== '' ? esc_url($link) : '';
-                    $alt      = $name !== '' ? $name : __('Sponsor logo', 'picostrap5-child-base');
+                    $alt      = $name !== '' ? $name : __('Sponsor logo', 'event-registration');
 
                     if ($img_url === '') {
                         continue;

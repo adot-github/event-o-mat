@@ -61,10 +61,11 @@ class Evtmgr_Checkin_App {
             'nonce'       => wp_create_nonce('wp_rest'),
             'swUrl'       => $base_url . 'sw.js',
             'manifestUrl' => $base_url . 'manifest.json',
+            'logoUrl'     => get_stylesheet_directory_uri() . '/db-custom/event-registration/branding/event-o-mat-logo.png',
         ]);
 
         $manifest_url = $base_url . 'manifest.json';
-        $icon_url     = get_stylesheet_directory_uri() . '/db-custom/event-registration/assets/evtmgr-appicon.svg';
+        $icon_url     = get_stylesheet_directory_uri() . '/db-custom/event-registration/branding/evtmgr-appicon.svg';
         add_action('wp_head', static function () use ($manifest_url, $icon_url) {
             echo '<link rel="manifest" href="' . esc_url($manifest_url) . '">' . "\n";
             echo '<link rel="apple-touch-icon" href="' . esc_url($icon_url) . '">' . "\n";

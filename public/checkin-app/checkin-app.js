@@ -33,7 +33,12 @@
 
     // ── Shell HTML ─────────────────────────────────────────────────────────
     function buildShell() {
+        const logo = cfg.logoUrl
+            ? `<div class="ca-header"><img src="${escHtml(cfg.logoUrl)}" alt="event-o-mat" class="ca-standalone__logo"></div>`
+            : '';
+
         return `
+${logo}
 <div id="ca-screen-idle" class="ca-screen ca-idle">
     <h1>Event Check-in</h1>
     <button class="ca-btn ca-btn-primary" id="ca-btn-scan">

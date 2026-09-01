@@ -48,6 +48,28 @@ add_action('wp_enqueue_scripts', function () {
     $needs_workshops = event_registration_content_has_shortcode('events_with_filters');
 
     if ($is_event_registration_page) {
+        // Load Bootstrap early (in <head>) when the theme does not provide it
+        // for this event. The event_uid is read from the first
+        // event-registration shortcode in the post content; the shortcode
+        // callbacks call this again as a fallback for shortcodes rendered from
+        // templates via do_shortcode(). The JS bundle is needed by every view
+        // with interactive Bootstrap components (modal, accordion/collapse).
+        $evt_uid = '';
+        $evt_post = get_post();
+        if ($evt_post && !empty($evt_post->post_content) && preg_match(
+            '/\[(?:event_registration|events_with_filters|events_by_workshop_type|presenters_by_slot|presenters_by_workshop_type|sponsor_wall|sponsor_ticker)\b[^\]]*\bevent_uid=(["\']?)([^"\'\]\s]+)\1/',
+            $evt_post->post_content,
+            $evt_match
+        )) {
+            $evt_uid = sanitize_text_field($evt_match[2]);
+        }
+        $needs_bootstrap_js = event_registration_content_has_shortcode('event_registration')
+            || event_registration_content_has_shortcode('events_with_filters')
+            || event_registration_content_has_shortcode('events_by_workshop_type')
+            || event_registration_content_has_shortcode('presenters_by_slot')
+            || event_registration_content_has_shortcode('presenters_by_workshop_type');
+        Event_Registration_Helpers::enqueue_bootstrap($evt_uid, $needs_bootstrap_js);
+
         foreach (glob($dir . '*.css') as $file_path) {
             $file   = basename($file_path);
             $handle = 'event-registration-' . sanitize_title(preg_replace('/\.css$/', '', $file));

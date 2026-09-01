@@ -37,6 +37,8 @@ function presenters_by_slot_shortcode($atts = array()) {
         return '';
     }
 
+    Event_Registration_Helpers::enqueue_bootstrap($event_uid, true);
+
     // ── 1. Daten sammeln ─────────────────────────────────────────────────────
 
     $slots_obj      = new Evtmgr_Slots();
@@ -194,6 +196,7 @@ HTML;
     return <<<HTML
     <style>
         .event-keynote-speakers {
+            max-width: 100% !important;
             --bs-accordion-btn-icon-width: 1.75rem;
             --bs-accordion-btn-icon: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='none' stroke='%23212529' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3e%3cpath d='M2 5l6 6 6-6'/%3e%3c/svg%3e");
             --bs-accordion-btn-active-icon: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='none' stroke='%230d6efd' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3e%3cpath d='M2 5l6 6 6-6'/%3e%3c/svg%3e");

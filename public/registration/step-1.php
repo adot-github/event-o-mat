@@ -667,7 +667,7 @@
         }
 </style>
 <!-- TIME TABLE-->
-<div class="container-lg bg-light p-0 mt-5">
+<div class="container-fluid bg-light p-0 mt-5">
     <!--
     <div class="timetable" style="--start-time: <?php echo esc_attr((string) $timetable_start_hour); ?>; --end-time: <?php echo esc_attr((string) $timetable_end_hour); ?>;">
     -->

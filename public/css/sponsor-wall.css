@@ -9,15 +9,14 @@
 .sponsor-wall {
     width: 100%;
     margin: 2rem 0;
+    max-width:2100px !important;
 }
 
 .sponsor-wall__group-title {
-    font-size: 1.5rem;
-    font-weight: 600;
     letter-spacing: 0.08em;
+    font-weight: 600;
     text-transform: uppercase;
-    color: #888;
-    margin: 2rem 0 0.75rem;
+    margin: 4rem 0 1rem;
 }
 
 .sponsor-wall__link:hover .sponsor-wall__logo,
@@ -40,17 +39,6 @@
     outline-offset: 2px;
     text-decoration: none;
 }
-
-
-
-
-
-
-
-
-
-
-
 
 /* ── View 1: Bootstrap 5 Grid / Cards ────────────────────────────────────── */
 
@@ -181,15 +169,28 @@
     background: #fff;
     border: 1.5px solid #d9d9d9;
     border-radius: 0;
-    padding: 1rem 1.75rem;
+    padding: 1rem;
     min-width: 160px;
-    height: 90px;
+    height: 150px;
     flex-shrink: 0;
     transition: border-color 0.25s ease;
 }
 
 .sponsor-wall--ticker .sponsor-wall__item:hover {
     border-color: #bfbfbf;
+}
+
+/* The base .sponsor-wall__logo rule forces width:180px and flex:0 0 100%, so a
+   tall logo overflows the ticker item and ignores its padding. Neutralise that
+   and let the image scale down to the item's content box — the item's 1rem
+   padding then stays visible as breathing room around every logo. */
+.sponsor-wall--ticker .sponsor-wall__logo {
+    flex: 0 1 auto !important;
+    width: auto !important;
+    height: auto !important;
+    max-width: 100% !important;
+    max-height: 100% !important;
+    object-fit: contain !important;
 }
 
 /* Reduced motion: disable animation */

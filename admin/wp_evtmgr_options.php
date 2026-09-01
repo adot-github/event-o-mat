@@ -65,7 +65,7 @@
                 ],
             ],
            'str_option_description_{{lang}}' => [
-                'label' => $labels['str_option_description_de'],
+                'label' => $labels['str_option_description_de'] ?? 'str_option_description_de',
                     'formatter' => [
                         'list' => 'actions'
                     ],

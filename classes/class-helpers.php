@@ -141,4 +141,90 @@ class Event_Registration_Helpers {
 
         return (string) $field;
     }
+
+    /**
+     * Whether the theme already ships Bootstrap (CSS + JS) for the given event.
+     *
+     * Controlled by the per-event option `theme_uses_bootstrap` stored in
+     * wp_evtmgr_options (type true_false, default "0"):
+     *   - "1"          → theme provides Bootstrap, the component loads nothing
+     *   - "0" / unset  → the component must load its own Bootstrap
+     *
+     * Without an event_uid the option cannot be resolved, so we assume the
+     * theme has no Bootstrap and let it load (safe default). Can be overridden
+     * with the `evtmgr_theme_uses_bootstrap` filter.
+     *
+     * @param string $event_uid
+     * @return bool
+     */
+    public static function theme_uses_bootstrap($event_uid = '') {
+        $event_uid      = sanitize_text_field((string) $event_uid);
+        $uses_bootstrap = false;
+
+        if ($event_uid !== '') {
+            if (!class_exists('Evtmgr_Options')) {
+                require_once __DIR__ . '/class-evtmgr-options.php';
+            }
+
+            $uses_bootstrap = (new Evtmgr_Options())->get_option($event_uid, 'theme_uses_bootstrap') === '1';
+        }
+
+        return (bool) apply_filters('evtmgr_theme_uses_bootstrap', $uses_bootstrap, $event_uid);
+    }
+
+    /**
+     * Enqueue the bundled Bootstrap stylesheet (and optionally the JS bundle)
+     * for the public views, unless the theme already provides Bootstrap for
+     * this event.
+     *
+     * Safe to call multiple times and from inside shortcode callbacks:
+     * wp_enqueue_style()/wp_enqueue_script() de-duplicate by handle, and
+     * WordPress prints a late enqueue in the footer.
+     *
+     * @param string $event_uid
+     * @param bool   $with_js    Also load bootstrap.bundle.min.js (Popper +
+     *                           modal/collapse/dropdown/tooltip). Needed by the
+     *                           event_registration view (modal, accordion).
+     * @return void
+     */
+    public static function enqueue_bootstrap($event_uid = '', $with_js = false) {
+        if (self::theme_uses_bootstrap($event_uid)) {
+            return;
+        }
+
+        $base_rel = '/db-custom/event-registration/public/assets/vendor/bootstrap/';
+        $base_dir = get_stylesheet_directory() . $base_rel;
+        $base_uri = get_stylesheet_directory_uri() . $base_rel;
+
+        $css_handle = 'evtmgr-bootstrap';
+
+        if (!wp_style_is($css_handle, 'registered') && !wp_style_is($css_handle, 'enqueued')) {
+            $css_file = 'css/bootstrap.min.css';
+            wp_register_style(
+                $css_handle,
+                $base_uri . $css_file,
+                array(),
+                file_exists($base_dir . $css_file) ? filemtime($base_dir . $css_file) : '5.3.8'
+            );
+        }
+        wp_enqueue_style($css_handle);
+
+        if (!$with_js) {
+            return;
+        }
+
+        $js_handle = 'evtmgr-bootstrap';
+
+        if (!wp_script_is($js_handle, 'registered') && !wp_script_is($js_handle, 'enqueued')) {
+            $js_file = 'js/bootstrap.bundle.min.js';
+            wp_register_script(
+                $js_handle,
+                $base_uri . $js_file,
+                array(),
+                file_exists($base_dir . $js_file) ? filemtime($base_dir . $js_file) : '5.3.8',
+                true
+            );
+        }
+        wp_enqueue_script($js_handle);
+    }
 }

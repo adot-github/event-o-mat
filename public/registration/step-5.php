@@ -460,7 +460,7 @@
 
 ?>
 
-<div class="container my-4 registration-step-5">
+<div class="container-fluid my-4 registration-step-5">
 
     <h2><?php echo $wordings['ihre_registrierung_ist_abgeschlossen'] ?? 'ihre_registrierung_ist_abgeschlossen'; ?></h2>
 

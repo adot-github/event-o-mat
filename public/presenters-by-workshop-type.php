@@ -66,6 +66,8 @@ function presenters_by_workshop_type_shortcode($atts = array()) {
     $lang      = sanitize_key((string) $atts['lang']);
     $type_ids  = array_values(array_unique(array_filter(array_map('absint', explode(',', (string) $atts['type'])))));
 
+    Event_Registration_Helpers::enqueue_bootstrap($event_uid, true);
+
     if ($event_uid === '') {
         return '';
     }
@@ -153,7 +155,7 @@ function presenters_by_workshop_type_shortcode($atts = array()) {
                 $image_url = '';
                 $image_raw = trim((string) ($presenter['str_person_image'] ?? ''));
                 if ($image_raw !== '' && $upload_baseurl !== '') {
-                    $image_url = $upload_baseurl . '/bgf-2026/' . ltrim($image_raw, '/');
+                    $image_url = $upload_baseurl . '/' . $event_uid . '/presenters/' . ltrim($image_raw, '/');
                 }
 
                 $bio_raw  = trim((string) ($presenter['mem_presenter_text'] ?? ''));

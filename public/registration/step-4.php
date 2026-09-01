@@ -151,7 +151,7 @@
 
 ?>
 
-<div class="container my-4 registration-step-4">
+<div class="container-fluid my-4 registration-step-4">
 
     <fieldset>
 

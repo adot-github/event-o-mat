@@ -11,6 +11,9 @@ css-output/
 # Logs
 *.log
 
+# Source maps (vendored dist)
+*.map
+
 # DocRaptor temp output
 /admin/pages/vendor/docraptor/docraptor/tmp/*
 !/admin/pages/vendor/docraptor/docraptor/tmp/.keep

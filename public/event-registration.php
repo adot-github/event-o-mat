@@ -14,6 +14,7 @@
         define('EVENT_REGISTRATION_DIR', __DIR__);
     }
 
+    require_once dirname(EVENT_REGISTRATION_DIR) . '/classes/class-helpers.php';
     require_once dirname(EVENT_REGISTRATION_DIR) . '/classes/class-registration.php';
     require_once dirname(EVENT_REGISTRATION_DIR) . '/classes/class-evtmgr-registration-steps-field-data.php';
     require_once dirname(EVENT_REGISTRATION_DIR) . '/classes/class-evtmgr-events.php';
@@ -51,6 +52,8 @@
         $event_uid               = sanitize_text_field((string) $atts['event_uid']);
         $lang                    = sanitize_key((string) $atts['lang']);
         $step                    = $registration->get_current_step();
+
+        Event_Registration_Helpers::enqueue_bootstrap($event_uid, true);
         $errors                  = array();
 
         $cookie_result = $registration->ensure_registration_cookie();

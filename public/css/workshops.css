@@ -1,4 +1,4 @@
-.events-with-filters-card h3, 
+.session-title,
 .events-with-filters-card ul,
 .events-with-filters-card .event-teaser,
 .event-teaser,
@@ -7,6 +7,10 @@
 .select2-result-label,
 .form-check-label {
     font-size: 1rem ;
+}
+
+.events-with-filters-card h2 {
+    font-size:1.75rem;
 }
 
 .events-with-filters-card ul:first-of-type,

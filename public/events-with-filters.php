@@ -84,6 +84,8 @@ function events_with_filters_shortcode($atts = array()) {
     $lang          = sanitize_key((string) $atts['lang']);
     $default_types = array_values(array_unique(array_filter(array_map('absint', explode(',', (string) $atts['type'])))));
 
+    Event_Registration_Helpers::enqueue_bootstrap($event_uid, true);
+
     if ($event_uid === '') {
         return '';
     }
@@ -186,6 +188,27 @@ function events_with_filters_shortcode($atts = array()) {
 HTML;
     }
 
+    // The filter form submits with method="get". A GET submit discards the
+    // action URL's query string, so on a site with plain permalinks the
+    // page identifier (?page_id=10) would be lost and the shortcode page
+    // never reached. Point the form at the page permalink and re-add any
+    // query args it carries (page_id / p / …) as hidden fields.
+    $form_action      = esc_url(get_permalink(get_queried_object_id()));
+    $preserved_fields = '';
+    $permalink_query  = wp_parse_url((string) get_permalink(get_queried_object_id()), PHP_URL_QUERY);
+
+    if (is_string($permalink_query) && $permalink_query !== '') {
+        $permalink_args = array();
+        parse_str($permalink_query, $permalink_args);
+
+        foreach ($permalink_args as $arg_key => $arg_value) {
+            if (is_scalar($arg_value)) {
+                $preserved_fields .= '<input type="hidden" name="' . esc_attr((string) $arg_key)
+                    . '" value="' . esc_attr((string) $arg_value) . '">';
+            }
+        }
+    }
+
     $result_count  = count($workshops);
     $search_attr   = esc_attr($search);
     $liked_checked = $only_liked ? ' checked="checked"' : '';
@@ -195,7 +218,8 @@ HTML;
 
     $filters_html = <<<HTML
     <div class="events-with-filters-form-wrapper mb-4">
-        <form name="events_with_filters_form" method="get" class="events-with-filters-form">
+        <form name="events_with_filters_form" method="get" action="{$form_action}" class="events-with-filters-form">
+            {$preserved_fields}
             <div class="row mb-3">
                 <div class="col-md-4 pt-2">
                     <div class="input-group input-container">
@@ -232,7 +256,7 @@ HTML;
                         <select name="ewf_filters[types][]" id="ewf_filter_types" multiple="multiple" class="form-control dirty" placeholder="Alle">
                             {$types_ui}
                         </select>
-                        <label for="ewf_filter_types">Workshop-Typ</label>
+                        <label for="ewf_filter_types">Event-Typ</label>
                         <div class="clean-filter"></div>
                     </div>
                 </div>

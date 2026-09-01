@@ -113,9 +113,9 @@
     ?>
 
     <div class="event-title" style="border-top-colour_off:#<?php echo esc_attr($slot_color); ?>">
-        <h3 class="session-title m-0 mb-2">
+        <h2 class="session-title m-0 mb-2">
             <?php echo esc_html($display_title); ?>
-        </h3>
+        </h2>
     </div>
 
     <?php

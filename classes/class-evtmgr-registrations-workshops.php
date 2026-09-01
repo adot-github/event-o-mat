@@ -24,7 +24,7 @@ class Evtmgr_Registrations_Workshops {
         $event_uid       = sanitize_text_field($event_uid);
         $customer_cookie = sanitize_text_field($customer_cookie);
 
-        if ($person_id <= 0 || $event_uid === '' || $event_uid === '' || $customer_cookie === '') {
+        if ($person_id <= 0 || $event_uid === '' || $customer_cookie === '') {
             return false;
         }
 
@@ -34,21 +34,18 @@ class Evtmgr_Registrations_Workshops {
 
         $registrations_obj = new Evtmgr_Registrations();
 
-        $selected_workshops = $registrations_obj->get_registration_value(
+        $selected_workshops = (string) $registrations_obj->get_registration_value(
             $registration_values,
             'selected_workshops'
         );
 
-        if ($selected_workshops === '') {
-            return false;
-        }
-
-        $workshop_ids = array_filter(array_map('absint', explode(',', $selected_workshops)));
-        $workshop_ids = array_values(array_unique($workshop_ids));
-
-        if (empty($workshop_ids)) {
-            return false;
-        }
+        // An empty selection is valid: not every event requires a workshop.
+        // Where a workshop is mandatory that rule is enforced in step 2, so
+        // step 5 must still be able to store a registration with zero
+        // workshops. We fall through, clear any previous rows and return true.
+        $workshop_ids = array_values(array_unique(
+            array_filter(array_map('absint', explode(',', $selected_workshops)))
+        ));
 
         $event_obj = new Evtmgr_Events();
         $event     = $event_obj->get_events_by_event_uid($event_uid, 'de');
