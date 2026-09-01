@@ -6,8 +6,7 @@
 :root {
     /* Fallback until functions.php injects the user's admin colour scheme
        (and before admin-detect-color.js runs) — prevents the white flash. */
-    --evtmgr-bg:          #1d2327;
-    --evtmgr-bg-off:      #59524c;
+    --evtmgr-bg-OFF:          #1d2327;
     --evtmgr-color-1: #5f0f40;
     --evtmgr-color-2: #9a031e;
     --evtmgr-color-3: #0f4c5c;
