@@ -1,0 +1,16 @@
+# Runtime / user-generated content
+/public/img/logos/
+/admin/file-storage/
+/file-storage/
+/design-assets/
+/assets/
+
+# Generated CSS
+css-output/
+
+# Logs
+*.log
+
+# DocRaptor temp output
+/admin/pages/vendor/docraptor/docraptor/tmp/*
+!/admin/pages/vendor/docraptor/docraptor/tmp/.keep
