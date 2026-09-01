@@ -84,6 +84,31 @@ if (!empty($event_uid) && isset($wpdb)) {
     }
 }
 
+$income_report_rows = array();
+
+if (!empty($event_uid) && isset($wpdb)) {
+    $persons_table = $wpdb->prefix . 'evtmgr_persons';
+
+    $income_report_sql = "
+        SELECT
+            CAST(COALESCE(p.num_invoice_total, 0) AS DECIMAL(10,2)) AS amount_per_registration,
+            COUNT(*) AS registration_count
+        FROM {$persons_table} AS p
+        WHERE p.fky_event_uid = %s
+        GROUP BY amount_per_registration
+        ORDER BY amount_per_registration DESC
+    ";
+
+    $income_report_rows = $wpdb->get_results(
+        $wpdb->prepare($income_report_sql, $event_uid),
+        ARRAY_A
+    );
+
+    if (!is_array($income_report_rows)) {
+        $income_report_rows = array();
+    }
+}
+
 $manual_links = array(
     array(
         'str_group'       => 'Anmeldungen',
@@ -179,6 +204,9 @@ $manual_links = array(
 
 
 <div class="container-xxl py-4">
+    <div class="ps-2">
+        <?php include __DIR__ . '/dashboard-active-event-title.php'; ?>
+    </div>
 
     <section class="m-0">
         <div class="accordion" id="accordion-workshop-auslastung">
@@ -190,7 +218,7 @@ $manual_links = array(
                             data-bs-target="#accordion-workshop-auslastung-body"
                             aria-expanded="false"
                             aria-controls="accordion-workshop-auslastung-body">
-                        Workshop-Auslastung
+                        Auslastung und Einnahmen
                     </button>
                 </h2>
                 <div id="accordion-workshop-auslastung-body"
@@ -207,42 +235,105 @@ $manual_links = array(
                                 Für diesen Event wurden keine Workshops gefunden.
                             </div>
                         <?php else : ?>
+                            <?php
+                                // Gemeinsame Skala für die Visualisierung des Anmeldestandes (Anteil freier Plätze).
+                                $render_anmeldestand_bar = static function ($registration_count, $max_places, $label) {
+                                    $registration_count = (int) $registration_count;
+                                    $max_places         = (int) $max_places;
+
+                                    if ($max_places <= 0) {
+                                        echo '<span class="text-muted">&ndash;</span>';
+                                        return;
+                                    }
+
+                                    $free_places   = max(0, $max_places - $registration_count);
+                                    $booked_percent = (int) round(($registration_count / $max_places) * 100);
+                                    $free_percent  = min(100, max(0, 100 - $booked_percent));
+
+                                    if ($free_percent >= 81) {
+                                        $bar_color = '#60b564';
+                                    } elseif ($free_percent >= 51) {
+                                        $bar_color = '#fed700';
+                                    } elseif ($free_percent >= 31) {
+                                        $bar_color = '#f69d01';
+                                    } elseif ($free_percent >= 6) {
+                                        $bar_color = '#e46117';
+                                    } else {
+                                        $bar_color = '#ca0638';
+                                    }
+                                    ?>
+                                    <div class="progress"
+                                         role="progressbar"
+                                         aria-label="Anmeldestand <?php echo esc_attr($label); ?>"
+                                         aria-valuenow="<?php echo esc_attr((string) $free_percent); ?>"
+                                         aria-valuemin="0"
+                                         aria-valuemax="100"
+                                         style="height: 1rem; background-color: #e9ecef; border-radius: 0;"
+                                         title="<?php echo esc_attr($free_places . ' von ' . $max_places . ' frei (' . $free_percent . '%)'); ?>">
+                                        <div class="progress-bar"
+                                             style="width: <?php echo esc_attr((string) $free_percent); ?>%; background-color: <?php echo esc_attr($bar_color); ?>; color: #000; font-weight: 600; border-radius: 0;">
+                                            <?php echo esc_html($free_percent . '% frei'); ?>
+                                        </div>
+                                    </div>
+                                    <?php
+                                };
+
+                                $total_max_places    = 0;
+                                $total_registrations = 0;
+
+                                foreach ($workshop_report_rows as $totals_row) {
+                                    $row_max = isset($totals_row['int_max_number_of_registrations'])
+                                        ? (int) $totals_row['int_max_number_of_registrations']
+                                        : 0;
+
+                                    if ($row_max > 0) {
+                                        $total_max_places    += $row_max;
+                                        $total_registrations += isset($totals_row['registration_count'])
+                                            ? (int) $totals_row['registration_count']
+                                            : 0;
+                                    }
+                                }
+
+                                $total_free_places = max(0, $total_max_places - $total_registrations);
+                            ?>
                             <div class="table-responsive">
                                 <table class="table table-sm table-striped table-hover align-middle mb-0">
                                     <thead>
                                         <tr>
-                                            <th>Workshop</th>
-                                            <th class="text-end">Anmeldungen</th>
-                                            <th class="text-end">Max. Plätze</th>
-                                            <th class="text-end">Freie Plätze</th>
+                                            <th>Event</th>
+                                            <th style="min-width: 160px;">Anmeldestand</th>
+                                            <th class="text-end">Anm.</th>
+                                            <th class="text-end">Max.</th>
+                                            <th class="text-end">Frei</th>
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        <?php foreach ($workshop_report_rows as $workshop_report_row) : ?>
+                                            <?php foreach ($workshop_report_rows as $workshop_report_row) : ?>
                                             <?php
-                                            $registration_count = isset($workshop_report_row['registration_count'])
-                                                ? (int) $workshop_report_row['registration_count']
-                                                : 0;
+                                                $registration_count = isset($workshop_report_row['registration_count'])
+                                                    ? (int) $workshop_report_row['registration_count']
+                                                    : 0;
 
-                                            $max_places = isset($workshop_report_row['int_max_number_of_registrations'])
-                                                ? (int) $workshop_report_row['int_max_number_of_registrations']
-                                                : 0;
+                                                $max_places = isset($workshop_report_row['int_max_number_of_registrations'])
+                                                    ? (int) $workshop_report_row['int_max_number_of_registrations']
+                                                    : 0;
 
-                                            $free_places = $max_places > 0
-                                                ? max(0, $max_places - $registration_count)
-                                                : null;
+                                                $free_places = $max_places > 0
+                                                    ? max(0, $max_places - $registration_count)
+                                                    : null;
 
-                                            $workshop_label = trim(
-                                                (string) ($workshop_report_row['str_workshop_number'] ?? '') . ' ' .
-                                                (string) ($workshop_report_row['str_workshop_title_de'] ?? '')
-                                            );
+                                                $workshop_label = trim(
+                                                    (string) ($workshop_report_row['str_workshop_number'] ?? '') . ' ' .
+                                                    (string) ($workshop_report_row['str_workshop_title_de'] ?? '')
+                                                );
 
-                                            if ($workshop_label === '') {
-                                                $workshop_label = 'Workshop ID ' . (string) ($workshop_report_row['workshop_id'] ?? '');
-                                            }
+                                                if ($workshop_label === '') {
+                                                    $workshop_label = 'Workshop ID ' . (string) ($workshop_report_row['workshop_id'] ?? '');
+                                                }
                                             ?>
                                             <tr>
                                                 <td><?php echo esc_html($workshop_label); ?></td>
+                                                <td><?php $render_anmeldestand_bar($registration_count, $max_places, $workshop_label); ?></td>
                                                 <td class="text-end"><?php echo esc_html((string) $registration_count); ?></td>
                                                 <td class="text-end">
                                                     <?php echo $max_places > 0 ? esc_html((string) $max_places) : '&ndash;'; ?>
@@ -253,6 +344,88 @@ $manual_links = array(
                                             </tr>
                                         <?php endforeach; ?>
                                     </tbody>
+                                    <tfoot>
+                                        <tr>
+                                            <td colspan="5" style="border: 0; height: 1rem;"></td>
+                                        </tr>
+                                        <tr class="fw-bold border-top">
+                                            <td>Total Auslastung</td>
+                                            <td><?php $render_anmeldestand_bar($total_registrations, $total_max_places, 'total'); ?></td>
+                                            <td class="text-end"><?php echo esc_html((string) $total_registrations); ?></td>
+                                            <td class="text-end"><?php echo $total_max_places > 0 ? esc_html((string) $total_max_places) : '&ndash;'; ?></td>
+                                            <td class="text-end"><?php echo $total_max_places > 0 ? esc_html((string) $total_free_places) : '&ndash;'; ?></td>
+                                        </tr>
+                                    </tfoot>
+                                </table>
+                            </div>
+
+                            <?php
+                                $format_chf_sum = static function ($amount) {
+                                    return 'CHF ' . number_format((float) $amount, 2, '.', '\'');
+                                };
+
+                                $format_chf_unit = static function ($amount) {
+                                    $amount   = (float) $amount;
+                                    $rappen   = (int) round(($amount - floor($amount)) * 100);
+                                    $integer  = number_format(floor($amount), 0, '.', '\'');
+
+                                    return $rappen === 0
+                                        ? 'CHF ' . $integer . '.' . "\u{2013}"
+                                        : 'CHF ' . $integer . '.' . str_pad((string) $rappen, 2, '0', STR_PAD_LEFT);
+                                };
+
+                                $income_total = 0.0;
+                            ?>
+
+                            <div class="table-responsive mt-4">
+                                <table class="table table-sm table-striped table-hover align-middle mb-0">
+                                    <thead>
+                                        <tr>
+                                            <th>Einnahmen</th>
+                                            <th class="text-end">Betrag</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <?php if (empty($income_report_rows)) : ?>
+                                            <tr>
+                                                <td colspan="2" class="text-muted">Keine Anmeldungen erfasst.</td>
+                                            </tr>
+                                        <?php else : ?>
+                                            <?php foreach ($income_report_rows as $income_report_row) : ?>
+                                                <?php
+                                                    $amount_per_registration = isset($income_report_row['amount_per_registration'])
+                                                        ? (float) $income_report_row['amount_per_registration']
+                                                        : 0.0;
+
+                                                    $income_registration_count = isset($income_report_row['registration_count'])
+                                                        ? (int) $income_report_row['registration_count']
+                                                        : 0;
+
+                                                    $income_line_sum = $amount_per_registration * $income_registration_count;
+                                                    $income_total   += $income_line_sum;
+                                                ?>
+                                                <tr>
+                                                    <td>
+                                                        <?php
+                                                            echo esc_html(
+                                                                $income_registration_count . ' ' .
+                                                                _n('Anmeldung', 'Anmeldungen', $income_registration_count, 'picostrap5-child-base') .
+                                                                ' zu '
+                                                            );
+                                                            echo esc_html($format_chf_unit($amount_per_registration));
+                                                        ?>
+                                                    </td>
+                                                    <td class="text-end"><?php echo esc_html($format_chf_sum($income_line_sum)); ?></td>
+                                                </tr>
+                                            <?php endforeach; ?>
+                                        <?php endif; ?>
+                                    </tbody>
+                                    <tfoot>
+                                        <tr class="fw-bold border-top">
+                                            <td>Total Einnahmen</td>
+                                            <td class="text-end"><?php echo esc_html($format_chf_sum($income_total)); ?></td>
+                                        </tr>
+                                    </tfoot>
                                 </table>
                             </div>
                         <?php endif; ?>

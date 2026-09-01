@@ -207,7 +207,7 @@ HTML;
                     <div class="form-check">
                         <input class="form-check-input" type="checkbox" name="ewf_liked" value="1" id="ewf_liked_checkbox"{$liked_checked}>
                         <label class="form-check-label" for="ewf_liked_checkbox">
-                            Nur gemerkte Angebote
+                            Nur Angebote in der Merkliste
                         </label>
                     </div>
                 </div>

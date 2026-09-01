@@ -55,6 +55,6 @@ $manual_links = array(
 );
 ?>
 
-<?php
-    include ('dashboard-card-2.php');
-?>
+<div class="container-xxl py-4">
+    <?php include ('dashboard-card-2.php'); ?>
+</div>

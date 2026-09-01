@@ -429,7 +429,7 @@ tr:not(.pricing-group-odd) + tr.pricing-group-odd > :is(td, th) {
 }
 
 /* "Nur Angebote aus meiner Merkliste" checkbox in the workshop-selection
-   modal — same visibility fix as the gallery's "Nur gemerkte Angebote"
+   modal — same visibility fix as the gallery's "Nur Angebote in der Merkliste"
    checkbox (public/css/events-with-filters.css): Bootstrap's default is
    too small/low-contrast. */
 .js-workshop-modal-filter .form-check {

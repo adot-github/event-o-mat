@@ -44,7 +44,7 @@
     font-weight: 400;
 }
 
-/* "Nur gemerkte Angebote" checkbox — plain Bootstrap default was too small
+/* "Nur Angebote in der Merkliste" checkbox — plain Bootstrap default was too small
    and too low-contrast next to the search field and select dropdowns. */
 .events-with-filters-form-wrapper .form-check {
     display: flex;

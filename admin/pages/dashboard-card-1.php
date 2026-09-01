@@ -4,6 +4,9 @@
 </style>
 
 <div class="container py-4">
+
+    <?php include __DIR__ . '/dashboard-active-event-title.php'; ?>
+
     <?php
     $current_group = '';
 

@@ -21,6 +21,29 @@ add_action('admin_enqueue_scripts', function ($hook_suffix) {
         '1.0.0'
     );
 
+    /*
+     * Render-blocking inline style so --evtmgr-bg already holds the user's admin
+     * colour scheme on first paint. Without this the variable is only set later
+     * by admin-detect-color.js (on DOMContentLoaded), which causes a white flash.
+     */
+    global $_wp_admin_css_colors;
+
+    $evtmgr_scheme = get_user_option('admin_color');
+    $evtmgr_bg     = '';
+
+    if ($evtmgr_scheme && isset($_wp_admin_css_colors[$evtmgr_scheme]->colors[0])) {
+        $evtmgr_bg = sanitize_hex_color($_wp_admin_css_colors[$evtmgr_scheme]->colors[0]);
+    }
+
+    if (!$evtmgr_bg) {
+        $evtmgr_bg = '#1d2327';
+    }
+
+    wp_add_inline_style(
+        'event-registration-admin-theme',
+        ':root{--evtmgr-bg:' . $evtmgr_bg . ';}html,body{background:' . $evtmgr_bg . ' !important;}'
+    );
+
     wp_enqueue_script(
         'bootstrap-5-bundle',
         'https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js',

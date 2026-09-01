@@ -4,6 +4,9 @@
 
 /* --- 1. Custom properties ---------------------------------- */
 :root {
+    /* Fallback until functions.php injects the user's admin colour scheme
+       (and before admin-detect-color.js runs) — prevents the white flash. */
+    --evtmgr-bg:          #1d2327;
     --evtmgr-bg-off:      #59524c;
     --evtmgr-color-1: #5f0f40;
     --evtmgr-color-2: #9a031e;
@@ -82,17 +85,21 @@ h1 {
     font-size: 2rem;
 }
 
-h1::before {
+h1.dashed::before, h2.dashed::before {
     content: "";
     display: block;
-    width: 1cm;
-    height: 2px;
-    background: currentColor;
+    width: 2cm;
+    height: 3px;
+    background: rgba(255,255,255,.5);
     position: relative;
-    top: -3px;
+    top: -5px;
 }
 
 h2 {
+    font-size: 1.75rem;
+}
+
+h3 {
     font-size: 1.5rem;
 }
 
@@ -322,6 +329,9 @@ a.button {
     --bs-accordion-active-color:         var(--evtmgr-text);
     --bs-accordion-btn-focus-box-shadow: 0 0 0 .25rem rgba(251,139,36,.25);
     --bs-accordion-btn-focus-border-color: rgba(251,139,36,.4);
+}
+.accordion-button {
+    background: rgba(0,0,0,.25);
 }
 .accordion-button::after {
     filter: invert(1) brightness(2);
