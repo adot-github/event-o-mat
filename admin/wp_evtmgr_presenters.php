@@ -211,7 +211,7 @@
                 'acf' => [
                     'type' => 'acdb_file_selector',
                     'file_type' => 'image',
-                    'subfolder' => '/',
+                    'subfolder' => '/{{fky_event_uid}}/assets/presenter-images',
                     'image_width' => 300,
                     'image_height' => 300,
                 ],

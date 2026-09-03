@@ -1,9 +1,13 @@
 # Runtime / user-generated content
 /public/img/logos/
+# Alt-Ablage generierter PDFs (jetzt unter wp-content/uploads/<event_uid>/pdf/<typ>/)
 /admin/file-storage/
 /file-storage/
 /design-assets/
 /assets/
+# Generierte Test-PDFs und lokale Template-/Font-Assets (nicht versioniert)
+/admin/pages/pdf/
+/admin/pages/assets/
 
 # Generated CSS
 css-output/

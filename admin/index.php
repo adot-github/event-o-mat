@@ -18,6 +18,7 @@
             'dashboard-workshop',
             'dashboard-anmeldungen',
             'dashboard-tools',
+            'dashboard-pdf',
             // TBX add_table_config pages (slug = 'acdb_' + table name)
             'acdb_evtmgr_events',
             'acdb_evtmgr_workshops',
@@ -43,6 +44,7 @@
             'diploma-pdf-create',
             'person-program-pdf-create',
             'event-pdf',
+            'booklet-pdf-create',
             'event-duplicate',
             'event-delete',
             'registration-delete',

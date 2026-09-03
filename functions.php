@@ -107,7 +107,7 @@ require_once get_stylesheet_directory() . '/db-custom/event-registration/public/
 
 /**
  * AJAX handler — generates one PDF per call, driven by the progress-bar JS
- * in pdf-creation.php. Job data is stored in a WP transient keyed by job_id.
+ * in pdf-creation-by-person.php. Job data is stored in a WP transient keyed by job_id.
  */
 add_action('wp_ajax_evtmgr_pdf_generate_person', function () {
     if (!check_ajax_referer('evtmgr_pdf_generate', 'nonce', false)) {
@@ -155,7 +155,7 @@ add_action('wp_ajax_evtmgr_pdf_generate_person', function () {
 
     try {
         $pdf_creator = new Event_Registration_Pdf_Creation($pages_dir);
-        $layout      = $pdf_creator->load_pdf_layout($pdf_layout);
+        $layout      = $pdf_creator->load_pdf_layout($pdf_layout, $event_uid);
 
         $person_id   = $pdf_creator->get_person_id($person);
         $first_name  = $pdf_creator->value_ci($person, 'str_first_name');
@@ -173,7 +173,7 @@ add_action('wp_ajax_evtmgr_pdf_generate_person', function () {
         }
 
         // Invoices show the billing creation date instead of the event date.
-        if ($pdf_layout === 'dachverband-rechnung.php') {
+        if ($pdf_layout === 'rechnung.php') {
             global $wpdb;
             $billing_date_created = $wpdb->get_var(
                 $wpdb->prepare(
@@ -240,7 +240,7 @@ add_action('wp_ajax_evtmgr_pdf_generate_person', function () {
 
 /**
  * AJAX handler — generates one workshop PDF per call, driven by the
- * progress-bar JS in pdf-creation-workshops.php.
+ * progress-bar JS in pdf-creation-by-workshops.php.
  */
 add_action('wp_ajax_evtmgr_pdf_generate_workshop', function () {
     if (!check_ajax_referer('evtmgr_pdf_generate', 'nonce', false)) {
@@ -290,14 +290,11 @@ add_action('wp_ajax_evtmgr_pdf_generate_workshop', function () {
     try {
         $pdf_creator   = new Event_Registration_Pdf_Creation($pages_dir);
         $workshops_obj = new Evtmgr_Workshops();
-        $layout        = $pdf_creator->load_pdf_layout($pdf_layout);
+        $layout        = $pdf_creator->load_pdf_layout($pdf_layout, $event_uid);
 
         $workshop_id      = absint($workshop['id'] ?? 0);
         $workshop_label   = $workshops_obj->workshop_pdf_label($workshop);
         $file_name        = $workshops_obj->workshop_pdf_file_name($workshop);
-        $participants     = $workshops_obj->get_workshop_registered_persons($workshop_id, $event_uid);
-        $presenters_text  = $workshops_obj->get_workshop_presenters_text($workshop_id);
-        $workshop_label_cb = [$workshops_obj, 'workshop_pdf_label'];
 
         $image_replacements = $pdf_creator->get_image_replacements($layout);
         $text_replacements  = $pdf_creator->text_replacements($layout, 'de');
@@ -307,11 +304,46 @@ add_action('wp_ajax_evtmgr_pdf_generate_workshop', function () {
             '{str_event_subtitle}'     => esc_html($str_event_subtitle),
             '{str_event_subtitle_de}'  => esc_html($str_event_subtitle),
             '{dtm_event_date}'         => esc_html($dtm_event_date),
+            '{dtm_event_date_full}'    => esc_html($dtm_event_date),
             '{id}'                     => esc_html((string) $workshop_id),
             '{str_workshop_number}'    => esc_html($workshops_obj->workshop_value_ci($workshop, 'str_workshop_number')),
             '{str_workshop_title_de}'  => esc_html($workshops_obj->workshop_value_ci($workshop, 'str_workshop_title_de')),
-            '{invoice_text}'           => $pdf_creator->render_workshop_participants_html($workshop, $participants, $presenters_text, $workshop_label_cb),
         ];
+
+        if (str_starts_with(basename($pdf_layout), 'workshop-flyer')) {
+            /* One informational flyer per workshop (content from wp_evtmgr_workshops).
+               Matches workshop-flyer.php and any variant (workshop-flyer-2.php, …). */
+            $event_date_ts = strtotime((string) (is_array($event) ? ($event['dtm_event_date'] ?? '') : ''));
+            if ($event_date_ts) {
+                $core_replacements['{dtm_event_date}'] = esc_html(wp_date('j.n.Y', $event_date_ts));
+
+                $evt_de_days   = ['Sonntag', 'Montag', 'Dienstag', 'Mittwoch', 'Donnerstag', 'Freitag', 'Samstag'];
+                $evt_de_months = [1 => 'Januar', 'Februar', 'März', 'April', 'Mai', 'Juni', 'Juli', 'August', 'September', 'Oktober', 'November', 'Dezember'];
+                $core_replacements['{dtm_event_date_full}'] = esc_html(
+                    $evt_de_days[(int) date('w', $event_date_ts)]
+                    . ', ' . (int) date('j', $event_date_ts)
+                    . '. ' . $evt_de_months[(int) date('n', $event_date_ts)]
+                    . ' ' . date('Y', $event_date_ts)
+                );
+            }
+
+            $core_replacements = array_merge(
+                $core_replacements,
+                $workshops_obj->get_workshop_flyer_replacements($workshop, $event_uid, 'de')
+            );
+        } else {
+            /* Booking list: participant table for the workshop. */
+            $participants      = $workshops_obj->get_workshop_registered_persons($workshop_id, $event_uid);
+            $presenters_text   = $workshops_obj->get_workshop_presenters_text($workshop_id);
+            $workshop_label_cb = [$workshops_obj, 'workshop_pdf_label'];
+
+            $core_replacements['{invoice_text}'] = $pdf_creator->render_workshop_participants_html(
+                $workshop,
+                $participants,
+                $presenters_text,
+                $workshop_label_cb
+            );
+        }
 
         $all_replacements = array_merge($image_replacements, $text_replacements, $core_replacements);
         $html = $pdf_creator->render_html((string) $layout['html_template'], $all_replacements);

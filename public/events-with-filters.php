@@ -42,6 +42,7 @@ if (!function_exists('events_with_filters_render_workshop_html')) {
         $id                = absint($workshop_id);
         $str_slot_color    = 'eeeeee';
         $show_like_button  = true;
+        $pdf_link_option   = 'link_pdf_in_filter_page';
 
         if ($id <= 0) {
             return '';
@@ -212,9 +213,62 @@ HTML;
     $result_count  = count($workshops);
     $search_attr   = esc_attr($search);
     $liked_checked = $only_liked ? ' checked="checked"' : '';
-    $categories_ui = events_with_filters_options_html($category_options, $selected_categories);
-    $types_ui      = events_with_filters_options_html($type_options, $selected_types);
-    $presenters_ui = events_with_filters_options_html($presenter_options, $selected_presenters);
+
+    // Each multi-select filter is only rendered when it offers a real choice,
+    // i.e. more than one option. A filter with 0 or 1 options can never narrow
+    // the result, so it stays hidden.
+    $filter_defs = array(
+        array(
+            'options'  => $category_options,
+            'selected' => $selected_categories,
+            'name'     => 'ewf_filters[categories][]',
+            'id'       => 'ewf_filter_categories',
+            'label'    => 'Kategorie',
+        ),
+        array(
+            'options'  => $type_options,
+            'selected' => $selected_types,
+            'name'     => 'ewf_filters[types][]',
+            'id'       => 'ewf_filter_types',
+            'label'    => 'Event-Typ',
+        ),
+        array(
+            'options'  => $presenter_options,
+            'selected' => $selected_presenters,
+            'name'     => 'ewf_filters[presenters][]',
+            'id'       => 'ewf_filter_presenters',
+            'label'    => 'Referent*in',
+        ),
+    );
+
+    $filter_selects_html = '';
+
+    foreach ($filter_defs as $filter_def) {
+        if (count($filter_def['options']) <= 1) {
+            continue;
+        }
+
+        $options_ui = events_with_filters_options_html($filter_def['options'], $filter_def['selected']);
+        $field_name = esc_attr($filter_def['name']);
+        $field_id   = esc_attr($filter_def['id']);
+        $field_lbl  = esc_html($filter_def['label']);
+
+        $filter_selects_html .= <<<HTML
+                <div class="col-md-4 mb-3">
+                    <div class="form-group floating-label select-container">
+                        <select name="{$field_name}" id="{$field_id}" multiple="multiple" class="form-control dirty" placeholder="Alle">
+                            {$options_ui}
+                        </select>
+                        <label for="{$field_id}">{$field_lbl}</label>
+                        <div class="clean-filter"></div>
+                    </div>
+                </div>
+HTML;
+    }
+
+    $filter_selects_row = $filter_selects_html !== ''
+        ? "<div class=\"row\">{$filter_selects_html}\n            </div>"
+        : '';
 
     $filters_html = <<<HTML
     <div class="events-with-filters-form-wrapper mb-4">
@@ -241,35 +295,7 @@ HTML;
                     </div>
                 </div>
             </div>
-            <div class="row">
-                <div class="col-md-4 mb-3">
-                    <div class="form-group floating-label select-container">
-                        <select name="ewf_filters[categories][]" id="ewf_filter_categories" multiple="multiple" class="form-control dirty" placeholder="Alle">
-                            {$categories_ui}
-                        </select>
-                        <label for="ewf_filter_categories">Kategorie</label>
-                        <div class="clean-filter"></div>
-                    </div>
-                </div>
-                <div class="col-md-4 mb-3">
-                    <div class="form-group floating-label select-container">
-                        <select name="ewf_filters[types][]" id="ewf_filter_types" multiple="multiple" class="form-control dirty" placeholder="Alle">
-                            {$types_ui}
-                        </select>
-                        <label for="ewf_filter_types">Event-Typ</label>
-                        <div class="clean-filter"></div>
-                    </div>
-                </div>
-                <div class="col-md-4 mb-3">
-                    <div class="form-group floating-label select-container">
-                        <select name="ewf_filters[presenters][]" id="ewf_filter_presenters" multiple="multiple" class="form-control dirty" placeholder="Alle">
-                            {$presenters_ui}
-                        </select>
-                        <label for="ewf_filter_presenters">Referent*in</label>
-                        <div class="clean-filter"></div>
-                    </div>
-                </div>
-            </div>
+            {$filter_selects_row}
         </form>
     </div>
 HTML;

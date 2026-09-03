@@ -25,7 +25,9 @@
 .events-with-filters-form-wrapper,
 .events-with-filters-result-count,
 .events-with-filters-wrapper,
-.event-workshop-type-speakers {
+.event-workshop-type-speakers,
+.event-price-map,
+.event-keyfigures {
     max-width:100% !important;
 }
 

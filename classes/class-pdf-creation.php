@@ -40,12 +40,22 @@ class Event_Registration_Pdf_Creation {
         return $docraptor;
     }
 
-    public function load_pdf_layout(string $pdf_layout_file): array {
+    public function load_pdf_layout(string $pdf_layout_file, string $event_uid): array {
         $pdf_layout_file = basename($pdf_layout_file);
-        $layout_file     = $this->base_dir . DIRECTORY_SEPARATOR . 'pdf-layouts' . DIRECTORY_SEPARATOR . $pdf_layout_file;
+        $event_uid       = sanitize_file_name($event_uid);
+
+        if ($event_uid === '') {
+            throw new RuntimeException('PDF layout: event_uid is empty for ' . $pdf_layout_file);
+        }
+
+        $upload_dir  = wp_upload_dir();
+        $templates_dir = rtrim((string) ($upload_dir['basedir'] ?? ''), '/\\')
+            . DIRECTORY_SEPARATOR . $event_uid
+            . DIRECTORY_SEPARATOR . 'pdf-templates';
+        $layout_file = $templates_dir . DIRECTORY_SEPARATOR . $pdf_layout_file;
 
         if (!file_exists($layout_file)) {
-            throw new RuntimeException('PDF layout file not found: ' . $pdf_layout_file);
+            throw new RuntimeException('PDF layout file not found: ' . $layout_file);
         }
 
         $layout = require $layout_file;
@@ -58,9 +68,12 @@ class Event_Registration_Pdf_Creation {
             throw new RuntimeException('PDF layout is missing html_template: ' . $pdf_layout_file);
         }
 
-        if (empty($layout['asset_dir'])) {
-            $layout['asset_dir'] = $this->base_dir . DIRECTORY_SEPARATOR . 'assets';
-        }
+        // Template images live per event under <uploads>/<event_uid>/assets/pdf-images/
+        // – always, regardless of any asset_dir the template file itself sets.
+        $layout['asset_dir'] = rtrim((string) ($upload_dir['basedir'] ?? ''), '/\\')
+            . DIRECTORY_SEPARATOR . $event_uid
+            . DIRECTORY_SEPARATOR . 'assets'
+            . DIRECTORY_SEPARATOR . 'pdf-images';
 
         if (empty($layout['images']) || !is_array($layout['images'])) {
             $layout['images'] = array();
@@ -301,13 +314,22 @@ class Event_Registration_Pdf_Creation {
     }
 
     public function get_pdf_path(string $subfolder_for_pdf, string $event_uid): string {
-        return dirname($this->base_dir) . DIRECTORY_SEPARATOR . 'file-storage' . DIRECTORY_SEPARATOR . sanitize_file_name($subfolder_for_pdf) . DIRECTORY_SEPARATOR . sanitize_file_name($event_uid) . DIRECTORY_SEPARATOR;
+        $upload_dir = wp_upload_dir();
+        $base_dir   = rtrim((string) ($upload_dir['basedir'] ?? ''), '/\\');
+
+        return $base_dir
+            . DIRECTORY_SEPARATOR . sanitize_file_name($event_uid)
+            . DIRECTORY_SEPARATOR . 'pdf'
+            . DIRECTORY_SEPARATOR . sanitize_file_name($subfolder_for_pdf) . DIRECTORY_SEPARATOR;
     }
 
     public function get_pdf_url(string $subfolder_for_pdf, string $event_uid, string $file_name = ''): string {
-        $url = get_stylesheet_directory_uri() . '/db-custom/event-registration/admin/file-storage/' .
-            rawurlencode($subfolder_for_pdf) . '/' .
-            rawurlencode($event_uid);
+        $upload_dir = wp_upload_dir();
+        $base_url   = rtrim((string) ($upload_dir['baseurl'] ?? ''), '/');
+
+        $url = $base_url . '/' .
+            rawurlencode($event_uid) . '/pdf/' .
+            rawurlencode($subfolder_for_pdf);
 
         if ($file_name !== '') {
             $url .= '/' . rawurlencode($file_name);

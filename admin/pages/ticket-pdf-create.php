@@ -6,7 +6,7 @@
 
 $type_of_pdf       = 'Tickets';
 $type_of_pdf_sing  = 'Ticket';
-$pdf_layout        = 'dachverband-ticket.php';
+$pdf_layout        = 'ticket.php';
 $file_name_field   = 'str_ticket_pdf';
 $subfolder_for_pdf = 'tickets';
 
@@ -24,4 +24,4 @@ $before_pdf_creation_callback = function ($event_uid) {
     }
 };
 
-require __DIR__ . '/pdf-creation.php';
+require __DIR__ . '/pdf-creation-by-person.php';

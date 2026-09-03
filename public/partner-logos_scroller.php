@@ -1,6 +1,6 @@
 <?php
 /**
- * Sponsor / Partner logo wall — View 2: Animated ticker / marquee.
+ * Sponsor / Partner logo scroller — animated ticker / marquee.
  *
  * Shortcode: [sponsor_ticker event_uid="xxxx-2026" lang="de" speed="40"]
  *

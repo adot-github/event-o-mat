@@ -1,6 +1,6 @@
 <?php
 /**
- * Sponsor / Partner logo wall — View 1: Responsive grid.
+ * Sponsor / Partner logo wall — responsive grid.
  *
  * Shortcode: [sponsor_wall event_uid="xxxx-2026" lang="de"]
  *

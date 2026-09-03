@@ -63,6 +63,7 @@
 				dtm_event_date:col-lg-2 col-md-3
                 dtm_registration_opened:col-lg-2 col-md-3
                 dtm_registration_closed:col-lg-2 col-md-3
+                str_event_url:col-lg-6 col-md-8
                 mem_text_on_closed_{{lang}}:col-md-{{lang_col_count}}
 
                 tab:E-Mail
@@ -118,6 +119,12 @@
                 ],
                 'ckeditor' => [
                     'mode' => 'standalone',
+                ]
+            ],
+           'str_event_url' => [
+                'label' => $labels['str_event_url'] ?? 'Event-URL (Landing- / Anmeldeseite)',
+                'acf' => [
+                    'type' => 'text',
                 ]
             ],
            'str_event_email_from' => [

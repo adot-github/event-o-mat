@@ -4,10 +4,13 @@ require_once get_stylesheet_directory() . '/db-custom/event-registration/public/
 require_once get_stylesheet_directory() . '/db-custom/event-registration/public/presenters-by-workshop-type.php';
 require_once get_stylesheet_directory() . '/db-custom/event-registration/public/events-by-workshop-type.php';
 require_once get_stylesheet_directory() . '/db-custom/event-registration/public/events-with-filters.php';
+require_once get_stylesheet_directory() . '/db-custom/event-registration/public/price-map.php';
+require_once get_stylesheet_directory() . '/db-custom/event-registration/public/event-keyfigures.php';
 require_once get_stylesheet_directory() . '/db-custom/event-registration/public/workshop-likes.php';
-require_once get_stylesheet_directory() . '/db-custom/event-registration/public/partner-logos_view-1.php';
-require_once get_stylesheet_directory() . '/db-custom/event-registration/public/partner-logos_view-2.php';
+require_once get_stylesheet_directory() . '/db-custom/event-registration/public/partner-logos_wall.php';
+require_once get_stylesheet_directory() . '/db-custom/event-registration/public/partner-logos_scroller.php';
 require_once get_stylesheet_directory() . '/db-custom/event-registration/public/checkin-app/class-checkin-app.php';
+require_once get_stylesheet_directory() . '/db-custom/event-registration/public/blocks/event-o-mat/register.php';
 
 if (!function_exists('event_registration_content_has_shortcode')) {
     /**
@@ -43,9 +46,13 @@ add_action('wp_enqueue_scripts', function () {
         || event_registration_content_has_shortcode('presenters_by_slot')
         || event_registration_content_has_shortcode('presenters_by_workshop_type')
         || event_registration_content_has_shortcode('sponsor_wall')
-        || event_registration_content_has_shortcode('sponsor_ticker');
+        || event_registration_content_has_shortcode('sponsor_ticker')
+        // Same content, inserted via the "Event-o-mat" editor blocks instead of
+        // as raw shortcodes (has_shortcode() does not see those).
+        || (function_exists('event_o_mat_page_has_block') && event_o_mat_page_has_block());
 
-    $needs_workshops = event_registration_content_has_shortcode('events_with_filters');
+    $needs_workshops = event_registration_content_has_shortcode('events_with_filters')
+        || (function_exists('event_o_mat_page_has_block') && event_o_mat_page_has_block('events_with_filters'));
 
     if ($is_event_registration_page) {
         // Load Bootstrap early (in <head>) when the theme does not provide it
@@ -63,11 +70,18 @@ add_action('wp_enqueue_scripts', function () {
         )) {
             $evt_uid = sanitize_text_field($evt_match[2]);
         }
+        if ($evt_uid === '' && function_exists('event_o_mat_page_event_uid')) {
+            $evt_uid = event_o_mat_page_event_uid();
+        }
         $needs_bootstrap_js = event_registration_content_has_shortcode('event_registration')
             || event_registration_content_has_shortcode('events_with_filters')
             || event_registration_content_has_shortcode('events_by_workshop_type')
             || event_registration_content_has_shortcode('presenters_by_slot')
-            || event_registration_content_has_shortcode('presenters_by_workshop_type');
+            || event_registration_content_has_shortcode('presenters_by_workshop_type')
+            || (function_exists('event_o_mat_page_block_tags') && (bool) array_intersect(
+                event_o_mat_page_block_tags(),
+                array('event_registration', 'events_with_filters', 'events_by_workshop_type', 'presenters_by_slot', 'presenters_by_workshop_type')
+            ));
         Event_Registration_Helpers::enqueue_bootstrap($evt_uid, $needs_bootstrap_js);
 
         foreach (glob($dir . '*.css') as $file_path) {

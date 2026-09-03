@@ -45,7 +45,7 @@ $editor->add_page_config([
 ]);
 
 $editor->add_page_config([
-    'id' => 'dashboard-anmeldungen',
+    'id' => 'dashboard-tools',
     'menu' => [
         'menu_parent'=> $root_config_id,
         'page_title' => "Tools",
@@ -53,6 +53,17 @@ $editor->add_page_config([
         'position'   => 4
     ],
     'page' => 'dashboard-tools'
+]);
+
+$editor->add_page_config([
+    'id' => 'dashboard-pdf',
+    'menu' => [
+        'menu_parent'=> $root_config_id,
+        'page_title' => "PDF-Generierung",
+        'menu_title' => "– PDF-Generierung",
+        'position'   => 5
+    ],
+    'page' => 'dashboard-pdf'
 ]);
 
 /** ENO */
@@ -195,6 +206,14 @@ $acdb_evtmgr_hidden_pages = array(
         'active_submenu'    => 'dashboard-event',
     ),
     array(
+        'page_title'        => '> booklet-pdf-create',
+        'menu_title'        => '> booklet-pdf-create',
+        'capability'        => 'edit_posts',
+        'menu_slug'         => 'booklet-pdf-create',
+        'file'              => '/db-custom/event-registration/admin/pages/booklet-pdf-create.php',
+        'active_submenu'    => 'dashboard-event',
+    ),
+    array(
         'page_title'        => '> event duplicate',
         'menu_title'        => '> event duplicate',
         'capability'        => 'edit_posts',
@@ -258,6 +277,24 @@ $acdb_evtmgr_hidden_pages = array(
         'file'              => '/db-custom/event-registration/admin/pages/filestorage-cean.php',
         'active_submenu'    => 'dashboard-tools',
     ),
+    array(
+        'page_title'        => '> pdf create',
+        'menu_title'        => '> pdf create',
+        'capability'        => 'edit_posts',
+        'menu_slug'         => 'flyer-pdf-create',
+        'file'              => '/db-custom/event-registration/admin/pages/flyer-pdf-create.php',
+        'active_submenu'    => 'dashboard-pdf',
+    ),
+    array(
+        'page_title'        => '> workshop-flyer-pdf-create',
+        'menu_title'        => '> workshop-flyer-pdf-create',
+        'capability'        => 'edit_posts',
+        'menu_slug'         => 'workshop-flyer-pdf-create',
+        'file'              => '/db-custom/event-registration/admin/pages/workshop-flyer-pdf-create.php',
+        'active_submenu'    => 'dashboard-pdf',
+    ),
+
+    
 
 );
 

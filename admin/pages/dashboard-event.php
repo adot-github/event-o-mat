@@ -32,6 +32,12 @@ $manual_links = array(
         'str_url'         => '/wp-admin/admin.php?page=acdb_evtmgr_options',
         'mem_description' => 'Diverse Optionen für den Event ',
     ),
+    array(
+        'str_group'       => 'Workshops',
+        'str_title'       => 'Buchungslisten für Workshops',
+        'str_url'         => '/wp-admin/admin.php?page=workshop-booking-lists-pdf-create',
+        'mem_description' => 'Erstellt Liste aller Teilnehmenden als PDF für jeden Workshop/Anlass.',
+    ),
 );
 
 ?>

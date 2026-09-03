@@ -3,6 +3,16 @@
 require_once ACDB_SYS_COMPONENTS_PATH . '/email_sendout/classes/AcdbEmailSendoutDatasource.php';
 class Email_Diploma extends AcdbEmailSendoutDatasource {
     public function __construct($options = []) {
+        // PDFs werden unter wp-content/uploads/<event_uid>/pdf/diplomas/ abgelegt.
+        $upload_dir  = wp_upload_dir();
+        $event_uid   = '';
+        if (class_exists('Evtmgr_Events')) {
+            $event_uid = (string) (new Evtmgr_Events())->get_current_event_uid(false);
+        } elseif (!empty($_COOKIE['current_event_uid'])) {
+            $event_uid = sanitize_text_field(wp_unslash($_COOKIE['current_event_uid']));
+        }
+        $pdf_dir_rel = ($event_uid !== '' ? sanitize_file_name($event_uid) . '/pdf/' : '') . 'diplomas';
+
         // All possible options are located in email_sendout/classes/AcdbEmailSendoutDatasource.php
         parent::__construct(array_merge([
             'custom_page' => 'diploma-send-by-email',
@@ -27,8 +37,8 @@ class Email_Diploma extends AcdbEmailSendoutDatasource {
                     '1' => "Alle Personen, welche die Teilnahmebestätigung bereits erhalten haben",
                 ]
             ],
-            "pdf_folder_abs" => wp_upload_dir()["path"],
-            "pdf_folder_http" => wp_upload_dir()["url"],
+            "pdf_folder_abs" => rtrim((string) ($upload_dir["basedir"] ?? ''), '/\\') . '/' . $pdf_dir_rel,
+            "pdf_folder_http" => rtrim((string) ($upload_dir["baseurl"] ?? ''), '/') . '/' . $pdf_dir_rel,
             'hide_in_menu' => true
         ], $options));
     }

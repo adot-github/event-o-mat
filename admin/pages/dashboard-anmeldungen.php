@@ -130,19 +130,19 @@ $manual_links = array(
     ),
 
     array(
-        'str_group'       => 'Rechnungen',
+        'str_group'       => 'PDF-Generierung',
         'str_title'       => 'Rechnungen korrigieren',
         'str_url'         => '/wp-admin/admin.php?page=invoice-change',
         'mem_description' => 'Formular zur Anpassung der Rechnung.',
     ),
     array(
-        'str_group'       => 'Rechnungen',
+        'str_group'       => 'PDF-Generierung',
         'str_title'       => 'Rechnungen generieren',
         'str_url'         => '/wp-admin/admin.php?page=invoice-pdf-create',
         'mem_description' => 'Erstellt eine Rechnung als PDF für angemeldete Personen.',
     ),
     array(
-        'str_group'       => 'Rechnungen',
+        'str_group'       => 'PDF-Generierung',
         'str_title'       => 'Rechnungen versenden',
         'str_url'         => '/wp-admin/admin.php?page=invoice-send-by-email',
         'mem_description' => 'Verschickt eine Rechnung als PDF an ausgewählte Personen.',

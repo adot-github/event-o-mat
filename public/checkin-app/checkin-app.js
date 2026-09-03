@@ -37,10 +37,15 @@
             ? `<div class="ca-header"><img src="${escHtml(cfg.logoUrl)}" alt="event-o-mat" class="ca-standalone__logo"></div>`
             : '';
 
+        const eventTitle = cfg.eventTitle
+            ? `<p class="ca-event-title">${escHtml(cfg.eventTitle)}</p>`
+            : '';
+
         return `
 ${logo}
 <div id="ca-screen-idle" class="ca-screen ca-idle">
     <h1>Event Check-in</h1>
+    ${eventTitle}
     <button class="ca-btn ca-btn-primary" id="ca-btn-scan">
         <svg width="32" height="32" fill="none" stroke="currentColor" stroke-width="1.25"
              viewBox="0 0 24 24" aria-hidden="true">

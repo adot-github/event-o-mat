@@ -8,7 +8,7 @@
 
 $type_of_pdf      = 'Teilnahmebestätigungen';
 $type_of_pdf_sing = 'Teilnahmebestätigung';
-$pdf_layout       = 'dachverband-teilnahmenbestaetigung.php';
+$pdf_layout       = 'teilnahmenbestaetigung.php';
 $file_name_field  = 'str_diploma_pdf';
 $subfolder_for_pdf = 'diplomas';
 
@@ -24,4 +24,4 @@ $before_pdf_creation_callback = function($event_uid) {
     }
 };
 
-require __DIR__ . '/pdf-creation.php';
+require __DIR__ . '/pdf-creation-by-person.php';

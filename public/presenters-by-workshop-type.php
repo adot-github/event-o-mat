@@ -90,12 +90,16 @@ function presenters_by_workshop_type_shortcode($atts = array()) {
     $group_index    = 0;
 
     foreach ($workshop_types as $workshop_type) {
-        $type_id   = absint($workshop_type['id'] ?? 0);
-        $type_name = trim((string) ($workshop_type['str_type_name'] ?? ''));
+        $type_id          = absint($workshop_type['id'] ?? 0);
+        $type_name        = trim((string) ($workshop_type['str_type_name'] ?? ''));
+        $type_name_plural = trim((string) ($workshop_type['str_type_name_plural'] ?? ''));
 
         if ($type_id <= 0 || $type_name === '') {
             continue;
         }
+
+        // Section heading uses the plural type name, singular as fallback.
+        $type_heading = $type_name_plural !== '' ? $type_name_plural : $type_name;
 
         if (!empty($type_ids) && !in_array($type_id, $type_ids, true)) {
             continue;
@@ -130,6 +134,9 @@ function presenters_by_workshop_type_shortcode($atts = array()) {
             $day_time_parts = array_filter(array($weekday_name, $time_label));
             $day_time_label = implode(', ', $day_time_parts);
 
+            $workshop_description      = trim((string) ($workshop['mem_workshop_description'] ?? ''));
+            $workshop_description_long = trim((string) ($workshop['mem_workshop_description_long'] ?? ''));
+
             $presenters = $presenters_obj->get_presenters_by_workshop_id($workshop_id, $lang);
 
             foreach ($presenters as $presenter) {
@@ -155,7 +162,13 @@ function presenters_by_workshop_type_shortcode($atts = array()) {
                 $image_url = '';
                 $image_raw = trim((string) ($presenter['str_person_image'] ?? ''));
                 if ($image_raw !== '' && $upload_baseurl !== '') {
-                    $image_url = $upload_baseurl . '/' . $event_uid . '/presenters/' . ltrim($image_raw, '/');
+                    // str_person_image holds a path relative to the uploads dir
+                    // (e.g. "fhnw-practice-day-2026/assets/presenter-images/p-961.jpg").
+                    // Older rows may hold just a bare file name.
+                    $image_rel = strpos($image_raw, '/') !== false
+                        ? ltrim($image_raw, '/')
+                        : $event_uid . '/assets/presenter-images/' . $image_raw;
+                    $image_url = $upload_baseurl . '/' . $image_rel;
                 }
 
                 $bio_raw  = trim((string) ($presenter['mem_presenter_text'] ?? ''));
@@ -167,6 +180,8 @@ function presenters_by_workshop_type_shortcode($atts = array()) {
                     'full_name'      => esc_html($full_name),
                     'sub_line'       => esc_html($sub_line),
                     'workshop_title' => esc_html($workshop_title),
+                    'workshop_description'      => $workshop_description !== '' ? wp_kses_post($workshop_description) : '',
+                    'workshop_description_long' => $workshop_description_long !== '' ? wp_kses_post($workshop_description_long) : '',
                     'day_time_label' => esc_html($day_time_label),
                     'image_url'      => esc_url($image_url),
                     'bio_html'       => $bio_html,
@@ -194,7 +209,7 @@ function presenters_by_workshop_type_shortcode($atts = array()) {
 
         $groups[] = array(
             'group_id'   => esc_attr('ks-group-' . $group_index),
-            'type_name'  => esc_html($type_name),
+            'type_name'  => esc_html($type_heading),
             'speakers'   => $speakers,
         );
 
@@ -219,13 +234,21 @@ function presenters_by_workshop_type_shortcode($atts = array()) {
             $expanded    = 'false';
             $coll_class  = 'accordion-collapse collapse';
 
-            $title_html = '';
-            if ($sp['workshop_title'] !== '' || $sp['day_time_label'] !== '') {
-                $day_time_html = $sp['day_time_label'] !== ''
-                    ? "<br>\n                        <span style=\"font-weight:normal;\">{$sp['day_time_label']}</span>"
-                    : '';
-                $title_html = "<h4 class=\"h1 mt-3 mb-5\">{$sp['workshop_title']}{$day_time_html}</h4>";
-            }
+            $title_html = $sp['workshop_title'] !== ''
+                ? "<h4 class=\"h3 mt-3 mb-0\">{$sp['workshop_title']}</h4>"
+                : '';
+
+            $description_parts = array_filter(array(
+                $sp['workshop_description'],
+                $sp['workshop_description_long'],
+            ));
+            $description_html = !empty($description_parts)
+                ? '<div class="ks-workshop-description mt-2">' . implode('', $description_parts) . '</div>'
+                : '';
+
+            $day_time_html = $sp['day_time_label'] !== ''
+                ? "<p class=\"ks-workshop-daytime mt-2\">{$sp['day_time_label']}</p>"
+                : '';
 
             $meta_html = '';
             if ($sp['sub_line'] !== '') {
@@ -257,10 +280,23 @@ function presenters_by_workshop_type_shortcode($atts = array()) {
                      aria-labelledby="{$heading_id}"
                      data-bs-parent="#{$group_id}">
                     <div class="accordion-body clearfix">
-                        {$title_html}
+                        
                         {$meta_html}
-                        {$image_html}
-                        {$bio_html}
+
+                        <div class="row">
+                            <div class="col-12 col-lg-4 col-md-5 text-center">
+                                {$image_html}
+                            </div>
+                            <div class="col-12 col-lg-8 col-md-7">
+                                    <div class="lead mt-4">
+                                    {$bio_html}
+                                    </div>
+                                    <h3 class="mt-4">Meine Angebote</h3>
+                                    {$title_html}
+                                    {$description_html}
+                                    {$day_time_html}
+                            </div>
+
                     </div>
                 </div>
             </div>

@@ -32,6 +32,44 @@
 
     $categories = $workshops_obj->get_categories_by_workshop_id($workshop_id, $lang);
 
+    /* Link to the workshop's flyer PDF. Shown only when the caller passes an
+       option name in $pdf_link_option that is set to "1" for this event and the
+       PDF file exists. events_with_filters -> link_pdf_in_filter_page,
+       registration step 1 -> link_pdf_in_registration. */
+    $workshop_pdf_url = '';
+    $pdf_link_option  = !empty($pdf_link_option) ? sanitize_key((string) $pdf_link_option) : '';
+
+    if ($pdf_link_option !== '') {
+        if (!class_exists('Evtmgr_Options')) {
+            $opt_file = dirname(__DIR__, 2) . '/classes/class-evtmgr-options.php';
+            if (is_file($opt_file)) {
+                require_once $opt_file;
+            }
+        }
+
+        $pdf_event_uid = sanitize_file_name((string) ($workshop['fky_event_uid'] ?? ''));
+
+        if (
+            $pdf_event_uid !== ''
+            && class_exists('Evtmgr_Options')
+            && Evtmgr_Options::option_is_true($pdf_event_uid, $pdf_link_option)
+        ) {
+            $pdf_file_name = $workshops_obj->workshop_pdf_file_name($workshop, $lang);
+
+            if ($pdf_file_name !== '') {
+                $pdf_upload  = wp_upload_dir();
+                $pdf_basedir = rtrim((string) ($pdf_upload['basedir'] ?? ''), '/\\')
+                    . '/' . $pdf_event_uid . '/pdf/workshop-flyer/';
+
+                if (is_file($pdf_basedir . $pdf_file_name)) {
+                    $workshop_pdf_url = rtrim((string) ($pdf_upload['baseurl'] ?? ''), '/')
+                        . '/' . rawurlencode($pdf_event_uid)
+                        . '/pdf/workshop-flyer/' . rawurlencode($pdf_file_name);
+                }
+            }
+        }
+    }
+
     $max_registrations     = !empty($workshop['int_max_number_of_registrations']) ? (int) $workshop['int_max_number_of_registrations'] : 0;
     $current_registrations = isset($workshop['int_number_of_registrations']) ? (int) $workshop['int_number_of_registrations'] : 0;
 
@@ -172,6 +210,16 @@
                     <?php endif; ?>
                 </li>
                 <?php endforeach; ?>
+        </ul>
+    <?php endif; ?>
+
+    <?php if ($workshop_pdf_url !== '') : ?>
+        <ul class="workshop-pdf-list no-border">
+            <li>
+                <a href="<?php echo esc_url($workshop_pdf_url); ?>" target="_blank" rel="noopener">
+                    <?php echo $wordings['pdf_zum_angebot'] ?? 'PDF zum Angebot'; ?>
+                </a>
+            </li>
         </ul>
     <?php endif; ?>
 

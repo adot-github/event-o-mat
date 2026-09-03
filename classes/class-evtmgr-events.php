@@ -85,6 +85,92 @@ class Evtmgr_Events {
         return $this->get_events_by_event_uid($event_uid, $lang);
     }
 
+    /**
+     * Fill wp_evtmgr_events.str_event_pdf_<lang> for one event where it is still
+     * empty: the booklet PDF file name "booklet-<slug of the event title>.pdf"
+     * (title of that language, German title as fallback, event_uid as last resort).
+     * Evtmgr_Booklet::generate() takes the file name from this field.
+     *
+     * @param string          $event_uid
+     * @param array<int,string> $langs
+     * @return array{checked:int,updated:int,files:array<int,array{lang:string,file_name:string}>}
+     */
+    public function event_update_booklet_pdf_filenames($event_uid, array $langs = array('de', 'fr', 'it', 'en')) {
+        $event_uid = sanitize_text_field((string) $event_uid);
+        $langs     = array_values(array_intersect($langs, array('de', 'fr', 'it', 'en')));
+
+        $summary = array('checked' => 0, 'updated' => 0, 'files' => array());
+
+        if ($event_uid === '' || empty($langs)) {
+            return $summary;
+        }
+
+        // str_event_name_<lang> exists for de/fr/it only.
+        $cols = array('str_event_name_de');
+        foreach ($langs as $lang) {
+            if (in_array($lang, array('de', 'fr', 'it'), true)) {
+                $cols[] = "str_event_name_{$lang}";
+            }
+            $cols[] = "str_event_pdf_{$lang}";
+        }
+
+        $row = $this->wpdb->get_row(
+            $this->wpdb->prepare(
+                "SELECT " . implode(', ', array_values(array_unique($cols))) . " FROM {$this->table_name} WHERE event_uid = %s LIMIT 1",
+                $event_uid
+            ),
+            ARRAY_A
+        );
+
+        if (!is_array($row)) {
+            return $summary;
+        }
+
+        $summary['checked'] = 1;
+        $de_title           = trim((string) ($row['str_event_name_de'] ?? ''));
+
+        $update  = array();
+        $formats = array();
+
+        foreach ($langs as $lang) {
+            if (trim((string) ($row["str_event_pdf_{$lang}"] ?? '')) !== '') {
+                continue;
+            }
+
+            $title = trim((string) ($row["str_event_name_{$lang}"] ?? ''));
+            if ($title === '') {
+                $title = $de_title;
+            }
+
+            $slug = $title !== '' ? sanitize_title($title) : '';
+            if ($slug === '') {
+                $slug = sanitize_title($event_uid);
+            }
+
+            $file_name = 'booklet-' . $slug . '.pdf';
+
+            $update["str_event_pdf_{$lang}"] = $file_name;
+            $formats[] = '%s';
+            $summary['files'][] = array('lang' => $lang, 'file_name' => $file_name);
+        }
+
+        if (!empty($update)) {
+            $updated = $this->wpdb->update(
+                $this->table_name,
+                $update,
+                array('event_uid' => $event_uid),
+                $formats,
+                array('%s')
+            );
+
+            if ($updated) {
+                $summary['updated'] = 1;
+            }
+        }
+
+        return $summary;
+    }
+
     public function get_current_event_uid($required = true) {
         if (!class_exists('Event_Registration_Context')) {
             $event_registration_class = __DIR__ . '/class-event-registration.php';

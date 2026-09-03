@@ -8,7 +8,7 @@
 
 $type_of_pdf      = 'Programme';
 $type_of_pdf_sing = 'Programm';
-$pdf_layout       = 'dachverband-program.php';
+$pdf_layout       = 'program.php';
 $file_name_field  = 'str_program_pdf';
 $subfolder_for_pdf = 'programs';
 
@@ -24,4 +24,4 @@ $before_pdf_creation_callback = function($event_uid) {
     }
 };
 
-require __DIR__ . '/pdf-creation.php';
+require __DIR__ . '/pdf-creation-by-person.php';

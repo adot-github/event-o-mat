@@ -8,7 +8,7 @@
 
 $type_of_pdf      = 'Rechnungen';
 $type_of_pdf_sing = 'Rechnung';
-$pdf_layout       = 'dachverband-rechnung.php';
+$pdf_layout       = 'rechnung.php';
 $file_name_field  = 'str_invoice_pdf';
 $subfolder_for_pdf = 'invoices';
 
@@ -24,4 +24,4 @@ $before_pdf_creation_callback = function($event_uid) {
     }
 };
 
-require __DIR__ . '/pdf-creation.php';
+require __DIR__ . '/pdf-creation-by-person.php';

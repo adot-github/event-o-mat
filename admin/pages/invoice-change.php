@@ -363,7 +363,7 @@ try {
                 }
 
                 if ($event_id <= 0) {
-                    throw new RuntimeException('Kein Kongress für Event Uid gefunden: ' . $event_uid);
+                    throw new RuntimeException('Kein Kongress für Event-UID gefunden: ' . $event_uid);
                 }
 
                 $inserted = $wpdb->insert(

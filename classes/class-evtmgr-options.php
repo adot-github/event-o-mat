@@ -178,6 +178,14 @@ class Evtmgr_Options {
         return (new self())->get_option($event_uid, 'pdf_creation_mode') !== 'live';
     }
 
+    /** True when a true_false option is stored as "1" for the event. */
+    public static function option_is_true(string $event_uid, string $name): bool {
+        if ($event_uid === '' || $name === '') {
+            return false;
+        }
+        return (new self())->get_option($event_uid, $name) === '1';
+    }
+
     public function set_option(string $event_uid, string $name, string $value): bool {
         $event_uid = sanitize_text_field($event_uid);
         $name      = sanitize_text_field($name);

@@ -240,11 +240,11 @@ a:focus {
     --bs-btn-active-color:       #fff;
 }
 .btn-outline-secondary {
-    --bs-btn-color:              var(--evtmgr-color-1);
-    --bs-btn-border-color:       var(--evtmgr-color-1);
-    --bs-btn-hover-bg:           var(--evtmgr-color-1);
+    --bs-btn-color:              var(--evtmgr-color-5);
+    --bs-btn-border-color:       var(--evtmgr-color-5);
+    --bs-btn-hover-bg:           var(--evtmgr-color-5);
     --bs-btn-hover-color:        #fff;
-    --bs-btn-active-bg:          var(--evtmgr-color-1);
+    --bs-btn-active-bg:          var(--evtmgr-color-5);
     --bs-btn-active-color:       #fff;
 }
 .btn-outline-success {

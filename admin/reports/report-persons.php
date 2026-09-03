@@ -20,7 +20,7 @@ $report_fields = array(
     'str_country'      => 'Land',
     'str_institution'  => 'Organisation',
     'str_language'     => 'Sprache',
-    'fky_event_uid'      => 'Event Uid',
+    'fky_event_uid'      => 'Event-UID',
 );
 
 $report_filter_by_event_uid = true;

@@ -124,7 +124,7 @@ if ($event_uid !== '' && class_exists('Evtmgr_Events')) {
     <?php endif; ?>
 
     <p class="mb-1">
-        Event Uid:
+        Event-UID:
         <strong><?php echo esc_html($event_uid); ?></strong>
     </p>
 

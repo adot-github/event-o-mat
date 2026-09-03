@@ -29,9 +29,38 @@ class Evtmgr_Checkin_App {
         add_shortcode('evtmgr_checkin_app', [self::class, 'render_shortcode']);
     }
 
-    public static function render_shortcode(): string {
+    public static function render_shortcode($atts = []): string {
+        $atts = shortcode_atts([
+            'event_uid' => '',
+            'lang'      => 'de',
+        ], $atts, 'evtmgr_checkin_app');
+
         $base_url  = get_stylesheet_directory_uri() . '/db-custom/event-registration/public/checkin-app/';
         $base_path = get_stylesheet_directory()     . '/db-custom/event-registration/public/checkin-app/';
+
+        // Event this check-in station is for → its title is shown under the
+        // "Event Check-in" heading. From the shortcode / block attribute, else
+        // the currently loaded event.
+        $event_uid = sanitize_text_field((string) $atts['event_uid']);
+        $lang      = sanitize_key((string) $atts['lang']);
+        if ($lang === '') {
+            $lang = 'de';
+        }
+
+        require_once dirname(__DIR__, 2) . '/classes/class-evtmgr-events.php';
+
+        $events_obj  = class_exists('Evtmgr_Events') ? new Evtmgr_Events() : null;
+        $event_title = '';
+
+        if ($events_obj) {
+            if ($event_uid === '') {
+                $event_uid = (string) $events_obj->get_current_event_uid(false);
+            }
+            if ($event_uid !== '') {
+                $event      = $events_obj->get_events_by_event_uid($event_uid, $lang);
+                $event_title = trim((string) ($event['str_event_name'] ?? ''));
+            }
+        }
 
         wp_enqueue_script(
             'html5-qrcode',
@@ -62,6 +91,8 @@ class Evtmgr_Checkin_App {
             'swUrl'       => $base_url . 'sw.js',
             'manifestUrl' => $base_url . 'manifest.json',
             'logoUrl'     => get_stylesheet_directory_uri() . '/db-custom/event-registration/branding/event-o-mat-logo.png',
+            'eventUid'    => $event_uid,
+            'eventTitle'  => $event_title,
         ]);
 
         $manifest_url = $base_url . 'manifest.json';

@@ -61,7 +61,7 @@ try {
     $event     = $event_obj->get_events_by_event_uid($event_uid, 'de');
 
     if (empty($event)) {
-        throw new RuntimeException('Kein Kongress für Event Uid gefunden: ' . $event_uid);
+        throw new RuntimeException('Kein Kongress für Event-UID gefunden: ' . $event_uid);
     }
 
     $str_event_name_ = $event['str_event_name'] ?? $event['str_event_name_de'] ?? '';
@@ -89,9 +89,9 @@ try {
         ?>
         <h1 class="mb-3"><?php echo esc_html($type_of_pdf); ?> erstellen</h1>
         <h3 class="mb-1"><strong>Kongress:</strong> <?php echo esc_html($str_event_name_); ?></h3>
-        <p><strong>Event Uid:</strong> <?php echo esc_html($event_uid); ?></p>
+        <p><strong>Event-UID:</strong> <?php echo esc_html($event_uid); ?></p>
 
-        <form method="post" action="" class="mb-4">
+        <form method="post" action="" class="mb-4" id="pdf-person-form">
 
             <div class="row g-3 mb-4">
 
@@ -120,7 +120,7 @@ try {
                     </select>
                 </div>
 
-                <div class="col-md-2">
+                <div class="col-md-3">
                     <label for="logo_width_mm" class="form-label ">Logo-Breite (mm)</label>
                     <select name="logo_width_mm" id="logo_width_mm" class="form-select">
                         <?php
@@ -136,7 +136,17 @@ try {
 
             </div>
 
-            <div class="row g-3 mb-4">
+            <style>
+                .etk-opts { display:flex; flex-wrap:wrap; gap:.75rem 3rem; }
+                .etk-opt { display:flex; align-items:center; flex:0 0 22rem; }
+                .etk-opt__label { flex:0 0 12rem; font-size:1rem; font-weight:400; }
+                .etk-opt__choices { display:flex; gap:1.5rem; }
+                .etk-opt .form-check { display:flex; align-items:center; gap:.4rem; margin:0; padding:0; min-height:auto; }
+                .etk-opt .form-check-input { float:none; margin:0; }
+                .etk-opt .form-check-label { line-height:1; }
+            </style>
+
+            <div class="etk-opts mb-4">
                 <?php
                 /* field => default value (1=ja, 0=nein) */
                 $radio_fields = [
@@ -150,47 +160,184 @@ try {
                 foreach ($radio_fields as $field_name => $field_def) :
                     $default_val = $field_def['default'];
                 ?>
-                <div class="col-md-auto">
-                    <fieldset class="mb-0">
-                        <legend class="form-label mb-1"><?php echo esc_html($field_def['label']); ?></legend>
-                        <div class="d-flex gap-3">
-                            <div class="form-check">
-                                <input class="form-check-input" type="radio"
-                                    name="<?php echo esc_attr($field_name); ?>"
-                                    id="<?php echo esc_attr($field_name); ?>_ja"
-                                    value="1"<?php echo $default_val === 1 ? ' checked' : ''; ?>>
-                                <label class="form-check-label" for="<?php echo esc_attr($field_name); ?>_ja">ja</label>
-                            </div>
-                            <div class="form-check">
-                                <input class="form-check-input" type="radio"
-                                    name="<?php echo esc_attr($field_name); ?>"
-                                    id="<?php echo esc_attr($field_name); ?>_nein"
-                                    value="0"<?php echo $default_val === 0 ? ' checked' : ''; ?>>
-                                <label class="form-check-label" for="<?php echo esc_attr($field_name); ?>_nein">nein</label>
-                            </div>
+                <div class="etk-opt">
+                    <div class="etk-opt__label"><?php echo esc_html($field_def['label']); ?></div>
+                    <div class="etk-opt__choices">
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio"
+                                name="<?php echo esc_attr($field_name); ?>"
+                                id="<?php echo esc_attr($field_name); ?>_ja"
+                                value="1"<?php echo $default_val === 1 ? ' checked' : ''; ?>>
+                            <label class="form-check-label" for="<?php echo esc_attr($field_name); ?>_ja">ja</label>
                         </div>
-                    </fieldset>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio"
+                                name="<?php echo esc_attr($field_name); ?>"
+                                id="<?php echo esc_attr($field_name); ?>_nein"
+                                value="0"<?php echo $default_val === 0 ? ' checked' : ''; ?>>
+                            <label class="form-check-label" for="<?php echo esc_attr($field_name); ?>_nein">nein</label>
+                        </div>
+                    </div>
                 </div>
                 <?php endforeach; ?>
             </div>
 
-            <div class="pdf-person-select-wrap mb-4">
-                <label for="selected_person_ids" class="form-label  h4">Teilnehmende auswählen</label>
-                <p class="form-text">Mehrfachauswahl mit Ctrl/Cmd oder Shift. Alle auswählen mit Ctrl+A.</p>
-                <select id="selected_person_ids" name="selected_person_ids[]" class="form-select pdf-person-select" multiple required>
-                    <?php foreach ($persons as $person) : ?>
-                        <?php $person_id = $pdf_creator->get_person_id($person); ?>
-                        <?php if ($person_id !== '') : ?>
-                            <option value="<?php echo esc_attr($person_id); ?>">
-                                <?php echo esc_html($pdf_creator->person_label($person)); ?>
-                            </option>
-                        <?php endif; ?>
-                    <?php endforeach; ?>
-                </select>
+            <div class="mb-3">
+                <p class="form-label fw-semibold h4 mb-0">Teilnehmende auswählen</p>
+                <p class="form-text">Klick auf einen Eintrag verschiebt ihn. PDF wird nur für ausgewählte Teilnehmende erstellt.</p>
             </div>
 
-            <button type="submit" class="btn btn-primary rounded-pill"><?php echo esc_html($type_of_pdf); ?> generieren</button>
+            <style>
+                .dlb-wrap { display:flex; gap:1rem; align-items:flex-start; }
+                .dlb-col { flex:1; min-width:0; }
+                .dlb-col label { display:block; font-weight:600; margin-bottom:.35rem; }
+                .dlb-filter { width:100%; margin-bottom:.4rem; }
+                .dlb-list { height:320px; overflow-y:auto; border:1px solid #dee2e6; border-radius:.375rem; padding:.25rem; }
+                .dlb-list .list-group-item { cursor:pointer; border:none; }
+                .dlb-list .list-group-item:hover { background:rgba(255,255,255,.25); }
+                .dlb-list .list-group-item { padding:.35rem .75rem; font-size:.9rem; user-select:none; border-radius:.375rem !important; }
+                .dlb-list .list-group-item.d-none { display:none !important; }
+                .dlb-actions { display:flex; flex-direction:column; gap:.5rem; justify-content:center; padding-top:2rem; }
+            </style>
+
+            <div class="dlb-wrap mb-3">
+                <div class="dlb-col">
+                    <label>Verfügbar (<span id="dlb-avail-count">0</span>)</label>
+                    <input type="text" class="form-control form-control-sm dlb-filter" id="dlb-filter-avail" placeholder="Filtern…">
+                    <ul class="list-group dlb-list" id="dlb-avail"></ul>
+                    <button type="button" class="btn btn-sm btn-outline-secondary mt-2 rounded-pill" id="dlb-add-all">Alle hinzufügen</button>
+                </div>
+
+                <div class="dlb-actions">
+                    <span class="text-muted">→</span>
+                    <span class="text-muted">←</span>
+                </div>
+
+                <div class="dlb-col">
+                    <label>Ausgewählt (<span id="dlb-sel-count">0</span>)</label>
+                    <input type="text" class="form-control form-control-sm dlb-filter" id="dlb-filter-sel" placeholder="Filtern…">
+                    <ul class="list-group dlb-list" id="dlb-sel"></ul>
+                    <button type="button" class="btn btn-sm btn-outline-secondary mt-2 rounded-pill" id="dlb-remove-all">Alle entfernen</button>
+                </div>
+            </div>
+
+            <!-- hidden select synced before submit -->
+            <select name="selected_person_ids[]" id="dlb-hidden-select" multiple style="display:none">
+                <?php foreach ($persons as $person) : ?>
+                    <?php $person_id = $pdf_creator->get_person_id($person); ?>
+                    <?php if ($person_id !== '') : ?>
+                        <option value="<?php echo esc_attr($person_id); ?>">
+                            <?php echo esc_html($pdf_creator->person_label($person)); ?>
+                        </option>
+                    <?php endif; ?>
+                <?php endforeach; ?>
+            </select>
+
+            <button type="submit" class="btn btn-primary rounded-pill" id="dlb-submit"><?php echo esc_html($type_of_pdf); ?> generieren</button>
         </form>
+
+        <script>
+        (function () {
+            var persons = <?php
+                $dlb_persons = [];
+                foreach ($persons as $person) {
+                    $pid = $pdf_creator->get_person_id($person);
+                    if ($pid !== '') {
+                        $dlb_persons[] = ['id' => $pid, 'label' => $pdf_creator->person_label($person)];
+                    }
+                }
+                echo wp_json_encode($dlb_persons);
+            ?>;
+
+            var availList  = document.getElementById('dlb-avail');
+            var selList    = document.getElementById('dlb-sel');
+            var availCount = document.getElementById('dlb-avail-count');
+            var selCount   = document.getElementById('dlb-sel-count');
+            var filterAvail = document.getElementById('dlb-filter-avail');
+            var filterSel   = document.getElementById('dlb-filter-sel');
+            var hiddenSel   = document.getElementById('dlb-hidden-select');
+            var submitBtn   = document.getElementById('dlb-submit');
+            var form        = document.getElementById('pdf-person-form');
+
+            function esc(s) {
+                return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+            }
+
+            function makeItem(p, side) {
+                var li = document.createElement('li');
+                li.className = 'list-group-item';
+                li.dataset.id = p.id;
+                li.dataset.label = p.label.toLowerCase();
+                li.textContent = p.label;
+                li.addEventListener('click', function () { move(li, side); });
+                return li;
+            }
+
+            function move(li, fromSide) {
+                if (fromSide === 'avail') {
+                    selList.appendChild(li);
+                    li.removeEventListener('click', li._clickHandler);
+                    li.addEventListener('click', function () { move(li, 'sel'); });
+                } else {
+                    availList.appendChild(li);
+                    li.removeEventListener('click', li._clickHandler);
+                    li.addEventListener('click', function () { move(li, 'avail'); });
+                }
+                applyFilter(filterAvail, availList);
+                applyFilter(filterSel, selList);
+                updateCounts();
+            }
+
+            function applyFilter(input, list) {
+                var q = input.value.toLowerCase();
+                list.querySelectorAll('.list-group-item').forEach(function (li) {
+                    li.classList.toggle('d-none', q !== '' && li.dataset.label.indexOf(q) === -1);
+                });
+            }
+
+            function updateCounts() {
+                availCount.textContent = availList.querySelectorAll('.list-group-item').length;
+                selCount.textContent   = selList.querySelectorAll('.list-group-item').length;
+                submitBtn.disabled     = selList.querySelectorAll('.list-group-item').length === 0;
+            }
+
+            // Populate available list
+            persons.forEach(function (p) {
+                availList.appendChild(makeItem(p, 'avail'));
+            });
+            updateCounts();
+
+            filterAvail.addEventListener('input', function () { applyFilter(filterAvail, availList); });
+            filterSel.addEventListener('input',   function () { applyFilter(filterSel,   selList);   });
+
+            document.getElementById('dlb-add-all').addEventListener('click', function () {
+                availList.querySelectorAll('.list-group-item:not(.d-none)').forEach(function (li) {
+                    selList.appendChild(li);
+                    li.onclick = function () { move(li, 'sel'); };
+                });
+                applyFilter(filterSel, selList);
+                updateCounts();
+            });
+
+            document.getElementById('dlb-remove-all').addEventListener('click', function () {
+                selList.querySelectorAll('.list-group-item:not(.d-none)').forEach(function (li) {
+                    availList.appendChild(li);
+                    li.onclick = function () { move(li, 'avail'); };
+                });
+                applyFilter(filterAvail, availList);
+                updateCounts();
+            });
+
+            form.addEventListener('submit', function () {
+                // Sync hidden select
+                Array.from(hiddenSel.options).forEach(function (o) { o.selected = false; });
+                selList.querySelectorAll('.list-group-item').forEach(function (li) {
+                    var opt = hiddenSel.querySelector('option[value="' + li.dataset.id + '"]');
+                    if (opt) opt.selected = true;
+                });
+            });
+        }());
+        </script>
         <?php
         $pdf_creator->show_page_footer();
         return;
@@ -261,7 +408,7 @@ try {
 
     /* ---- Load layout (for logo image) ---- */
 
-    $layout             = $pdf_creator->load_pdf_layout('dachverband-etiketten.php');
+    $layout             = $pdf_creator->load_pdf_layout('etiketten.php', $event_uid);
     $image_replacements = $pdf_creator->get_image_replacements($layout);
     $docraptor          = $pdf_creator->create_docraptor_client();
 

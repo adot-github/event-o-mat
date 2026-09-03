@@ -199,6 +199,8 @@
                 ? sanitize_hex_color_no_hash((string) $color)
                 : 'eeeeee';
 
+            $pdf_link_option = 'link_pdf_in_registration';
+
             ob_start();
             include __DIR__ . '/_workshop.php';
             return trim((string) ob_get_clean());

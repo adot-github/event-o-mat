@@ -550,7 +550,7 @@ try {
       {$bg_style}
     }
 
-    .hero-page-1 {
+    .hero-page-front {
       position: absolute;
       left: 0;
       top: 27mm;
@@ -841,8 +841,7 @@ try {
       <div class="logo">{$logo_img}</div>
     </div>
 
-    <div class="hero-page-1"></div>
-
+    <div class="hero-page-front"></div>
     <div class="gelbe-flaeche-front"></div>
 
     <div class="title-wrap-front">
@@ -852,12 +851,6 @@ try {
       <div>Anmeldung ab: {$reg_opened_fmt}</div>
     </div>
   </div>
-
-
-
-
-
-
 
 
   <!-- Seite 2 -->

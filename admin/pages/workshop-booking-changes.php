@@ -331,7 +331,7 @@ try {
         <h1 class="h3 mb-3">Umbuchungen vornehmen</h1>
         <section class="mb-4">
             <h2 class="h5 mb-1"><?php echo esc_html(evtmgr_workshop_bookings_person_label($person)); ?></h2>
-            <div class="">Event Uid: <?php echo esc_html($event_uid); ?></div>
+            <div class="">Event-UID: <?php echo esc_html($event_uid); ?></div>
         </section>
 
         <form method="post" action="<?php echo evtmgr_workshop_bookings_admin_url(); ?>" class="mb-4">
@@ -495,7 +495,7 @@ try {
         <h1 class="h3 mb-3">Umbuchung prüfen</h1>
         <section class="mb-4">
             <h2 class="h5 mb-1"><?php echo esc_html(evtmgr_workshop_bookings_person_label($person)); ?></h2>
-            <div class="">Event Uid: <?php echo esc_html($event_uid); ?></div>
+            <div class="">Event-UID: <?php echo esc_html($event_uid); ?></div>
         </section>
 
         <form method="post" action="<?php echo evtmgr_workshop_bookings_admin_url(); ?>">
@@ -588,7 +588,7 @@ try {
         $event_id = evtmgr_workshop_bookings_get_events_id($wpdb, $tables, $event_uid);
 
         if ($event_id <= 0 && !empty($add_pairs)) {
-            throw new RuntimeException('Kein Kongress für Event Uid gefunden: ' . $event_uid);
+            throw new RuntimeException('Kein Kongress für Event-UID gefunden: ' . $event_uid);
         }
 
         $deleted_count = 0;

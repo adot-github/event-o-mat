@@ -90,8 +90,8 @@ function events_by_workshop_type_shortcode($atts = array()) {
     $upload_baseurl = rtrim((string) ($upload_dir['baseurl'] ?? ''), '/');
 
     $pdf_subfolder = 'workshop-booking-lists';
-    $pdf_basedir   = get_stylesheet_directory()     . '/db-custom/event-registration/admin/file-storage/' . sanitize_file_name($pdf_subfolder) . '/' . sanitize_file_name($event_uid) . '/';
-    $pdf_baseurl   = get_stylesheet_directory_uri() . '/db-custom/event-registration/admin/file-storage/' . rawurlencode($pdf_subfolder) . '/' . rawurlencode($event_uid) . '/';
+    $pdf_basedir   = rtrim((string) ($upload_dir['basedir'] ?? ''), '/\\') . '/' . sanitize_file_name($event_uid) . '/pdf/' . sanitize_file_name($pdf_subfolder) . '/';
+    $pdf_baseurl   = $upload_baseurl . '/' . rawurlencode($event_uid) . '/pdf/' . rawurlencode($pdf_subfolder) . '/';
 
     $groups      = array();
     $group_index = 0;
@@ -172,7 +172,13 @@ function events_by_workshop_type_shortcode($atts = array()) {
                 $image_url = '';
                 $image_raw = trim((string) ($presenter['str_person_image'] ?? ''));
                 if ($image_raw !== '' && $upload_baseurl !== '') {
-                    $image_url = $upload_baseurl . '/bgf-2026/' . ltrim($image_raw, '/');
+                    // str_person_image holds a path relative to the uploads dir
+                    // (e.g. "fhnw-practice-day-2026/assets/presenter-images/p-961.jpg").
+                    // Older rows may hold just a bare file name.
+                    $image_rel = strpos($image_raw, '/') !== false
+                        ? ltrim($image_raw, '/')
+                        : $event_uid . '/assets/presenter-images/' . $image_raw;
+                    $image_url = $upload_baseurl . '/' . $image_rel;
                 }
 
                 $presenter_items[] = array(

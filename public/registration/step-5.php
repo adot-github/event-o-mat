@@ -204,7 +204,7 @@
                 }
 
                 $pdf_creator = new Event_Registration_Pdf_Creation($pages_dir);
-                $layout      = $pdf_creator->load_pdf_layout('dachverband-ticket.php');
+                $layout      = $pdf_creator->load_pdf_layout('ticket.php', $event_uid ?? '');
 
                 $ticket_event    = [];
                 $str_event_name_ = '';
@@ -312,7 +312,7 @@
                 }
 
                 $inv_pdf_creator = new Event_Registration_Pdf_Creation($pages_dir);
-                $inv_layout      = $inv_pdf_creator->load_pdf_layout('dachverband-rechnung.php');
+                $inv_layout      = $inv_pdf_creator->load_pdf_layout('rechnung.php', $event_uid ?? '');
 
                 $invoice_event    = [];
                 $inv_event_name   = '';
