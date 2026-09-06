@@ -483,7 +483,7 @@ try {
         $border_style = $print_border ? 'border:0.3mm solid #000;' : '';
 
         $page_labels .=
-            '<div class="label" style="left:' . $left . 'mm;top:' . $top . 'mm;width:' . $w . 'mm;height:' . $h . 'mm;' . $border_style . '">' .
+            '<div class="label debug-border" style="left:' . $left . 'mm;top:' . $top . 'mm;width:' . $w . 'mm;height:' . $h . 'mm;' . $border_style . '">' .
             $logo_html .
             '<div class="label-name">' . $name_line . '</div>' .
             $job_title_line .
@@ -508,8 +508,9 @@ try {
     /* ---- Generate PDF ---- */
 
     $replacements = [
-        '{fontsize}'   => number_format($fontsize, 1, '.', '') . 'pt',
-        '{pages_html}' => $pages_html,
+        '{fontsize}'    => number_format($fontsize, 1, '.', '') . 'pt',
+        '{pages_html}'  => $pages_html,
+        '{shared_css}'  => $image_replacements['{shared_css}'] ?? '',
     ];
 
     $html = $pdf_creator->render_html((string) $layout['html_template'], $replacements);

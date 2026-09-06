@@ -75,8 +75,17 @@ class Event_Registration_Pdf_Creation {
             . DIRECTORY_SEPARATOR . 'assets'
             . DIRECTORY_SEPARATOR . 'pdf-images';
 
+        // Shared stylesheet for every template in this folder (see get_shared_css()).
+        $layout['templates_dir'] = $templates_dir;
+
         if (empty($layout['images']) || !is_array($layout['images'])) {
             $layout['images'] = array();
+        }
+
+        // Font files (token => filename in asset_dir), kept separate from 'images'
+        // – only get_shared_css() reads this, to resolve @font-face src urls.
+        if (empty($layout['fonts']) || !is_array($layout['fonts'])) {
+            $layout['fonts'] = array();
         }
 
         if (empty($layout['texts']) || !is_array($layout['texts'])) {
@@ -84,6 +93,55 @@ class Event_Registration_Pdf_Creation {
         }
 
         return $layout;
+    }
+
+    /**
+     * Loads pdf-templates/styles.css (shared by every template in that folder)
+     * and resolves any {..._data_uri} font tokens it contains against this
+     * template's own 'fonts' map. Any other {token} still present (e.g.
+     * etiketten's {fontsize}, filled in later per generation run) is left
+     * untouched for the caller's own render_html() pass to resolve.
+     */
+    public function get_shared_css(array $layout): string {
+        $templates_dir = (string) ($layout['templates_dir'] ?? '');
+        $css_file      = $templates_dir !== '' ? $templates_dir . DIRECTORY_SEPARATOR . 'styles.css' : '';
+
+        if ($css_file === '' || !is_readable($css_file)) {
+            return '';
+        }
+
+        $css = (string) file_get_contents($css_file);
+
+        // Fallback font map so a shared stylesheet can use Inter as the one
+        // house font everywhere, even for a template that doesn't list these
+        // files in its own 'fonts' (only used here, resolved with the same
+        // try/catch-to-'' safety as everything else below – an event without
+        // these font files just gets an empty, harmless @font-face src,
+        // never a fatal error).
+        $font_fallback = array(
+            '{inter_light_data_uri}'     => 'Inter-Light.ttf',
+            '{inter_regular_data_uri}'   => 'Inter-Regular.ttf',
+            '{inter_semibold_data_uri}'  => 'Inter-SemiBold.ttf',
+            '{inter_bold_data_uri}'      => 'Inter-Bold.ttf',
+            '{inter_extrabold_data_uri}' => 'Inter-ExtraBold.ttf',
+        );
+        $fonts = array_merge($font_fallback, (array) ($layout['fonts'] ?? array()));
+
+        $asset_dir  = (string) ($layout['asset_dir'] ?? '');
+        $image_map  = array();
+        foreach ($fonts as $placeholder => $filename) {
+            try {
+                $image_map[(string) $placeholder] = $this->image_to_data_uri((string) $filename, $asset_dir);
+            } catch (\Throwable $e) {
+                $image_map[(string) $placeholder] = '';
+            }
+        }
+
+        $css = $this->render_html($css, $image_map);
+
+        // Only strip unresolved *_data_uri tokens (never any other {token} –
+        // those are template-specific and get filled in by the caller later).
+        return (string) preg_replace('/\{[A-Za-z0-9_]+_data_uri\}/', '', $css);
     }
 
     public function image_to_data_uri(string $filename, string $asset_dir = ''): string {
@@ -118,6 +176,8 @@ class Event_Registration_Pdf_Creation {
         foreach ($images as $placeholder => $filename) {
             $replacements[$placeholder] = $this->image_to_data_uri((string) $filename, (string) $asset_dir);
         }
+
+        $replacements['{shared_css}'] = $this->get_shared_css($layout);
 
         return $replacements;
     }
