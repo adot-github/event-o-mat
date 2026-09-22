@@ -5,7 +5,7 @@
     max-width: 100%;
     overflow: auto;
     cursor: grab;
-    border: 1px solid #dee2e6;
+    border: 0px solid #dee2e6;
     border-radius: 0.375rem;
     background: #fff;
 }
@@ -159,7 +159,7 @@ if ($event_uid !== '' && class_exists('Evtmgr_Events')) {
         max-width: 100%;
         overflow: auto;
         cursor: grab;
-        border: 1px solid #dee2e6;
+        border: 0px solid #dee2e6;
         border-radius: 0.375rem;
         background: #fff;
         max-height: 75vh;
