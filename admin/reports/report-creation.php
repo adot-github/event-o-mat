@@ -148,6 +148,12 @@ if ($event_uid !== '' && class_exists('Evtmgr_Events')) {
 </div>
 
 <style>
+    /* Break out of Bootstrap's container-xxl max-width so the (horizontally
+       scrollable) report table can use the full admin content width. */
+    .event-report-page {
+        max-width: 100%;
+    }
+
     .event-report-table-scroll {
         width: 100%;
         max-width: 100%;
