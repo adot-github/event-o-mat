@@ -4,9 +4,10 @@
 
 /* --- 1. Custom properties ---------------------------------- */
 :root {
-    /* Fallback until functions.php injects the user's admin colour scheme
-       (and before admin-detect-color.js runs) — prevents the white flash. */
-    --evtmgr-bg-OFF:          #1d2327;
+    /* Aliases the plugin's generic --acdb-iframe-bg (advanced-custom-database, set on
+       every skin:iframe surface from the user's WP admin colour scheme); #1d2327 is the
+       last-resort fallback if that variable isn't defined for some reason. */
+    --evtmgr-bg: var(--acdb-iframe-bg, #1d2327);
     --evtmgr-color-1: #5f0f40;
     --evtmgr-color-2: #9a031e;
     --evtmgr-color-3: #0f4c5c;

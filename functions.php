@@ -22,28 +22,10 @@ add_action('admin_enqueue_scripts', function ($hook_suffix) {
     );
 
     /*
-     * Render-blocking inline style so --evtmgr-bg already holds the user's admin
-     * colour scheme on first paint. Without this the variable is only set later
-     * by admin-detect-color.js (on DOMContentLoaded), which causes a white flash.
+     * --evtmgr-bg aliases the plugin's generic --acdb-iframe-bg (set render-blocking
+     * by advanced-custom-database on every skin:iframe surface — see Acdb_UDF::get_admin_color_hex()
+     * and admin-bootstrap-theme.css), so no per-module colour lookup or flash-fix is needed here anymore.
      */
-    global $_wp_admin_css_colors;
-
-    $evtmgr_scheme = get_user_option('admin_color');
-    $evtmgr_bg     = '';
-
-    if ($evtmgr_scheme && isset($_wp_admin_css_colors[$evtmgr_scheme]->colors[0])) {
-        $evtmgr_bg = sanitize_hex_color($_wp_admin_css_colors[$evtmgr_scheme]->colors[0]);
-    }
-
-    if (!$evtmgr_bg) {
-        $evtmgr_bg = '#1d2327';
-    }
-
-    wp_add_inline_style(
-        'event-registration-admin-theme',
-        ':root{--evtmgr-bg:' . $evtmgr_bg . ';}html,body{background:' . $evtmgr_bg . ' !important;}'
-    );
-
     wp_enqueue_script(
         'bootstrap-5-bundle',
         'https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js',
@@ -51,46 +33,7 @@ add_action('admin_enqueue_scripts', function ($hook_suffix) {
         '5.3.8',
         true
     );
-
-    wp_enqueue_script(
-        'event-registration-admin-detect-color',
-        get_stylesheet_directory_uri() . '/db-custom/event-registration/admin/js/admin-detect-color.js',
-        array(),
-        '1.0.0',
-        true
-    );
 });
-
-(function () {
-    $action = isset($_GET['action']) ? sanitize_text_field(wp_unslash($_GET['action'])) : '';
-    if (!in_array($action, ['acdb_iframe_left', 'acdb_iframe_right'], true)) {
-        return;
-    }
-    $page = isset($_GET['page']) ? sanitize_text_field(wp_unslash($_GET['page'])) : '';
-    if ($page === '' || strpos($page, 'evtmgr') === false) {
-        return;
-    }
-    ob_start(function ($html) {
-        global $_wp_admin_css_colors;
-
-        $bg     = '';
-        $scheme = get_user_option('admin_color');
-
-        if ($scheme && isset($_wp_admin_css_colors[$scheme]) && !empty($_wp_admin_css_colors[$scheme]->colors)) {
-            $bg = sanitize_hex_color($_wp_admin_css_colors[$scheme]->colors[0]);
-        }
-
-        if (!$bg) {
-            $bg = '#1d2327';
-        }
-
-        return str_replace(
-            '<head>',
-            '<head><style>html,body{background:' . $bg . '!important}</style>',
-            $html
-        );
-    });
-})();
 
 add_action('wp_footer', function () {
     if (!defined('IFRAME_REQUEST') || !IFRAME_REQUEST) {
