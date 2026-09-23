@@ -41,6 +41,10 @@ $report_title = isset($report_title) && trim((string) $report_title) !== ''
     ? (string) $report_title
     : 'Report';
 
+$report_file_name = isset($report_file_name) && trim((string) $report_file_name) !== ''
+    ? (string) $report_file_name
+    : 'report';
+
 $report_table = isset($report_table)
     ? (string) $report_table
     : '';
@@ -138,7 +142,7 @@ if ($event_uid !== '' && class_exists('Evtmgr_Events')) {
             Excel herunterladen
         </button>
 
-        <button type="button" class="btn btn-outline-success rounded-pill ms-4" id="event-report-download-csv">
+        <button type="button" class="btn btn-success rounded-pill ms-4" id="event-report-download-csv">
             CSV herunterladen
         </button>
 
@@ -193,6 +197,9 @@ if ($event_uid !== '' && class_exists('Evtmgr_Events')) {
 <script>
 (function () {
     const table = document.getElementById('event-report-table');
+    const reportFileBaseName = <?php echo wp_json_encode(
+        $event_uid !== '' ? ($report_file_name . '-' . $event_uid) : $report_file_name
+    ); ?>;
 
     function downloadFile(filename, content, mimeType) {
         const blob = new Blob([content], { type: mimeType });
@@ -273,7 +280,7 @@ if ($event_uid !== '' && class_exists('Evtmgr_Events')) {
     if (excelButton) {
         excelButton.addEventListener('click', function () {
             downloadFile(
-                'report.xls',
+                reportFileBaseName + '.xls',
                 tableToHtmlDocument(),
                 'application/vnd.ms-excel;charset=utf-8'
             );
@@ -283,7 +290,7 @@ if ($event_uid !== '' && class_exists('Evtmgr_Events')) {
     if (csvButton) {
         csvButton.addEventListener('click', function () {
             downloadFile(
-                'report.csv',
+                reportFileBaseName + '.csv',
                 tableToCsv(),
                 'text/csv;charset=utf-8;'
             );
@@ -293,7 +300,7 @@ if ($event_uid !== '' && class_exists('Evtmgr_Events')) {
     if (wordButton) {
         wordButton.addEventListener('click', function () {
             downloadFile(
-                'report.doc',
+                reportFileBaseName + '.doc',
                 tableToHtmlDocument(),
                 'application/msword;charset=utf-8'
             );

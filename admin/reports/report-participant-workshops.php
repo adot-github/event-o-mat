@@ -2,6 +2,7 @@
 <?php
 
 $report_title = 'Teilnehmende mit Workshops';
+$report_file_name = 'teilnehmende-workshops-report';
 
 $report_fields = array(
     'id'                => 'id',
