@@ -138,6 +138,10 @@ if ($event_uid !== '' && class_exists('Evtmgr_Events')) {
             Excel herunterladen
         </button>
 
+        <button type="button" class="btn btn-outline-success rounded-pill ms-4" id="event-report-download-csv">
+            CSV herunterladen
+        </button>
+
         <button type="button" class="btn btn-primary rounded-pill ms-4" id="event-report-download-word">
             Word herunterladen
         </button>
@@ -222,7 +226,48 @@ if ($event_uid !== '' && class_exists('Evtmgr_Events')) {
         `;
     }
 
+    function csvEscape(value) {
+        const stringValue = String(value ?? '');
+
+        if (/["\r\n;]/.test(stringValue)) {
+            return '"' + stringValue.replace(/"/g, '""') + '"';
+        }
+
+        return stringValue;
+    }
+
+    function tableToCsv() {
+        if (!table) {
+            return '';
+        }
+
+        const lines = [];
+
+        table.querySelectorAll('tr').forEach(function (row) {
+            const cells = Array.from(row.children).map(function (cell) {
+                const listItems = cell.querySelectorAll('li');
+                let text;
+
+                if (listItems.length) {
+                    text = Array.from(listItems).map(function (li) {
+                        return li.textContent.trim();
+                    }).join('; ');
+                } else {
+                    text = cell.textContent.trim();
+                }
+
+                return csvEscape(text);
+            });
+
+            lines.push(cells.join(';'));
+        });
+
+        // Leading BOM so Excel recognizes UTF-8 (umlauts, accents) correctly.
+        return String.fromCharCode(0xFEFF) + lines.join('\r\n');
+    }
+
     const excelButton = document.getElementById('event-report-download-excel');
+    const csvButton = document.getElementById('event-report-download-csv');
     const wordButton = document.getElementById('event-report-download-word');
 
     if (excelButton) {
@@ -231,6 +276,16 @@ if ($event_uid !== '' && class_exists('Evtmgr_Events')) {
                 'report.xls',
                 tableToHtmlDocument(),
                 'application/vnd.ms-excel;charset=utf-8'
+            );
+        });
+    }
+
+    if (csvButton) {
+        csvButton.addEventListener('click', function () {
+            downloadFile(
+                'report.csv',
+                tableToCsv(),
+                'text/csv;charset=utf-8;'
             );
         });
     }
