@@ -51,6 +51,7 @@
         $event_uid               = sanitize_text_field((string) $atts['event_uid']);
         $lang                    = sanitize_key((string) $atts['lang']);
         $step                    = $registration->get_current_step();
+        $max_step_reached        = $registration->get_max_step_reached();
         $errors                  = array();
 
         $cookie_result = $registration->ensure_registration_cookie();
@@ -91,19 +92,32 @@
                     $customer_cookie = '';
                     $_POST['str_customer_cookie'] = '';
                     $step = 1;
+                    $max_step_reached = 1;
                 } elseif ('next' === $action) {
                     $step++;
                 } elseif ('prev' === $action) {
                     $step--;
                 } elseif (isset($_POST['registration_step'])) {
-                    $step = absint(wp_unslash($_POST['registration_step']));
+                    /*
+                     * The step navigator lets visitors request any step directly.
+                     * Without this clamp, jumping straight to the last step skips
+                     * the required fields on earlier steps (e.g. name/email) entirely
+                     * and still saves a registration - only allow jumping to a step
+                     * already reached the normal way (via "next").
+                     */
+                    $step = min(absint(wp_unslash($_POST['registration_step'])), $max_step_reached);
                 }
 
                 $step = max(1, min(Event_Registration::MAX_STEP, (int) $step));
+                $max_step_reached = max($max_step_reached, $step);
+
                 $registration->persist_current_step($step);
+                $registration->persist_max_step_reached($max_step_reached);
             }
         } else {
+            $max_step_reached = max($max_step_reached, $step);
             $registration->persist_current_step($step);
+            $registration->persist_max_step_reached($max_step_reached);
         }
 
         $registration_values = $registration_field_data->get_all_values_for_current_cookie($customer_cookie);
@@ -175,7 +189,13 @@
 
         <div class="event-registration-steps" aria-label="Registrierungsschritte">
             <?php for ($i = 1; $i <= Event_Registration::MAX_STEP; $i++) : ?>
-                <?php if ((int) $step === Event_Registration::MAX_STEP) : ?>
+                <?php
+                    // Once on the confirmation step, or for a step not yet reached via
+                    // "next", the step is shown but not clickable - see the clamp on
+                    // $_POST['registration_step'] above for why.
+                    $is_jumpable = (int) $step !== Event_Registration::MAX_STEP && $i <= $max_step_reached;
+                ?>
+                <?php if (!$is_jumpable) : ?>
                     <span class="event-registration-step <?php echo $i === (int) $step ? 'is-active' : ''; ?>">
                         <?php echo $wordings['schritt'] ?? 'schritt'; ?>&nbsp;<?php echo $i; ?>
                     </span>
