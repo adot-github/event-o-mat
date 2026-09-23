@@ -198,7 +198,8 @@ if ($event_uid !== '' && class_exists('Evtmgr_Events')) {
 (function () {
     const table = document.getElementById('event-report-table');
     const reportFileBaseName = <?php echo wp_json_encode(
-        $event_uid !== '' ? ($report_file_name . '-' . $event_uid) : $report_file_name
+        ($event_uid !== '' ? ($report_file_name . '-' . $event_uid) : $report_file_name)
+            . '-' . current_time('Y-m-d')
     ); ?>;
 
     function downloadFile(filename, content, mimeType) {
