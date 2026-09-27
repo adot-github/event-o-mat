@@ -2,8 +2,7 @@
 
 <?php
 $current_group = '';
-$tier_classes  = ['bg-secondary', 'bg-danger', 'bg-success'];
-$tier_index    = 0;
+$group_index   = 0;
 
 foreach ($manual_links as $item) :
     $item_group = isset($item['str_group']) ? (string) $item['str_group'] : '';
@@ -16,19 +15,19 @@ foreach ($manual_links as $item) :
         endif;
 
         $current_group = $item_group;
-        $current_tier  = $tier_classes[$tier_index++ % 3];
-        $group_margin_top = $tier_index === 1 ? 'mt-0' : 'mt-5';
+        $group_index++;
+        $group_margin_top = $group_index === 1 ? 'mt-0' : 'mt-5';
         ?>
 
         <div class="d-flex justify-content-between align-items-baseline <?php echo $group_margin_top; ?> mb-3">
-            <h2 class="dashed m-0 mt-3 mb-1"><?php echo esc_html($current_group); ?></h2>
+            <h2 class="acdb-heading-dashed m-0 mt-3 mb-1"><?php echo esc_html($current_group); ?></h2>
         </div>
 
         <div class="row g-4">
     <?php endif; ?>
 
     <div class="col-12 col-lg-4 mt-0 mb-3">
-        <div class="card evtmgr-tier <?php echo $current_tier; ?> h-100">
+        <div class="card acdb-tile h-100">
             <div class="card-body">
 
                 <h3 class="m-0">
@@ -40,7 +39,7 @@ foreach ($manual_links as $item) :
                 </p>
 
                 <a href="<?php echo esc_url($item['str_url']); ?>"
-                   class="btn evtmgr-tier-btn w-100 rounded-pill fw-semibold mt-4">
+                   class="btn btn-primary w-100 rounded-pill fw-semibold mt-4">
                     Öffnen
                 </a>
 

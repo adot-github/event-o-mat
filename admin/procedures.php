@@ -65,12 +65,12 @@ $editor->add_page_config([
  */
 $acdb_evtmgr_hidden_pages = array(
     array(
-        'page_title'        => '> dashboard-event',
-        'menu_title'        => '> dashboard-event',
+        'page_title'        => '> report-income',
+        'menu_title'        => '> report-income',
         'capability'        => 'edit_posts',
         'menu_slug'         => 'report-income',
         'file'              => '/db-custom/event-registration/admin/reports/report-income.php',
-        'active_submenu'    => 'dashboard-event',
+        'active_submenu'    => 'dashboard-anmeldungen',
     ),
 
 
@@ -303,7 +303,7 @@ $acdb_evtmgr_hidden_sys_pages = array(
 add_action('admin_menu', function () use ($acdb_evtmgr_hidden_pages) {
 
     foreach ($acdb_evtmgr_hidden_pages as $page) {
-        add_submenu_page(
+        $hook_suffix = add_submenu_page(
             'acdb_evtmgr_events',
             $page['page_title'],
             $page['menu_title'],
@@ -313,6 +313,10 @@ add_action('admin_menu', function () use ($acdb_evtmgr_hidden_pages) {
                 require get_stylesheet_directory() . $page['file'];
             }
         );
+        // Let advanced-custom-database style these pages like its own (colour scheme, buttons, fields)
+        if ($hook_suffix && function_exists('Acdb_DB_Editor')) {
+            Acdb_DB_Editor()->register_admin_page($hook_suffix);
+        }
     }
 
 }, 99);

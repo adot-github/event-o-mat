@@ -4,56 +4,13 @@ add_action('admin_enqueue_scripts', function ($hook_suffix) {
     $evtmgr_prefix = $admin_page_hooks['acdb_evtmgr_events'] ?? '';
     $is_evtmgr = strpos($hook_suffix, 'evtmgr') !== false
               || ($evtmgr_prefix !== '' && strpos($hook_suffix, $evtmgr_prefix) !== false);
-    if (!$is_evtmgr) {
+    if (!$is_evtmgr || !function_exists('Acdb_DB_Editor')) {
         return;
     }
-    wp_enqueue_style(
-        'bootstrap-5',
-        'https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css',
-        array(),
-        '5.3.8'
-    );
-
-    wp_enqueue_style(
-        'event-registration-admin-theme',
-        get_stylesheet_directory_uri() . '/db-custom/event-registration/admin/css/admin-bootstrap-theme.css',
-        array('bootstrap-5'),
-        '1.0.0'
-    );
-
-    /*
-     * --evtmgr-bg aliases the plugin's generic --acdb-iframe-bg. advanced-custom-database
-     * only sets that variable on pages registered through its own DB-editor config (see
-     * Acdb_DB_Editor_Main::admin_enqueue_scripts) - our "hidden" procedure pages (e.g.
-     * event-duplicate, event-delete, ...) are added via a plain add_submenu_page() in
-     * procedures.php and never go through that config, so without this they'd fall back
-     * to the hardcoded default instead of the user's actual admin colour scheme.
-     */
-    $iframe_bg = Acdb_UDF::get_admin_color_hex();
-    $iframe_accent = Acdb_UDF::get_admin_color_accent_hex();
-    wp_add_inline_style(
-        'event-registration-admin-theme',
-        ':root{--acdb-iframe-bg:' . $iframe_bg . ';--acdb-iframe-fg:' . Acdb_UDF::get_readable_text_color($iframe_bg) . ';--acdb-iframe-field-bg:' . Acdb_UDF::get_tint_color($iframe_bg, 0.7) . ';--acdb-iframe-accent:' . $iframe_accent . ';--acdb-iframe-accent-fg:' . Acdb_UDF::get_readable_text_color($iframe_accent) . ';}'
-    );
-
-    wp_enqueue_script(
-        'bootstrap-5-bundle',
-        'https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js',
-        array(),
-        '5.3.8',
-        true
-    );
-});
-
-add_action('wp_footer', function () {
-    if (!defined('IFRAME_REQUEST') || !IFRAME_REQUEST) {
-        return;
-    }
-    $page = isset($_GET['page']) ? (string) $_GET['page'] : '';
-    if (strpos($page, 'evtmgr') === false) {
-        return;
-    }
-    echo '<link rel="stylesheet" href="' . esc_url(get_stylesheet_directory_uri() . '/db-custom/event-registration/admin/css/admin-bootstrap-theme.css') . '" media="all" />' . "\n";
+    // Bootstrap for the dashboards and procedure pages, themed to the admin colour scheme by
+    // advanced-custom-database (colour variables, background and form styling come from there too;
+    // the hidden procedure pages are registered with it in procedures.php).
+    Acdb_DB_Editor()->enqueue_bootstrap();
 });
 
 require_once get_stylesheet_directory() . '/db-custom/event-registration/public/functions.php';

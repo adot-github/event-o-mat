@@ -98,10 +98,10 @@ foreach ($events as $event) {
                     ? (string) $event['str_event_subtitle']
                     : '';
 
-                $card_classes = 'card evtmgr-tier evtmgr-tier-default h-100';
+                $card_classes = 'card acdb-tile h-100';
 
                 if ($is_active) {
-                    $card_classes .= ' evtmgr-card-active';
+                    $card_classes .= ' acdb-tile-active';
                 }
                 ?>
 
@@ -111,13 +111,13 @@ foreach ($events as $event) {
 
                             <?php if ($is_active) : ?>
                                 <div class="mb-2">
-                                    <span class="badge rounded-pill evtmgr-badge-active p-2 ps-3 pe-3">
+                                    <span class="badge rounded-pill acdb-badge-accent p-2 ps-3 pe-3">
                                         Aktuell ausgewählt
                                     </span>
                                 </div>
                             <?php endif; ?>
 
-                            <h2 class="mb-2 evtmgr-tier-text">
+                            <h2 class="mb-2">
                                 <?php echo esc_html($title); ?>
                             </h2>
 
@@ -127,7 +127,7 @@ foreach ($events as $event) {
                                 </p>
                             <?php endif; ?>
 
-                            <dl class="row mb-0 evtmgr-tier-text">
+                            <dl class="row mb-0">
                                 <dt class="col-5 fw-normal opacity-75">Event UID</dt>
                                 <dd class="col-7 mb-1"><?php echo esc_html($event_uid); ?></dd>
 
@@ -149,7 +149,7 @@ foreach ($events as $event) {
 
                             <div class="mt-auto pt-3">
                                 <button type="button"
-                                        class="btn evtmgr-tier-btn w-100 rounded-pill fw-semibold js-open-event"
+                                        class="btn btn-primary w-100 rounded-pill fw-semibold js-open-event"
                                         data-event-uid="<?php echo esc_attr($event_uid); ?>"
                                         data-event-languages="<?php echo esc_attr($event_languages); ?>">
                                     Event aktivieren

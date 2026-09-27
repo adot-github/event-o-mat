@@ -191,6 +191,12 @@ $manual_links = array(
         'str_url'         => '/wp-admin/admin.php?page=report-participant-workshops',
         'mem_description' => 'Liste aller Personen, welche sich angemeldet haben, mit den angemeldeten Workshops.',
     ),
+    array(
+        'str_group'       => 'Listen',
+        'str_title'       => 'Umsatz des Events',
+        'str_url'         => '/wp-admin/admin.php?page=report-income',
+        'mem_description' => 'Liste aller Personen mit zu bezahlendem Betrag',
+    ),
 
     
     array(

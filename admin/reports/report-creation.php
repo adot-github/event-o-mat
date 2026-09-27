@@ -7,7 +7,7 @@
     cursor: grab;
     border: 0px solid #dee2e6;
     border-radius: 0.375rem;
-    background: #fff;
+    background: var(--acdb-iframe-card-bg, #fff);
 }
 
 .event-report-table-scroll.is-dragging {
@@ -191,7 +191,7 @@ if ($event_uid !== '' && class_exists('Evtmgr_Events')) {
         cursor: grab;
         border: 0px solid #dee2e6;
         border-radius: 0.375rem;
-        background: #fff;
+        background: var(--acdb-iframe-card-bg, #fff);
         max-height: 75vh;
     }
 
