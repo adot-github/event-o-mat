@@ -83,6 +83,17 @@ $fields_as_list = isset($fields_as_list) && is_array($fields_as_list)
     ? $fields_as_list
     : array();
 
+/*
+ * Optional: show a label instead of the stored value, per field.
+ *
+ * $report_value_labels = array(
+ *     'int_billing_status' => array('0' => 'Rechnung noch nicht erhalten', ...),
+ * );
+ */
+$report_value_labels = isset($report_value_labels) && is_array($report_value_labels)
+    ? $report_value_labels
+    : array();
+
 $event_registration = new Event_Registration_Context();
 $event_uid = $event_registration->get_cookie_event_uid(true);
 
@@ -99,6 +110,17 @@ $rows = $reports->get_report_rows(array(
 ));
 
 $record_count = is_array($rows) ? count($rows) : 0;
+
+if (!empty($report_value_labels) && is_array($rows)) {
+    foreach ($rows as &$row) {
+        foreach ($report_value_labels as $field => $labels) {
+            if (isset($row[$field]) && isset($labels[(string) $row[$field]])) {
+                $row[$field] = $labels[(string) $row[$field]];
+            }
+        }
+    }
+    unset($row);
+}
 
 $event_title = '';
 

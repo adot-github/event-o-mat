@@ -13,7 +13,7 @@ $report_title = 'Umsatz-Report';
 $report_table = 'wp_evtmgr_persons';
 
 $report_fields = array(
-    'id'                 => 'id',
+    'id'                 => 'Rg-Nr.',
     'str_first_name'     => 'Vorname',
     'str_last_name'      => 'Nachname',
     'str_email'          => 'E-Mail',
@@ -25,6 +25,17 @@ $report_fields = array(
     'str_language'       => 'Sprache',
     'num_invoice_total'         => 'Betrag',
     'int_billing_status' => 'RG-Status',
+);
+
+$report_value_labels = array(
+    'int_billing_status' => array(
+        '0'   => 'Rechnung noch nicht erhalten',
+        '1'   => 'Rechnung erhalten, aber noch nicht bezahlt',
+        '11'  => 'Erste Mahnung erhalten, aber noch nicht bezahlt',
+        '12'  => 'Zweite Mahnung erhalten, aber noch nicht bezahlt',
+        '13'  => 'Dritte Mahnung erhalten, aber noch nicht bezahlt',
+        '100' => 'Rechnung bezahlt',
+    ),
 );
 
 $report_owner_column = 'fky_event_uid';
