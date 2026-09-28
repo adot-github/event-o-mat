@@ -242,7 +242,8 @@ $manual_links = array(
                             </div>
                         <?php else : ?>
                             <?php
-                                // Gemeinsame Skala für die Visualisierung des Anmeldestandes (Anteil freier Plätze).
+                                // Visualisierung des Anmeldestandes: links der gebuchte Anteil (Gelb bis Rot, je
+                                // voller desto röter), rechts der freie Anteil (immer grün). Voll = ganz rot "ausgebucht".
                                 $render_anmeldestand_bar = static function ($registration_count, $max_places, $label) {
                                     $registration_count = (int) $registration_count;
                                     $max_places         = (int) $max_places;
@@ -252,34 +253,54 @@ $manual_links = array(
                                         return;
                                     }
 
-                                    $free_places   = max(0, $max_places - $registration_count);
-                                    $booked_percent = (int) round(($registration_count / $max_places) * 100);
-                                    $free_percent  = min(100, max(0, 100 - $booked_percent));
+                                    $free_places    = max(0, $max_places - $registration_count);
+                                    $booked_percent = min(100, max(0, (int) round(($registration_count / $max_places) * 100)));
+                                    $free_percent   = 100 - $booked_percent;
+                                    $is_full        = $free_places === 0;
 
-                                    if ($free_percent >= 81) {
-                                        $bar_color = '#60b564';
-                                    } elseif ($free_percent >= 51) {
-                                        $bar_color = '#fed700';
-                                    } elseif ($free_percent >= 31) {
-                                        $bar_color = '#f69d01';
-                                    } elseif ($free_percent >= 6) {
-                                        $bar_color = '#e46117';
+                                    if ($booked_percent >= 95) {
+                                        $booked_color = '#ca0638';
+                                        $booked_text  = '#fff';
+                                    } elseif ($booked_percent >= 70) {
+                                        $booked_color = '#e46117';
+                                        $booked_text  = '#fff';
+                                    } elseif ($booked_percent >= 50) {
+                                        $booked_color = '#f69d01';
+                                        $booked_text  = '#000';
                                     } else {
-                                        $bar_color = '#ca0638';
+                                        $booked_color = '#fed700';
+                                        $booked_text  = '#000';
                                     }
+
+                                    // Beschriftung nur, wenn das Segment breit genug ist (Details im Tooltip)
+                                    $min_label_percent = 15;
+                                    $segment_style     = 'font-weight: 600; border-radius: 0; white-space: nowrap; overflow: hidden;';
                                     ?>
                                     <div class="progress"
                                          role="progressbar"
                                          aria-label="Anmeldestand <?php echo esc_attr($label); ?>"
-                                         aria-valuenow="<?php echo esc_attr((string) $free_percent); ?>"
+                                         aria-valuenow="<?php echo esc_attr((string) $booked_percent); ?>"
                                          aria-valuemin="0"
                                          aria-valuemax="100"
                                          style="height: 1rem; background-color: #e9ecef; border-radius: 0;"
-                                         title="<?php echo esc_attr($free_places . ' von ' . $max_places . ' frei (' . $free_percent . '%)'); ?>">
-                                        <div class="progress-bar"
-                                             style="width: <?php echo esc_attr((string) $free_percent); ?>%; background-color: <?php echo esc_attr($bar_color); ?>; color: #000; font-weight: 600; border-radius: 0;">
-                                            <?php echo esc_html($free_percent . '% frei'); ?>
-                                        </div>
+                                         title="<?php echo esc_attr($registration_count . ' von ' . $max_places . ' gebucht (' . $booked_percent . '%), ' . $free_places . ' frei (' . $free_percent . '%)'); ?>">
+                                        <?php if ($is_full) : ?>
+                                            <div class="progress-bar"
+                                                 style="width: 100%; background-color: #ca0638; color: #fff; <?php echo esc_attr($segment_style); ?>">
+                                                ausgebucht
+                                            </div>
+                                        <?php else : ?>
+                                            <?php if ($booked_percent > 0) : ?>
+                                                <div class="progress-bar"
+                                                     style="width: <?php echo esc_attr((string) $booked_percent); ?>%; background-color: <?php echo esc_attr($booked_color); ?>; color: <?php echo esc_attr($booked_text); ?>; <?php echo esc_attr($segment_style); ?>">
+                                                    <?php echo $booked_percent >= $min_label_percent ? esc_html($booked_percent . '% geb.') : ''; ?>
+                                                </div>
+                                            <?php endif; ?>
+                                            <div class="progress-bar"
+                                                 style="width: <?php echo esc_attr((string) $free_percent); ?>%; background-color: #60b564; color: #000; <?php echo esc_attr($segment_style); ?>">
+                                                <?php echo $free_percent >= $min_label_percent ? esc_html($free_percent . '% frei') : ''; ?>
+                                            </div>
+                                        <?php endif; ?>
                                     </div>
                                     <?php
                                 };
