@@ -4,103 +4,13 @@ add_action('admin_enqueue_scripts', function ($hook_suffix) {
     $evtmgr_prefix = $admin_page_hooks['acdb_evtmgr_events'] ?? '';
     $is_evtmgr = strpos($hook_suffix, 'evtmgr') !== false
               || ($evtmgr_prefix !== '' && strpos($hook_suffix, $evtmgr_prefix) !== false);
-    if (!$is_evtmgr) {
+    if (!$is_evtmgr || !function_exists('Acdb_DB_Editor')) {
         return;
     }
-    wp_enqueue_style(
-        'bootstrap-5',
-        'https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css',
-        array(),
-        '5.3.8'
-    );
-
-    wp_enqueue_style(
-        'event-registration-admin-theme',
-        get_stylesheet_directory_uri() . '/db-custom/event-registration/admin/css/admin-bootstrap-theme.css',
-        array('bootstrap-5'),
-        '1.0.0'
-    );
-
-    /*
-     * Render-blocking inline style so --evtmgr-bg already holds the user's admin
-     * colour scheme on first paint. Without this the variable is only set later
-     * by admin-detect-color.js (on DOMContentLoaded), which causes a white flash.
-     */
-    global $_wp_admin_css_colors;
-
-    $evtmgr_scheme = get_user_option('admin_color');
-    $evtmgr_bg     = '';
-
-    if ($evtmgr_scheme && isset($_wp_admin_css_colors[$evtmgr_scheme]->colors[0])) {
-        $evtmgr_bg = sanitize_hex_color($_wp_admin_css_colors[$evtmgr_scheme]->colors[0]);
-    }
-
-    if (!$evtmgr_bg) {
-        $evtmgr_bg = '#1d2327';
-    }
-
-    wp_add_inline_style(
-        'event-registration-admin-theme',
-        ':root{--evtmgr-bg:' . $evtmgr_bg . ';}html,body{background:' . $evtmgr_bg . ' !important;}'
-    );
-
-    wp_enqueue_script(
-        'bootstrap-5-bundle',
-        'https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js',
-        array(),
-        '5.3.8',
-        true
-    );
-
-    wp_enqueue_script(
-        'event-registration-admin-detect-color',
-        get_stylesheet_directory_uri() . '/db-custom/event-registration/admin/js/admin-detect-color.js',
-        array(),
-        '1.0.0',
-        true
-    );
-});
-
-(function () {
-    $action = isset($_GET['action']) ? sanitize_text_field(wp_unslash($_GET['action'])) : '';
-    if (!in_array($action, ['acdb_iframe_left', 'acdb_iframe_right'], true)) {
-        return;
-    }
-    $page = isset($_GET['page']) ? sanitize_text_field(wp_unslash($_GET['page'])) : '';
-    if ($page === '' || strpos($page, 'evtmgr') === false) {
-        return;
-    }
-    ob_start(function ($html) {
-        global $_wp_admin_css_colors;
-
-        $bg     = '';
-        $scheme = get_user_option('admin_color');
-
-        if ($scheme && isset($_wp_admin_css_colors[$scheme]) && !empty($_wp_admin_css_colors[$scheme]->colors)) {
-            $bg = sanitize_hex_color($_wp_admin_css_colors[$scheme]->colors[0]);
-        }
-
-        if (!$bg) {
-            $bg = '#1d2327';
-        }
-
-        return str_replace(
-            '<head>',
-            '<head><style>html,body{background:' . $bg . '!important}</style>',
-            $html
-        );
-    });
-})();
-
-add_action('wp_footer', function () {
-    if (!defined('IFRAME_REQUEST') || !IFRAME_REQUEST) {
-        return;
-    }
-    $page = isset($_GET['page']) ? (string) $_GET['page'] : '';
-    if (strpos($page, 'evtmgr') === false) {
-        return;
-    }
-    echo '<link rel="stylesheet" href="' . esc_url(get_stylesheet_directory_uri() . '/db-custom/event-registration/admin/css/admin-bootstrap-theme.css') . '" media="all" />' . "\n";
+    // Bootstrap for the dashboards and procedure pages, themed to the admin colour scheme by
+    // advanced-custom-database (colour variables, background and form styling come from there too;
+    // the hidden procedure pages are registered with it in procedures.php).
+    Acdb_DB_Editor()->enqueue_bootstrap();
 });
 
 require_once get_stylesheet_directory() . '/db-custom/event-registration/public/functions.php';

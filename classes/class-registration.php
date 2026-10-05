@@ -5,11 +5,12 @@ if (!defined('ABSPATH')) {
 }
 
 class Event_Registration {
-    const COOKIE_NAME      = 'registration_user_cookie';
-    const STEP_COOKIE_NAME = 'event_registration_current_step';
-    const NONCE_ACTION     = 'event_registration_action';
-    const NONCE_NAME       = 'event_registration_nonce';
-    const MAX_STEP         = 5;
+    const COOKIE_NAME                  = 'registration_user_cookie';
+    const STEP_COOKIE_NAME             = 'event_registration_current_step';
+    const MAX_STEP_REACHED_COOKIE_NAME = 'event_registration_max_step_reached';
+    const NONCE_ACTION                 = 'event_registration_action';
+    const NONCE_NAME                   = 'event_registration_nonce';
+    const MAX_STEP                     = 5;
 
     /**
      * @var wpdb
@@ -144,6 +145,41 @@ class Event_Registration {
         $_COOKIE[self::STEP_COOKIE_NAME] = (string) $step;
     }
 
+    /**
+     * Highest step the visitor has actually passed through via "next"
+     * (as opposed to the step navigator, which can request any step).
+     */
+    public function get_max_step_reached() {
+        if (!empty($_COOKIE[self::MAX_STEP_REACHED_COOKIE_NAME])) {
+            return max(1, min(self::MAX_STEP, (int) $_COOKIE[self::MAX_STEP_REACHED_COOKIE_NAME]));
+        }
+
+        return 1;
+    }
+
+    /**
+     * Monotonically increasing: never lowers the stored value, so jumping
+     * back to an earlier step doesn't "forget" steps already reached.
+     */
+    public function persist_max_step_reached($step) {
+        $step = max(1, min(self::MAX_STEP, (int) $step));
+        $step = max($step, $this->get_max_step_reached());
+
+        setcookie(
+            self::MAX_STEP_REACHED_COOKIE_NAME,
+            (string) $step,
+            time() + (DAY_IN_SECONDS * 30),
+            COOKIEPATH ? COOKIEPATH : '/',
+            COOKIE_DOMAIN,
+            is_ssl(),
+            false
+        );
+
+        $_COOKIE[self::MAX_STEP_REACHED_COOKIE_NAME] = (string) $step;
+
+        return $step;
+    }
+
     public function clear_registration_cookies() {
         $cookie_path   = COOKIEPATH ? COOKIEPATH : '/';
         $cookie_domain = COOKIE_DOMAIN;
@@ -168,7 +204,17 @@ class Event_Registration {
             false
         );
 
-        unset($_COOKIE[self::COOKIE_NAME], $_COOKIE[self::STEP_COOKIE_NAME]);
+        setcookie(
+            self::MAX_STEP_REACHED_COOKIE_NAME,
+            '',
+            time() - YEAR_IN_SECONDS,
+            $cookie_path,
+            $cookie_domain,
+            is_ssl(),
+            false
+        );
+
+        unset($_COOKIE[self::COOKIE_NAME], $_COOKIE[self::STEP_COOKIE_NAME], $_COOKIE[self::MAX_STEP_REACHED_COOKIE_NAME]);
 
         return true;
     }

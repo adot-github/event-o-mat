@@ -263,7 +263,7 @@ class Event_Registration_Reports {
         }
 
         echo '<div class="event-report-table-scroll js-report-table-scroll">';
-        echo '<table class="table table-striped table-hover table-bordered align-middle event-report-table" id="event-report-table">';
+        echo '<table class="table table-striped table-hover table-bordered-off align-middle event-report-table" id="event-report-table">';
 
         echo '<thead>';
         echo '<tr>';
