@@ -40,16 +40,32 @@ function event_o_mat_block_map() {
             'params'      => array('event_uid', 'lang'),
         ),
         'events_with_filters' => array(
-            'label'       => 'Workshops mit Filter',
-            'description' => 'Workshop-Liste mit Filter- und Merkfunktion.',
+            'label'       => 'Angebote mit Filter',
+            'description' => 'Anzeige mit Filter- und Merkfunktion.',
             'icon'        => 'filter',
-            'params'      => array('event_uid', 'lang', 'type'),
+            'params'      => array('event_uid', 'lang', 'type', 'show_filters', 'type_of_display'),
+            // Darstellung, wenn im Block nichts gewählt ist (Attribut typeOfDisplay leer).
+            'display_default' => 'cards',
         ),
         'events_by_workshop_type' => array(
             'label'       => 'Workshops nach Typ (Akkordeon)',
             'description' => 'Workshops gruppiert nach Workshop-Typ, je Angebot ein Akkordeon.',
             'icon'        => 'list-view',
             'params'      => array('event_uid', 'lang', 'type'),
+        ),
+        'events_by_slot' => array(
+            'label'       => 'Angebote nach Zeit',
+            'description' => 'Alle Angebote nach Tag und Zeitblock, als Karten oder Akkordeon mit Merkfunktion.',
+            'icon'        => 'clock',
+            'params'      => array('event_uid', 'lang', 'type_of_display'),
+            'display_default' => 'cards',
+        ),
+        'liked_events' => array(
+            'label'       => 'Merkliste',
+            'description' => 'Die gemerkten Angebote des Besuchers, nach Tag und Zeitblock.',
+            'icon'        => 'star-filled',
+            'params'      => array('event_uid', 'lang', 'type_of_display'),
+            'display_default' => 'accordion',
         ),
         'presenters_by_slot' => array(
             'label'       => 'Referent:innen nach Slot',
@@ -61,7 +77,8 @@ function event_o_mat_block_map() {
             'label'       => 'Referent:innen nach Workshop-Typ',
             'description' => 'Referent:innen gruppiert nach Workshop-Typ, mit Foto und Bio.',
             'icon'        => 'groups',
-            'params'      => array('event_uid', 'lang', 'type'),
+            'params'      => array('event_uid', 'lang', 'type', 'group_by_type', 'type_of_display'),
+            'display_default' => 'accordion',
         ),
         'sponsor_wall' => array(
             'label'       => 'Partner / Sponsoren – Grid',
@@ -169,6 +186,10 @@ add_action('init', function () {
         'lang'     => array('type' => 'string', 'default' => 'de'),
         'type'     => array('type' => 'string', 'default' => ''),
         'speed'    => array('type' => 'number', 'default' => 60),
+        'showFilters'   => array('type' => 'boolean', 'default' => true),
+        // '' = display_default of the block (cards / accordion).
+        'typeOfDisplay' => array('type' => 'string', 'default' => ''),
+        'groupByType'   => array('type' => 'boolean', 'default' => true),
     );
 
     foreach (event_o_mat_block_map() as $tag => $def) {
@@ -233,6 +254,24 @@ function event_o_mat_block_render($tag, $attributes) {
         if ($type !== '') {
             $atts .= ' type="' . esc_attr($type) . '"';
         }
+    }
+
+    if (in_array('show_filters', $params, true)) {
+        $show_filters = !isset($attributes['showFilters']) || !empty($attributes['showFilters']);
+        $atts .= ' show_filters="' . ($show_filters ? '1' : '0') . '"';
+    }
+
+    if (in_array('group_by_type', $params, true)) {
+        $group_by_type = !isset($attributes['groupByType']) || !empty($attributes['groupByType']);
+        $atts .= ' group_by_type="' . ($group_by_type ? '1' : '0') . '"';
+    }
+
+    if (in_array('type_of_display', $params, true)) {
+        $type_of_display = isset($attributes['typeOfDisplay']) ? (string) $attributes['typeOfDisplay'] : '';
+        if (!in_array($type_of_display, array('cards', 'accordion'), true)) {
+            $type_of_display = $map[$tag]['display_default'] ?? 'cards';
+        }
+        $atts .= ' type_of_display="' . $type_of_display . '"';
     }
 
     if (in_array('speed', $params, true)) {

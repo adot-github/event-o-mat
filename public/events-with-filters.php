@@ -38,7 +38,7 @@ add_action('init', function () {
 });
 
 if (!function_exists('events_with_filters_render_workshop_html')) {
-    function events_with_filters_render_workshop_html($workshop_id, $lang, array $wordings = array(), $is_liked = false) {
+    function events_with_filters_render_workshop_html($workshop_id, $lang, array $wordings = array(), $is_liked = false, $workshop_layout = 'card') {
         $id                = absint($workshop_id);
         $str_slot_color    = 'eeeeee';
         $show_like_button  = true;
@@ -51,6 +51,52 @@ if (!function_exists('events_with_filters_render_workshop_html')) {
         ob_start();
         include __DIR__ . '/registration/_workshop.php';
         return trim((string) ob_get_clean());
+    }
+}
+
+if (!function_exists('events_with_filters_card_item_html')) {
+    /** One offer as card (grid column). Shared with [events_by_slot]. */
+    function events_with_filters_card_item_html($workshop_html) {
+        return <<<HTML
+
+        <div class="col">
+            <div class="card h-100 events-with-filters-card">
+                <div class="card-body">
+                    {$workshop_html}
+                </div>
+            </div>
+        </div>
+HTML;
+    }
+}
+
+if (!function_exists('events_with_filters_accordion_item_html')) {
+    /**
+     * One offer as accordion item: "number | title" in the header, the
+     * workshop partial (layout 'accordion') in the body. Shared with
+     * [events_by_slot]. $workshop needs str_workshop_title / str_workshop_number.
+     */
+    function events_with_filters_accordion_item_html($item_id, array $workshop, $workshop_html) {
+        $item_title = trim((string) ($workshop['str_workshop_title'] ?? ''));
+        $item_no    = trim((string) ($workshop['str_workshop_number'] ?? ''));
+        $item_title = esc_html($item_no !== '' ? $item_no . ' | ' . $item_title : $item_title);
+        $item_id    = esc_attr($item_id);
+
+        return <<<HTML
+
+        <div class="accordion-item events-with-filters-accordion-item">
+            <h2 class="accordion-header" id="{$item_id}-heading">
+                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#{$item_id}" aria-expanded="false" aria-controls="{$item_id}">
+                    {$item_title}
+                </button>
+            </h2>
+            <div id="{$item_id}" class="accordion-collapse collapse" aria-labelledby="{$item_id}-heading">
+                <div class="accordion-body">
+                    {$workshop_html}
+                </div>
+            </div>
+        </div>
+HTML;
     }
 }
 
@@ -75,7 +121,9 @@ function events_with_filters_shortcode($atts = array()) {
         array(
             'event_uid' => '',
             'lang'      => 'de',
-            'type'      => '',
+            'type'            => '',
+            'show_filters'    => '1',
+            'type_of_display' => 'cards',
         ),
         $atts,
         'events_with_filters'
@@ -84,6 +132,11 @@ function events_with_filters_shortcode($atts = array()) {
     $event_uid     = sanitize_text_field((string) $atts['event_uid']);
     $lang          = sanitize_key((string) $atts['lang']);
     $default_types = array_values(array_unique(array_filter(array_map('absint', explode(',', (string) $atts['type'])))));
+
+    // show_filters=0 → no filter form and no result count; the GET filter
+    // parameters are ignored too, so only the block's type selection applies.
+    $show_filters    = !in_array(strtolower(trim((string) $atts['show_filters'])), array('0', 'false', 'no', 'nein'), true);
+    $type_of_display = sanitize_key((string) $atts['type_of_display']) === 'accordion' ? 'accordion' : 'cards';
 
     Event_Registration_Helpers::enqueue_bootstrap($event_uid, true);
 
@@ -100,17 +153,23 @@ function events_with_filters_shortcode($atts = array()) {
     $visitor_cookie = $likes_obj->get_or_create_visitor_cookie();
 
     // ── GET-Parameter des Filterformulars ────────────────────────────────────
-    $search = isset($_GET['ewf_search'])
+    $search = $show_filters && isset($_GET['ewf_search'])
         ? sanitize_text_field(wp_unslash($_GET['ewf_search']))
         : '';
 
-    $ewf_filters = isset($_GET['ewf_filters']) && is_array($_GET['ewf_filters'])
+    $ewf_filters = $show_filters && isset($_GET['ewf_filters']) && is_array($_GET['ewf_filters'])
         ? wp_unslash($_GET['ewf_filters'])
         : array();
 
+    // The block's types are only a preselection for the first visit: once the
+    // form was submitted (ewf_submitted), an empty selection means "all" —
+    // otherwise a deselected type would come back on every submit, since a
+    // multi-select with nothing chosen sends no parameter at all.
+    $form_submitted = $show_filters && isset($_GET['ewf_submitted']);
+
     $selected_types = isset($ewf_filters['types'])
         ? array_values(array_filter(array_map('absint', (array) $ewf_filters['types'])))
-        : $default_types;
+        : ($form_submitted ? array() : $default_types);
 
     $selected_categories = isset($ewf_filters['categories'])
         ? array_values(array_filter(array_map('absint', (array) $ewf_filters['categories'])))
@@ -120,7 +179,7 @@ function events_with_filters_shortcode($atts = array()) {
         ? array_values(array_filter(array_map('absint', (array) $ewf_filters['presenters'])))
         : array();
 
-    $only_liked = isset($_GET['ewf_liked']) && wp_unslash($_GET['ewf_liked']) === '1';
+    $only_liked = $show_filters && isset($_GET['ewf_liked']) && wp_unslash($_GET['ewf_liked']) === '1';
 
     // ── Filteroptionen laden ──────────────────────────────────────────────────
     $category_options = array_map(
@@ -160,7 +219,12 @@ function events_with_filters_shortcode($atts = array()) {
         ));
     }
 
-    // ── Karten rendern ────────────────────────────────────────────────────────
+    // ── Karten / Akkordeon rendern ────────────────────────────────────────────
+    // Unique ids per shortcode instance (several blocks on one page).
+    static $ewf_instance = 0;
+    $ewf_instance++;
+    $accordion_id = 'ewf-accordion-' . $ewf_instance;
+
     $cards_html = '';
 
     foreach ($workshops as $workshop) {
@@ -171,22 +235,24 @@ function events_with_filters_shortcode($atts = array()) {
         }
 
         $is_liked      = in_array($workshop_id, $liked_workshop_ids, true);
-        $workshop_html = events_with_filters_render_workshop_html($workshop_id, $lang, $wordings, $is_liked);
+        $workshop_html = events_with_filters_render_workshop_html(
+            $workshop_id,
+            $lang,
+            $wordings,
+            $is_liked,
+            $type_of_display === 'accordion' ? 'accordion' : 'card'
+        );
 
         if ($workshop_html === '') {
             continue;
         }
 
-        $cards_html .= <<<HTML
+        if ($type_of_display === 'accordion') {
+            $cards_html .= events_with_filters_accordion_item_html($accordion_id . '-' . $workshop_id, $workshop, $workshop_html);
+            continue;
+        }
 
-        <div class="col">
-            <div class="card h-100 events-with-filters-card">
-                <div class="card-body">
-                    {$workshop_html}
-                </div>
-            </div>
-        </div>
-HTML;
+        $cards_html .= events_with_filters_card_item_html($workshop_html);
     }
 
     // The filter form submits with method="get". A GET submit discards the
@@ -256,7 +322,7 @@ HTML;
         $filter_selects_html .= <<<HTML
                 <div class="col-md-4 mb-3">
                     <div class="form-group floating-label select-container">
-                        <select name="{$field_name}" id="{$field_id}" multiple="multiple" class="form-control dirty" placeholder="Alle">
+                        <select name="{$field_name}" id="{$field_id}" multiple="multiple" class="form-control dirty" placeholder="Alle" data-placeholder="Alle">
                             {$options_ui}
                         </select>
                         <label for="{$field_id}">{$field_lbl}</label>
@@ -274,6 +340,7 @@ HTML;
     <div class="events-with-filters-form-wrapper mb-4">
         <form name="events_with_filters_form" method="get" action="{$form_action}" class="events-with-filters-form">
             {$preserved_fields}
+            <input type="hidden" name="ewf_submitted" value="1">
             <div class="row mb-3">
                 <div class="col-md-4 pt-2">
                     <div class="input-group input-container">
@@ -300,14 +367,27 @@ HTML;
     </div>
 HTML;
 
-    $cards_section = $cards_html !== ''
-        ? <<<HTML
+    if ($cards_html === '') {
+        $cards_section = '';
+    } elseif ($type_of_display === 'accordion') {
+        $cards_section = <<<HTML
+        <div class="events-with-filters-wrapper events-with-filters-accordion-wrapper">
+            <div class="accordion events-with-filters-accordion" id="{$accordion_id}">{$cards_html}
+            </div>
+        </div>
+HTML;
+    } else {
+        $cards_section = <<<HTML
         <div class="events-with-filters-wrapper mx-n2">
             <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4 mx-0">{$cards_html}
             </div>
         </div>
-HTML
-        : '';
+HTML;
+    }
+
+    if (!$show_filters) {
+        return $cards_section;
+    }
 
     return <<<HTML
     {$filters_html}

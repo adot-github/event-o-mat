@@ -8,6 +8,9 @@
     $lang             = !empty($lang) ? sanitize_key($lang) : 'de';
     $show_like_button = !empty($show_like_button);
     $is_liked         = !empty($is_liked);
+    // 'accordion': the caller renders the title in the accordion header, so the
+    // title is skipped here and the description is shown inline (no nested accordion).
+    $workshop_layout  = (isset($workshop_layout) && $workshop_layout === 'accordion') ? 'accordion' : 'card';
 
     $workshops_obj = new Evtmgr_Workshops();
     $presenters_obj   = new Evtmgr_Presenters();
@@ -150,18 +153,34 @@
         }
     ?>
 
+    <?php if ($workshop_layout !== 'accordion') : ?>
     <div class="event-title" style="border-top-colour_off:#<?php echo esc_attr($slot_color); ?>">
         <h2 class="session-title m-0 mb-2">
             <?php echo esc_html($display_title); ?>
         </h2>
     </div>
+    <?php endif; ?>
 
     <?php
         $show_description      = !empty($workshop['mem_workshop_description']);
         $show_description_long = !empty(trim($workshop['mem_workshop_description_long'] ?? ''));
     ?>
 
-    <?php if ($show_description || $show_description_long) : ?>
+    <?php if ($workshop_layout === 'accordion' && ($show_description || $show_description_long)) : ?>
+        <div class="workshop-description">
+            <?php if ($show_description) : ?>
+                <div class="event-teaser">
+                    <?php echo wp_kses_post($workshop['mem_workshop_description']); ?>
+                </div>
+            <?php endif; ?>
+
+            <?php if ($show_description_long) : ?>
+                <div class="event-details">
+                    <?php echo wp_kses_post($workshop['mem_workshop_description_long']); ?>
+                </div>
+            <?php endif; ?>
+        </div>
+    <?php elseif ($show_description || $show_description_long) : ?>
         <div class="accordion workshop-description-accordion" id="workshop-description-<?php echo esc_attr($workshop_id); ?>">
             <div class="accordion-item">
                 <p class="accordion-header" id="heading-description-<?php echo esc_attr($workshop_id); ?>">
@@ -284,13 +303,6 @@
     <?php endif; ?>
 
     <?php if ($show_like_button) : ?>
-        <button type="button"
-                class="js-workshop-like-button workshop-like-button<?php echo $is_liked ? ' is-liked' : ''; ?>"
-                data-workshop-id="<?php echo esc_attr($workshop_id); ?>"
-                data-event-uid="<?php echo esc_attr($workshop['fky_event_uid'] ?? ''); ?>"
-                aria-pressed="<?php echo $is_liked ? 'true' : 'false'; ?>"
-                aria-label="Auf die Merkliste setzen">
-            <img src="<?php echo esc_url(get_stylesheet_directory_uri() . '/db-custom/event-registration/public/img/like.svg'); ?>" alt="" width="24" height="24">
-        </button>
+        <?php echo evtmgr_like_button_html($workshop_id, $workshop['fky_event_uid'] ?? '', $is_liked); ?>
     <?php endif; ?>
 </div>

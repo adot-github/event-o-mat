@@ -164,6 +164,63 @@
     border-right: 5px solid transparent;
 }
 
+/* Select2 from the theme (bootstrap-5 theme) draws the dropdown arrow on
+   single selects only — add the same chevron to the multi-select filters. */
+.events-with-filters-form-wrapper .select-container.theme-select2 .select2-selection--multiple {
+    padding-right: 4.5rem;
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23343a40' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m2 5 6 6 6-6'/%3e%3c/svg%3e");
+    background-repeat: no-repeat;
+    background-position: right .75rem center;
+    background-size: 16px 12px;
+    cursor: pointer;
+    /* Chips and the inline search on one line — in Select2 4.1 the search is
+       a block below the chips, which doubled the height once a value is set. */
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+}
+
+.events-with-filters-form-wrapper .select-container.theme-select2 .select2-selection--multiple .select2-selection__rendered {
+    flex: 0 1 auto;
+    min-width: 0;
+    max-width: calc(100% - 2rem);
+    row-gap: .375rem;
+}
+
+/* Long labels are shortened with "…" instead of pushing the search to a new line */
+.events-with-filters-form-wrapper .select-container.theme-select2 .select2-selection--multiple .select2-selection__choice {
+    max-width: 100%;
+    min-width: 0;
+}
+
+.events-with-filters-form-wrapper .select-container.theme-select2 .select2-selection--multiple .select2-selection__choice__display {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.events-with-filters-form-wrapper .select-container.theme-select2 .select2-selection--multiple .select2-search--inline {
+    flex: 1 1 2rem;
+    width: auto;
+    min-width: 2rem;
+}
+
+/* Chip as high as one text line (24px) so a selection keeps the field height */
+.events-with-filters-form-wrapper .select-container.theme-select2 .select2-selection--multiple .select2-selection__choice {
+    height: 1.5rem;
+    margin-bottom: 0;
+}
+
+.events-with-filters-form-wrapper .select-container.theme-select2 .select2-selection--multiple .select2-selection__choice .select2-selection__choice__remove {
+    height: 100%;
+    padding-top: 0;
+    padding-bottom: 0;
+}
+
+.events-with-filters-form-wrapper .select-container.theme-select2 .select2-selection--multiple .select2-selection__clear {
+    right: 2.5rem;
+}
+
 .events-with-filters-form-wrapper .select2-container-multi .select2-choices .select2-search-choice {
     font-size: 12px;
 }
@@ -197,6 +254,11 @@
 .events-with-filters-form-wrapper .input-container.has-values .clean-filter:after,
 .events-with-filters-form-wrapper .select-container.has-values .clean-filter:after {
     display: block;
+}
+
+/* Select2 from the theme (theme_uses_select2) brings its own clear button */
+.events-with-filters-form-wrapper .select-container.theme-select2 .clean-filter:after {
+    display: none;
 }
 
 .events-with-filters-form-wrapper .input-container.has-values input,

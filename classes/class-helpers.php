@@ -173,6 +173,35 @@ class Event_Registration_Helpers {
     }
 
     /**
+     * Whether the theme already ships Select2 (CSS + JS) for the given event.
+     *
+     * Controlled by the per-event option `theme_uses_select2` stored in
+     * wp_evtmgr_options (type true_false, default "0"):
+     *   - "1"          → theme provides Select2, the component loads nothing
+     *   - "0" / unset  → the component loads its bundled Select2 (3.5.2)
+     *
+     * Without an event_uid we assume the theme has no Select2 (safe default).
+     * Can be overridden with the `evtmgr_theme_uses_select2` filter.
+     *
+     * @param string $event_uid
+     * @return bool
+     */
+    public static function theme_uses_select2($event_uid = '') {
+        $event_uid    = sanitize_text_field((string) $event_uid);
+        $uses_select2 = false;
+
+        if ($event_uid !== '') {
+            if (!class_exists('Evtmgr_Options')) {
+                require_once __DIR__ . '/class-evtmgr-options.php';
+            }
+
+            $uses_select2 = (new Evtmgr_Options())->get_option($event_uid, 'theme_uses_select2') === '1';
+        }
+
+        return (bool) apply_filters('evtmgr_theme_uses_select2', $uses_select2, $event_uid);
+    }
+
+    /**
      * Enqueue the bundled Bootstrap stylesheet (and optionally the JS bundle)
      * for the public views, unless the theme already provides Bootstrap for
      * this event.

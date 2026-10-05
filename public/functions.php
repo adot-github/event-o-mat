@@ -4,6 +4,7 @@ require_once get_stylesheet_directory() . '/db-custom/event-registration/public/
 require_once get_stylesheet_directory() . '/db-custom/event-registration/public/presenters-by-workshop-type.php';
 require_once get_stylesheet_directory() . '/db-custom/event-registration/public/events-by-workshop-type.php';
 require_once get_stylesheet_directory() . '/db-custom/event-registration/public/events-with-filters.php';
+require_once get_stylesheet_directory() . '/db-custom/event-registration/public/events-by-slot.php';
 require_once get_stylesheet_directory() . '/db-custom/event-registration/public/price-map.php';
 require_once get_stylesheet_directory() . '/db-custom/event-registration/public/event-keyfigures.php';
 require_once get_stylesheet_directory() . '/db-custom/event-registration/public/workshop-likes.php';
@@ -44,6 +45,8 @@ add_action('wp_enqueue_scripts', function () {
         || event_registration_content_has_shortcode('events_with_filters')
         || event_registration_content_has_shortcode('events_by_workshop_type')
         || event_registration_content_has_shortcode('presenters_by_slot')
+        || event_registration_content_has_shortcode('events_by_slot')
+        || event_registration_content_has_shortcode('liked_events')
         || event_registration_content_has_shortcode('presenters_by_workshop_type')
         || event_registration_content_has_shortcode('sponsor_wall')
         || event_registration_content_has_shortcode('sponsor_ticker')
@@ -64,7 +67,7 @@ add_action('wp_enqueue_scripts', function () {
         $evt_uid = '';
         $evt_post = get_post();
         if ($evt_post && !empty($evt_post->post_content) && preg_match(
-            '/\[(?:event_registration|events_with_filters|events_by_workshop_type|presenters_by_slot|presenters_by_workshop_type|sponsor_wall|sponsor_ticker)\b[^\]]*\bevent_uid=(["\']?)([^"\'\]\s]+)\1/',
+            '/\[(?:event_registration|events_with_filters|events_by_workshop_type|events_by_slot|liked_events|presenters_by_slot|presenters_by_workshop_type|sponsor_wall|sponsor_ticker)\b[^\]]*\bevent_uid=(["\']?)([^"\'\]\s]+)\1/',
             $evt_post->post_content,
             $evt_match
         )) {
@@ -77,10 +80,12 @@ add_action('wp_enqueue_scripts', function () {
             || event_registration_content_has_shortcode('events_with_filters')
             || event_registration_content_has_shortcode('events_by_workshop_type')
             || event_registration_content_has_shortcode('presenters_by_slot')
+            || event_registration_content_has_shortcode('events_by_slot')
+            || event_registration_content_has_shortcode('liked_events')
             || event_registration_content_has_shortcode('presenters_by_workshop_type')
             || (function_exists('event_o_mat_page_block_tags') && (bool) array_intersect(
                 event_o_mat_page_block_tags(),
-                array('event_registration', 'events_with_filters', 'events_by_workshop_type', 'presenters_by_slot', 'presenters_by_workshop_type')
+                array('event_registration', 'events_with_filters', 'events_by_workshop_type', 'events_by_slot', 'liked_events', 'presenters_by_slot', 'presenters_by_workshop_type')
             ));
         Event_Registration_Helpers::enqueue_bootstrap($evt_uid, $needs_bootstrap_js);
 
@@ -98,46 +103,74 @@ add_action('wp_enqueue_scripts', function () {
 
     $assets_base = get_stylesheet_directory_uri() . '/db-custom/event-registration/public/assets/';
 
-    wp_enqueue_style(
-        'event-registration-select2',
-        $assets_base . 'vendor/select2/select2.css',
-        [],
-        '3.5.2'
-    );
+    // Bundled Select2 only when the theme does not provide it for this event
+    // (option theme_uses_select2) — two Select2 versions on one page clash.
+    $ewf_deps = ['jquery'];
+    if (!Event_Registration_Helpers::theme_uses_select2($evt_uid)) {
+        wp_enqueue_style(
+            'event-registration-select2',
+            $assets_base . 'vendor/select2/select2.css',
+            [],
+            '3.5.2'
+        );
 
-    wp_enqueue_script(
-        'event-registration-select2',
-        $assets_base . 'vendor/select2/select2.min.js',
-        ['jquery'],
-        '3.5.2',
-        true
-    );
+        wp_enqueue_script(
+            'event-registration-select2',
+            $assets_base . 'vendor/select2/select2.min.js',
+            ['jquery'],
+            '3.5.2',
+            true
+        );
+
+        $ewf_deps[] = 'event-registration-select2';
+    }
 
     $ewf_js_dir  = get_stylesheet_directory()     . '/db-custom/event-registration/public/js/';
     $ewf_js_file = 'events-with-filters.js';
     wp_enqueue_script(
         'event-registration-events-with-filters',
         get_stylesheet_directory_uri() . '/db-custom/event-registration/public/js/' . $ewf_js_file,
-        ['jquery', 'event-registration-select2'],
+        $ewf_deps,
         file_exists($ewf_js_dir . $ewf_js_file) ? filemtime($ewf_js_dir . $ewf_js_file) : null,
         true
     );
 
-    // "Merkliste" like button — the button itself is only rendered by
-    // events_with_filters_render_workshop_html(), so its JS only needs to
-    // load alongside that shortcode too.
-    $likes_js_dir  = get_stylesheet_directory()     . '/db-custom/event-registration/public/js/';
-    $likes_js_file = 'workshop-likes.js';
-    wp_enqueue_script(
-        'event-registration-workshop-likes',
-        get_stylesheet_directory_uri() . '/db-custom/event-registration/public/js/' . $likes_js_file,
-        ['jquery'],
-        file_exists($likes_js_dir . $likes_js_file) ? filemtime($likes_js_dir . $likes_js_file) : null,
-        true
-    );
-
-    wp_localize_script('event-registration-workshop-likes', 'evtmgrLikes', [
-        'ajaxUrl' => admin_url('admin-ajax.php'),
-        'nonce'   => wp_create_nonce('evtmgr_toggle_like'),
-    ]);
+    // "Merkliste" like button of the workshop cards.
+    event_registration_enqueue_workshop_likes();
 });
+
+if (!function_exists('event_registration_enqueue_workshop_likes')) {
+    /**
+     * JS for the "Merkliste" like button (.js-workshop-like-button). Called by
+     * every view that renders the button (events_with_filters,
+     * presenters_by_workshop_type); safe to call several times and from inside
+     * a shortcode callback (WordPress prints a late enqueue in the footer).
+     * The button CSS lives in css/event-registration.css.
+     */
+    function event_registration_enqueue_workshop_likes() {
+        $handle = 'event-registration-workshop-likes';
+
+        if (wp_script_is($handle, 'enqueued')) {
+            return;
+        }
+
+        $likes_js_dir  = get_stylesheet_directory()     . '/db-custom/event-registration/public/js/';
+        $likes_js_file = 'workshop-likes.js';
+        wp_enqueue_script(
+            $handle,
+            get_stylesheet_directory_uri() . '/db-custom/event-registration/public/js/' . $likes_js_file,
+            ['jquery'],
+            file_exists($likes_js_dir . $likes_js_file) ? filemtime($likes_js_dir . $likes_js_file) : null,
+            true
+        );
+
+        wp_localize_script($handle, 'evtmgrLikes', [
+            'ajaxUrl'      => admin_url('admin-ajax.php'),
+            'nonce'        => wp_create_nonce('evtmgr_toggle_like'),
+            // Pop-up shown after an offer was added to the Merkliste.
+            'likedTitle'   => 'Das Angebot wurde in Ihre Merkliste gesetzt.',
+            'likedText'    => 'Sie können später bei der Anmeldung die Angebote auf die Merkliste eingrenzen und sich somit schnell auf gemerkte Angebote anmelden.',
+            'closeLabel'   => 'Schliessen',
+        ]);
+    }
+}

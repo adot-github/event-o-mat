@@ -65,6 +65,9 @@
 		var params = paramsFor( tag );
 		var wantsType = params.indexOf( 'type' ) !== -1;
 		var wantsSpeed = params.indexOf( 'speed' ) !== -1;
+		var wantsShowFilters = params.indexOf( 'show_filters' ) !== -1;
+		var wantsDisplay = params.indexOf( 'type_of_display' ) !== -1;
+		var wantsGroupByType = params.indexOf( 'group_by_type' ) !== -1;
 
 		var typesState = useState( [] );
 		var wsTypes = typesState[ 0 ];
@@ -114,7 +117,7 @@
 		controls.push(
 			h( cmp.SelectControl, {
 				key: 'event',
-				label: __( 'Kongress', 'event-registration' ),
+				label: __( 'Angebot', 'event-registration' ),
 				value: attributes.eventUid || '',
 				options: eventOptions,
 				onChange: function ( v ) { setAttributes( { eventUid: v } ); },
@@ -156,7 +159,7 @@
 			} else {
 				controls.push(
 					h( 'p', { key: 'type-label', className: 'event-o-mat-block__field-label' },
-						__( 'Workshop-Typen (nichts angehakt = alle)', 'event-registration' ) )
+						__( 'Anzuzeigende Angebote (nichts angehakt = alle)', 'event-registration' ) )
 				);
 				wsTypes.forEach( function ( t ) {
 					var id = String( t.id );
@@ -174,6 +177,44 @@
 					);
 				} );
 			}
+		}
+
+		if ( wantsDisplay ) {
+			controls.push(
+				h( cmp.SelectControl, {
+					key: 'type-of-display',
+					label: __( 'Darstellung', 'event-registration' ),
+					// '' = the block's own default (display_default in register.php)
+					value: attributes.typeOfDisplay || def.display_default || 'cards',
+					options: [
+						{ value: 'cards', label: __( 'Karten', 'event-registration' ) },
+						{ value: 'accordion', label: __( 'Akkordeon', 'event-registration' ) },
+					],
+					onChange: function ( v ) { setAttributes( { typeOfDisplay: v } ); },
+				} )
+			);
+		}
+
+		if ( wantsGroupByType ) {
+			controls.push(
+				h( cmp.ToggleControl, {
+					key: 'group-by-type',
+					label: __( 'Gruppiert nach Art des Angebots', 'event-registration' ),
+					checked: attributes.groupByType !== false,
+					onChange: function ( v ) { setAttributes( { groupByType: !! v } ); },
+				} )
+			);
+		}
+
+		if ( wantsShowFilters ) {
+			controls.push(
+				h( cmp.ToggleControl, {
+					key: 'show-filters',
+					label: __( 'Filter anzeigen', 'event-registration' ),
+					checked: attributes.showFilters !== false,
+					onChange: function ( v ) { setAttributes( { showFilters: !! v } ); },
+				} )
+			);
 		}
 
 		if ( wantsSpeed ) {
@@ -234,6 +275,9 @@
 				lang: { type: 'string', default: 'de' },
 				type: { type: 'string', default: '' },
 				speed: { type: 'number', default: 60 },
+				showFilters: { type: 'boolean', default: true },
+				typeOfDisplay: { type: 'string', default: '' },
+				groupByType: { type: 'boolean', default: true },
 			},
 			edit: EventOMatEdit,
 			save: function () { return null; },

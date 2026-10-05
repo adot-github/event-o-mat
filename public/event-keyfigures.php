@@ -22,33 +22,12 @@ add_action('init', function () {
     add_shortcode('event_keyfigures', 'event_registration_event_keyfigures_shortcode');
 });
 
-function event_registration_event_keyfigures_shortcode($atts = array()) {
-    $atts = shortcode_atts(
-        array(
-            'event_uid' => '',
-            'lang'      => 'de',
-        ),
-        $atts,
-        'event_keyfigures'
-    );
-
-    $event_uid = sanitize_text_field((string) $atts['event_uid']);
-    $lang      = sanitize_key((string) $atts['lang']);
-
-    if ($event_uid === '') {
-        return '';
-    }
-
-    $content = new Evtmgr_Pdf_Content($event_uid, $lang !== '' ? $lang : 'de');
-
-    if (!$content->has_event()) {
-        return '';
-    }
-
-    $title       = $content->get_event_title();
-    $subtitle    = $content->get_event_subtitle();
-    $description  = $content->get_event_description();
-
+/**
+ * The facts row (Datum / Anmeldung ab / Anmeldeschluss) as <dl>, '' when all
+ * three are empty. Shared by [event_keyfigures] and the step-1 intro of
+ * [event_registration]; needs event_registration_keyfigures_css() on the page.
+ */
+function event_registration_keyfigures_facts_html(Evtmgr_Pdf_Content $content) {
     $facts = array(
         'Datum'          => $content->get_event_date(),
         'Anmeldung ab'   => $content->get_event_registration_opened(),
@@ -66,16 +45,19 @@ function event_registration_event_keyfigures_shortcode($atts = array()) {
             . '</div>';
     }
 
-    $title_html    = $title !== ''             ? '<h1 class="event-keyfigures__title">' . $title . '</h1>' : '';
-    $subtitle_html = $subtitle !== ''          ? '<p class="event-keyfigures__subtitle">' . $subtitle . '</p>' : '';
-    $desc_html     = trim($description) !== '' ? '<div class="event-keyfigures__description">' . $description . '</div>' : '';
-    $facts_html    = $facts_rows !== ''        ? '<dl class="event-keyfigures__facts">' . $facts_rows . '</dl>' : '';
+    return $facts_rows !== '' ? '<dl class="event-keyfigures__facts">' . $facts_rows . '</dl>' : '';
+}
 
-    if ($title_html === '' && $subtitle_html === '' && $desc_html === '' && $facts_html === '') {
+/** Inline CSS for .event-keyfigures — printed once per page. */
+function event_registration_keyfigures_css() {
+    static $printed = false;
+
+    if ($printed) {
         return '';
     }
+    $printed = true;
 
-    $css = <<<CSS
+    return <<<CSS
     <style>
         .event-keyfigures { margin: 1.5rem 0; }
 
@@ -116,8 +98,45 @@ function event_registration_event_keyfigures_shortcode($atts = array()) {
         }
     </style>
 CSS;
+}
 
-    return $css . '<div class="wrapper event-keyfigures">'
+function event_registration_event_keyfigures_shortcode($atts = array()) {
+    $atts = shortcode_atts(
+        array(
+            'event_uid' => '',
+            'lang'      => 'de',
+        ),
+        $atts,
+        'event_keyfigures'
+    );
+
+    $event_uid = sanitize_text_field((string) $atts['event_uid']);
+    $lang      = sanitize_key((string) $atts['lang']);
+
+    if ($event_uid === '') {
+        return '';
+    }
+
+    $content = new Evtmgr_Pdf_Content($event_uid, $lang !== '' ? $lang : 'de');
+
+    if (!$content->has_event()) {
+        return '';
+    }
+
+    $title       = $content->get_event_title();
+    $subtitle    = $content->get_event_subtitle();
+    $description  = $content->get_event_description();
+
+    $title_html    = $title !== ''             ? '<h1 class="event-keyfigures__title">' . $title . '</h1>' : '';
+    $subtitle_html = $subtitle !== ''          ? '<p class="event-keyfigures__subtitle">' . $subtitle . '</p>' : '';
+    $desc_html     = trim($description) !== '' ? '<div class="event-keyfigures__description">' . $description . '</div>' : '';
+    $facts_html    = event_registration_keyfigures_facts_html($content);
+
+    if ($title_html === '' && $subtitle_html === '' && $desc_html === '' && $facts_html === '') {
+        return '';
+    }
+
+    return event_registration_keyfigures_css() . '<div class="wrapper event-keyfigures">'
         . $title_html
         . $subtitle_html
         . $desc_html

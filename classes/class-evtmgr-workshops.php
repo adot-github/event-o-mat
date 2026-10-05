@@ -103,6 +103,45 @@ class Evtmgr_Workshops {
         );
     }
 
+    /**
+     * All online workshops of an event with their time block (timezone) and
+     * the block's parent (= the day), ordered by day, time and number.
+     * Used by [events_by_slot].
+     */
+    public function get_workshops_with_timezone_for_event($event_uid, $lang = 'de') {
+        $event_uid = sanitize_text_field($event_uid);
+        $lang      = $this->sanitize_language($lang);
+
+        $sql = "
+            SELECT
+                w.id,
+                w.str_workshop_number,
+                w.str_workshop_title_{$lang}   AS str_workshop_title,
+                tz.id                          AS timezone_id,
+                tz.str_timezone_name_{$lang}   AS str_timezone_name,
+                tz.dtm_day,
+                tz.dtm_time_from,
+                tz.dtm_time_to,
+                tz.int_sort_order,
+                ptz.id                         AS day_id,
+                ptz.str_timezone_name_{$lang}  AS str_day_name,
+                ptz.int_sort_order             AS day_sort_order
+            FROM {$this->table_name} w
+            INNER JOIN {$this->time_zones_table} tz
+                ON tz.id = w.fky_timezone_id
+            LEFT JOIN {$this->time_zones_table} ptz
+                ON ptz.id = tz.fky_parent_timezone_id
+            WHERE w.fky_event_uid = %s
+              AND w.ysn_online = 1
+            ORDER BY tz.dtm_day, tz.dtm_time_from, tz.int_sort_order, w.str_workshop_number
+        ";
+
+        return $this->wpdb->get_results(
+            $this->wpdb->prepare($sql, $event_uid),
+            ARRAY_A
+        );
+    }
+
     public function get_workshops_all_by_slot($slot_id, $event_uid, $lang = 'de') {
         $slot_id   = absint($slot_id);
         $event_uid = sanitize_text_field($event_uid);

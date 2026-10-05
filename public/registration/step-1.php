@@ -623,17 +623,7 @@
     </h1>
     -->
 
-    <?php
-    echo ($wordings['beginn_der_anmeldung'] ?? 'beginn_der_anmeldung') . ' ' .
-        wp_date('l, j. F Y', strtotime($qry_events['dtm_registration_opened'])) .
-        '<br>';
-
-    echo ($wordings['ende_der_anmeldung'] ?? 'ende_der_anmeldung') . ' ' .
-        wp_date('l, j. F Y', strtotime($qry_events['dtm_registration_closed']));
-    ?>
-    <div class="event-registration-description lead mt-3">
-        <?php echo wp_kses_post($registration->get_value($qry_events, 'mem_event_description')); ?>
-    </div>
+    <?php // Description + registration dates: rendered above the step tabs in event-registration.php. ?>
 
     <!--
     <div class="event-registration-actions">

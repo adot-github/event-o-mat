@@ -428,6 +428,79 @@ tr:not(.pricing-group-odd) + tr.pricing-group-odd > :is(td, th) {
     cursor: wait;
 }
 
+/* Pop-up after an offer was added to the Merkliste (js/workshop-likes.js).
+   Positioned next to the clicked icon by JS: .is-right (right of it) or
+   .is-below (below it); --evtmgr-toast-arrow = arrow offset. */
+.evtmgr-like-toast {
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 100000;
+    max-width: 360px;
+    padding: 1rem 2.5rem 1rem 1rem;
+    background: #ffffff;
+    border-left: 4px solid #fde703;
+    box-shadow: 0 4px 18px rgba(0, 0, 0, 0.18);
+    font-size: .9rem;
+    line-height: 1.4;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity .2s ease, transform .2s ease, visibility .2s;
+}
+
+.evtmgr-like-toast.is-right  { transform: translateX(-6px); }
+.evtmgr-like-toast.is-below  { transform: translateY(-6px); border-left: none; border-top: 4px solid #fde703; }
+
+.evtmgr-like-toast.is-visible {
+    opacity: 1;
+    visibility: visible;
+    transform: none;
+}
+
+/* Arrow towards the icon */
+.evtmgr-like-toast::before {
+    content: "";
+    position: absolute;
+    width: 0;
+    height: 0;
+    border: 8px solid transparent;
+}
+
+.evtmgr-like-toast.is-right::before {
+    top: var(--evtmgr-toast-arrow, 24px);
+    left: -20px;
+    transform: translateY(-50%);
+    border-right-color: #fde703;
+}
+
+.evtmgr-like-toast.is-below::before {
+    top: -20px;
+    left: var(--evtmgr-toast-arrow, 24px);
+    transform: translateX(-50%);
+    border-bottom-color: #fde703;
+}
+
+.evtmgr-like-toast__title {
+    margin: 0 0 .35rem;
+    font-weight: 700;
+}
+
+.evtmgr-like-toast__text {
+    margin: 0;
+}
+
+.evtmgr-like-toast__close {
+    position: absolute;
+    top: .35rem;
+    right: .5rem;
+    padding: 0 .25rem;
+    border: none;
+    background: transparent;
+    font-size: 1.4rem;
+    line-height: 1;
+    cursor: pointer;
+}
+
 /* "Nur Angebote aus meiner Merkliste" checkbox in the workshop-selection
    modal — same visibility fix as the gallery's "Nur Angebote in der Merkliste"
    checkbox (public/css/events-with-filters.css): Bootstrap's default is
@@ -462,4 +535,8 @@ tr:not(.pricing-group-odd) + tr.pricing-group-odd > :is(td, th) {
     opacity: 1;
     color: #000;
     cursor: pointer;
+}
+/* Step-1 intro (description + Datum / Anmeldung ab / Anmeldeschluss) above the step tabs */
+.event-registration-intro.event-keyfigures {
+    margin: 0 0 2.5rem;
 }

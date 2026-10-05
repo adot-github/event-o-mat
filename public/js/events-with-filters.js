@@ -36,7 +36,20 @@ jQuery(function ($) {
         check_for_updates(this, '.input-container');
     }).trigger('keyup');
 
-    $('.select-container select.form-control', $form).select2({}).on('change', function () {
+    var $selects = $('.select-container select.form-control', $form);
+
+    // The theme may already have initialised Select2 on every <select>
+    // (option theme_uses_select2) — re-initialising would drop its styling,
+    // and its own clear button replaces our .clean-filter.
+    $selects.each(function () {
+        if ($(this).data('select2')) {
+            $(this).closest('.select-container').addClass('theme-select2');
+        } else {
+            $(this).select2({});
+        }
+    });
+
+    $selects.on('change', function () {
         check_for_updates(this, '.select-container');
     }).trigger('change');
 });

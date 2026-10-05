@@ -171,6 +171,29 @@
         }
     </style>
 
+    <?php
+    // Step 1: event description + facts row (Datum / Anmeldung ab /
+    // Anmeldeschluss) above the step tabs — same facts row as [event_keyfigures].
+    if ((int) $step === 1 && function_exists('event_registration_keyfigures_facts_html')) :
+        $intro_content = new Evtmgr_Pdf_Content($event_uid, $lang !== '' ? $lang : 'de');
+
+        if ($intro_content->has_event()) :
+            $intro_description = trim($intro_content->get_event_description());
+            $intro_facts       = event_registration_keyfigures_facts_html($intro_content);
+    ?>
+        <div class="event-registration-intro event-keyfigures">
+            <?php if ($intro_description !== '') : ?>
+                <div class="event-registration-description lead">
+                    <?php echo wp_kses_post($intro_description); ?>
+                </div>
+            <?php endif; ?>
+            <?php echo event_registration_keyfigures_css() . $intro_facts; ?>
+        </div>
+    <?php
+        endif;
+    endif;
+    ?>
+
     <form method="post" action="">
         <?php wp_nonce_field(Event_Registration::NONCE_ACTION, Event_Registration::NONCE_NAME); ?>
         <input type="hidden" name="current_step" value="<?php echo esc_attr($step); ?>">
