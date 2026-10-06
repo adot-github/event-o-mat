@@ -257,7 +257,7 @@
     );
 
     $timetable_sessions = array();
-    $debug_step1 = !empty($_GET['debug_step1']);
+    $debug_step1 = !empty($_GET['debug_step1']) && current_user_can('manage_options');
 
 
     /*

@@ -21,7 +21,7 @@
      * - Send confirmation email
      */
 
-    $debug_step5 = isset($_GET['debug_step5']) && $_GET['debug_step5'] === '1';
+    $debug_step5 = isset($_GET['debug_step5']) && $_GET['debug_step5'] === '1' && current_user_can('manage_options');
 
     $current_lang = isset($lang) && $lang !== ''
         ? sanitize_key($lang)
@@ -478,28 +478,28 @@
     <?php echo esc_html($lang ?? ''); ?>
 
     registration_values:
-    <?php print_r($registration_values); ?>
+    <?php echo esc_html(print_r($registration_values, true)); ?>
 
     person_save_result:
-    <?php print_r($person_save_result); ?>
+    <?php echo esc_html(print_r($person_save_result, true)); ?>
 
     person_id:
-    <?php print_r($person_id); ?>
+    <?php echo esc_html(print_r($person_id, true)); ?>
 
     registration_workshops_saved:
-    <?php print_r($registration_workshops_saved); ?>
+    <?php echo esc_html(print_r($registration_workshops_saved, true)); ?>
 
     registration_billing_saved:
-    <?php print_r($registration_billing_saved); ?>
+    <?php echo esc_html(print_r($registration_billing_saved, true)); ?>
 
     workshop_sync_result:
-    <?php print_r($workshop_sync_result); ?>
+    <?php echo esc_html(print_r($workshop_sync_result, true)); ?>
 
     workshop_sync_success:
-    <?php print_r($workshop_sync_success); ?>
+    <?php echo esc_html(print_r($workshop_sync_success, true)); ?>
 
     confirmation_email_sent:
-    <?php print_r($confirmation_email_sent); ?>
+    <?php echo esc_html(print_r($confirmation_email_sent, true)); ?>
 
     email_error:
     <?php echo esc_html($email_error ?: ($GLOBALS['event_registration_last_email_error'] ?? '')); ?>
@@ -511,7 +511,7 @@
     <?php echo esc_html($GLOBALS['wpdb']->last_error ?? ''); ?>
 
     error_messages:
-    <?php print_r($error_messages); ?>
+    <?php echo esc_html(print_r($error_messages, true)); ?>
 
         </pre>
     <?php endif; ?>

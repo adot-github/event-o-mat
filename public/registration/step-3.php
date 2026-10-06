@@ -10,7 +10,7 @@
 
     $event_uid   = isset($event_uid) ? sanitize_text_field((string) $event_uid) : '';
     $lang        = isset($lang) ? sanitize_key((string) $lang) : 'de';
-    $debug_step3 = isset($_GET['debug_step3']) && $_GET['debug_step3'] === '1';
+    $debug_step3 = isset($_GET['debug_step3']) && $_GET['debug_step3'] === '1' && current_user_can('manage_options');
 
     $selected_workshops = isset($registration_values['selected_workshops'])
         ? sanitize_text_field((string) $registration_values['selected_workshops'])
@@ -123,20 +123,20 @@ event_uid: <?php echo esc_html($event_uid); ?>
 lang: <?php echo esc_html($lang); ?>
 
 selected_workshop_ids:
-<?php print_r($selected_workshop_ids); ?>
+<?php echo esc_html(print_r($selected_workshop_ids, true)); ?>
 
 pricing_group: <?php echo esc_html($pricing_group); ?>
 
 total_cost: <?php echo esc_html($total_cost); ?>
 
 pricing_lines:
-<?php print_r($pricing_lines); ?>
+<?php echo esc_html(print_r($pricing_lines, true)); ?>
 
 selected_workshop_rows:
-<?php print_r($selected_workshop_rows); ?>
+<?php echo esc_html(print_r($selected_workshop_rows, true)); ?>
 
 registration_values:
-<?php print_r($registration_values); ?>
+<?php echo esc_html(print_r($registration_values, true)); ?>
         </pre>
     <?php endif; ?>
 

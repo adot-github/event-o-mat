@@ -9,7 +9,7 @@
      * Open the page with ?debug_step4=1
      * Remove this block when everything works.
      */
-    if (isset($_GET['debug_step4']) && $_GET['debug_step4'] === '1') {
+    if (isset($_GET['debug_step4']) && $_GET['debug_step4'] === '1' && current_user_can('manage_options')) {
         echo '<pre style="background:#111;color:#0f0;padding:12px;white-space:pre-wrap;overflow:auto;">';
         echo "STEP 4 LOADED\n\n";
 
@@ -18,13 +18,13 @@
         echo "\n\n";
 
         echo "registration_values:\n";
-        print_r(isset($registration_values) ? $registration_values : 'NO $registration_values');
+        echo esc_html(print_r(isset($registration_values) ? $registration_values : 'NO $registration_values', true));
 
         echo "\n\nall_data_for_current_cookie:\n";
-        print_r(isset($all_data_for_current_cookie) ? $all_data_for_current_cookie : 'NO $all_data_for_current_cookie');
+        echo esc_html(print_r(isset($all_data_for_current_cookie) ? $all_data_for_current_cookie : 'NO $all_data_for_current_cookie', true));
 
         echo "\n\nPOST:\n";
-        print_r($_POST);
+        echo esc_html(print_r($_POST, true));
 
         echo '</pre>';
     }
