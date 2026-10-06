@@ -1,5 +1,9 @@
-
 <?php
+
+if (!defined('ABSPATH')) {
+    exit;
+}
+
 
 $report_title = 'Teilnehmende mit Workshops';
 $report_file_name = 'teilnehmende-workshops-report';

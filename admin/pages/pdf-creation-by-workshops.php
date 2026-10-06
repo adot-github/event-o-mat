@@ -5,23 +5,11 @@
  */
 
 if (!defined('ABSPATH')) {
-    $dir = __DIR__;
-    $wp_load = '';
-    for ($i = 0; $i < 10; $i++) {
-        $candidate = $dir . DIRECTORY_SEPARATOR . 'wp-load.php';
-        if (file_exists($candidate)) { $wp_load = $candidate; break; }
-        $parent = dirname($dir);
-        if ($parent === $dir) break;
-        $dir = $parent;
-    }
-    if ($wp_load === '') {
-        die('<div style="padding:20px;font-family:Arial,sans-serif;color:#b00020;"><strong>wp-load.php nicht gefunden.</strong></div>');
-    }
-    require_once $wp_load;
+    exit;
 }
 
-if (!defined('ABSPATH')) {
-    die('WordPress konnte nicht geladen werden.');
+if (!current_user_can(EVTMGR_CAPABILITY)) {
+    wp_die('Keine Berechtigung.');
 }
 
 foreach ([

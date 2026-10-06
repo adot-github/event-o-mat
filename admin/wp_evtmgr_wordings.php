@@ -1,4 +1,9 @@
 <?php
+
+if (!defined('ABSPATH')) {
+    exit;
+}
+
     require_once get_stylesheet_directory() . '/db-custom/event-registration/classes/class-evtmgr-events.php';
     require_once get_stylesheet_directory() . '/db-custom/event-registration/classes/class_database_fields.php';
 

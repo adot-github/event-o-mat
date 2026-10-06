@@ -1,4 +1,9 @@
 <?php
+
+if (!defined('ABSPATH')) {
+    exit;
+}
+
 (function(){
     if (!function_exists('Acdb_DB_Editor')) {
         return;

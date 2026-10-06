@@ -1,5 +1,9 @@
-
 <?php
+
+if (!defined('ABSPATH')) {
+    exit;
+}
+
 $manual_links = array(
     array(
         'str_title'       => 'Workshops bearbeiten',

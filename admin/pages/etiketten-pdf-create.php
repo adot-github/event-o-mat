@@ -1,6 +1,3 @@
-<style>
-    legend {font-size:1rem;font-weight:400;margin-bottom:1rem;}
-</style>
 <?php
 
 /**
@@ -8,17 +5,18 @@
  * Generates one A4 PDF with all selected persons' labels laid out in a grid.
  */
 
-$wp_load = dirname(__FILE__, 8) . '/wp-load.php';
-
-if (!file_exists($wp_load)) {
-    die('wp-load.php not found: ' . htmlspecialchars($wp_load, ENT_QUOTES, 'UTF-8'));
-}
-
-require_once $wp_load;
-
 if (!defined('ABSPATH')) {
     exit;
 }
+
+if (!current_user_can(EVTMGR_CAPABILITY)) {
+    wp_die('Keine Berechtigung.');
+}
+?>
+<style>
+    legend {font-size:1rem;font-weight:400;margin-bottom:1rem;}
+</style>
+<?php
 
 require_once dirname(__DIR__) . '/../classes/class-event-registration.php';
 require_once dirname(__DIR__) . '/../classes/class-evtmgr-persons.php';

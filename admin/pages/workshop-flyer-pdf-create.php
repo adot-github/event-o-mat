@@ -1,5 +1,9 @@
-
 <?php
+
+if (!defined('ABSPATH')) {
+    exit;
+}
+
 
 /**
  * Caller for workshop booking-list PDF creation.

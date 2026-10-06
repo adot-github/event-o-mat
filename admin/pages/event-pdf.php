@@ -13,6 +13,7 @@ require_once $_pdf_classes_dir . 'class-evtmgr-time-zones.php';
 require_once $_pdf_classes_dir . 'class-evtmgr-pricing.php';
 require_once $_pdf_classes_dir . 'class-evtmgr-sponsors.php';
 require_once $_pdf_classes_dir . 'class-evtmgr-options.php';
+require_once $_pdf_classes_dir . 'class-pdf-creation.php';
 
 require_once __DIR__ . '/vendor/autoload.php';
 
@@ -962,7 +963,7 @@ try {
 HTML;
 
     $docraptor = new DocRaptor\DocApi();
-    $docraptor->getConfig()->setUsername('u2UGJ0xRC-dYkb42Q--J');
+    $docraptor->getConfig()->setUsername(Event_Registration_Pdf_Creation::get_docraptor_key());
 
     $doc = new DocRaptor\Doc();
     $doc->setTest(Evtmgr_Options::is_pdf_test_mode($event_uid));

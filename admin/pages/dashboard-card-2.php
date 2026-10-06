@@ -1,3 +1,9 @@
+<?php
+
+if (!defined('ABSPATH')) {
+    exit;
+}
+?>
 <?php include __DIR__ . '/dashboard-active-event-title.php'; ?>
 
 <?php

@@ -1,5 +1,10 @@
 <?php
 
+if (!defined('ABSPATH')) {
+    exit;
+}
+
+
 /**
  * Caller file for PDF creation: Tickets for participants.
  */

@@ -21,3 +21,6 @@ css-output/
 # DocRaptor temp output
 /admin/pages/vendor/docraptor/docraptor/tmp/*
 !/admin/pages/vendor/docraptor/docraptor/tmp/.keep
+
+# Lokale Test-/Daten-Skripte (laden WordPress selbst, nicht auf den Server)
+/tools_test/

@@ -1,5 +1,10 @@
 <?php
 
+if (!defined('ABSPATH')) {
+    exit;
+}
+
+
 require_once ACDB_SYS_COMPONENTS_PATH . '/email_sendout/classes/AcdbEmailSendoutDatasource.php';
 class Email_Invoice extends AcdbEmailSendoutDatasource {
     public function __construct($options = []) {

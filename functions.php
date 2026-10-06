@@ -1,4 +1,18 @@
 <?php
+
+if (!defined('ABSPATH')) {
+    exit;
+}
+
+/*
+ * Capability required for the whole event manager (admin pages, PDF generation).
+ * 'edit_others_posts' = editors and administrators. This is also the default menu capability
+ * of advanced-custom-database, so its table editors match.
+ */
+if (!defined('EVTMGR_CAPABILITY')) {
+    define('EVTMGR_CAPABILITY', 'edit_others_posts');
+}
+
 add_action('admin_enqueue_scripts', function ($hook_suffix) {
     global $admin_page_hooks;
     $evtmgr_prefix = $admin_page_hooks['acdb_evtmgr_events'] ?? '';
@@ -23,7 +37,7 @@ add_action('wp_ajax_evtmgr_pdf_generate_person', function () {
     if (!check_ajax_referer('evtmgr_pdf_generate', 'nonce', false)) {
         wp_send_json_error(['message' => 'Ungültige Sicherheitsprüfung.'], 403);
     }
-    if (!current_user_can('manage_options')) {
+    if (!current_user_can(EVTMGR_CAPABILITY)) {
         wp_send_json_error(['message' => 'Keine Berechtigung.'], 403);
     }
 
@@ -156,7 +170,7 @@ add_action('wp_ajax_evtmgr_pdf_generate_workshop', function () {
     if (!check_ajax_referer('evtmgr_pdf_generate', 'nonce', false)) {
         wp_send_json_error(['message' => 'Ungültige Sicherheitsprüfung.'], 403);
     }
-    if (!current_user_can('manage_options')) {
+    if (!current_user_can(EVTMGR_CAPABILITY)) {
         wp_send_json_error(['message' => 'Keine Berechtigung.'], 403);
     }
 

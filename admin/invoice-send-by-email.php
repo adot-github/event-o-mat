@@ -1,4 +1,9 @@
 <?php
+
+if (!defined('ABSPATH')) {
+    exit;
+}
+
 require_once dirname(EVENT_REGISTRATION_DIR) . '/classes/class-email-invoice.php';
 $email_sendout_datasource = new Email_Invoice();    
 

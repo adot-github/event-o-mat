@@ -31,11 +31,26 @@ class Event_Registration_Pdf_Creation {
         throw new RuntimeException('DocRaptor autoload.php wurde nicht gefunden.');
     }
 
+    /**
+     * DocRaptor API key from wp-config.php:
+     * define('EVTMGR_DOCRAPTOR_KEY', '...');
+     * Kept out of the code and the database (not visible in the admin, not in DB exports).
+     */
+    public static function get_docraptor_key(): string {
+        $key = defined('EVTMGR_DOCRAPTOR_KEY') ? trim((string) EVTMGR_DOCRAPTOR_KEY) : '';
+
+        if ($key === '') {
+            throw new RuntimeException("DocRaptor-Key fehlt: define('EVTMGR_DOCRAPTOR_KEY', '...'); in wp-config.php eintragen.");
+        }
+
+        return $key;
+    }
+
     public function create_docraptor_client(): \DocRaptor\DocApi {
         $this->load_docraptor_autoload();
 
         $docraptor = new \DocRaptor\DocApi();
-        $docraptor->getConfig()->setUsername('u2UGJ0xRC-dYkb42Q--J');
+        $docraptor->getConfig()->setUsername(self::get_docraptor_key());
 
         return $docraptor;
     }
